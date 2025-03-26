@@ -5,19 +5,19 @@ import 'package:flutter_social_share/modules/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/modules/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/modules/posts/widgets/item_row.dart';
 
-class PostDetailPage extends StatefulWidget {
+class PostDetailScreen extends StatefulWidget {
   final Post post;
 
-  const PostDetailPage({
+  const PostDetailScreen({
     Key? key,
     required this.post,
   }) : super(key: key);
 
   @override
-  _PostDetailPageState createState() => _PostDetailPageState();
+  _PostDetailScreenState createState() => _PostDetailScreenState();
 }
 
-class _PostDetailPageState extends State<PostDetailPage> {
+class _PostDetailScreenState extends State<PostDetailScreen> {
   Post get post => widget.post;
 
   @override

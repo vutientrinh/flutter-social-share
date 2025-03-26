@@ -4,14 +4,14 @@ import 'package:flutter_social_share/modules/posts/blocs/list_posts_rxdart_bloc.
 import 'package:flutter_social_share/modules/posts/models/post.dart';
 import 'package:flutter_social_share/modules/posts/widgets/post_item_remake.dart';
 
-class ListPostsPage extends StatefulWidget {
-  const ListPostsPage({Key? key}) : super(key: key);
+class ListPostsScreen extends StatefulWidget {
+  const ListPostsScreen({Key? key}) : super(key: key);
 
   @override
-  _ListPostsPageState createState() => _ListPostsPageState();
+  _ListPostsScreenState createState() => _ListPostsScreenState();
 }
 
-class _ListPostsPageState extends State<ListPostsPage> {
+class _ListPostsScreenState extends State<ListPostsScreen> {
   final _postsBloc = ListPostsRxDartBloc();
 
   @override
@@ -26,8 +26,8 @@ class _ListPostsPageState extends State<ListPostsPage> {
       body: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: <Widget>[
-          const SliverAppBar(
-            title: Text(
+          SliverAppBar(
+            title: const Text(
               'Homefeed',
               style: TextStyle(color: Colors.black),
             ),
@@ -36,6 +36,12 @@ class _ListPostsPageState extends State<ListPostsPage> {
             elevation: 1,
             forceElevated: true,
             backgroundColor: Colors.white,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.wechat_rounded, color: Colors.black),
+                onPressed: () {},
+              ),
+            ],
           ),
           CupertinoSliverRefreshControl(
             onRefresh: _postsBloc.getPosts,

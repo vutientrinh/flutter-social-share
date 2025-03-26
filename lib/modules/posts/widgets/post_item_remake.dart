@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/modules/posts/models/post.dart';
-import 'package:flutter_social_share/modules/posts/pages/post_detail_page.dart';
+import 'package:flutter_social_share/modules/posts/views/post_screen/post_detail_screen.dart';
 import 'package:flutter_social_share/modules/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/modules/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/modules/posts/widgets/item_row.dart';
@@ -37,7 +37,9 @@ class _PostItemState extends State<PostItem> {
                   child: ItemRow(
                     avatarUrl: widget.post.urlUserAvatar,
                     title: widget.post.displayName,
-                    subtitle: widget.post.displayTimePostCreated,
+                    // subtitle: widget.post.displayTimePostCreated,
+                    subtitle: "khdsljfhalsdhfljashdj",
+
                     rightWidget: IconButton(
                       onPressed: () {},
                       icon: const Icon(Icons.more_horiz),
@@ -58,7 +60,7 @@ class _PostItemState extends State<PostItem> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PostDetailPage(post: widget.post),
+        builder: (context) => PostDetailScreen(post: widget.post),
       ),
     );
   }

@@ -6,7 +6,7 @@
       "status": 1,
       "created_at": "2021-06-08T15:37:28+00:00",
       "updated_at": "2021-11-25T16:11:50+00:00",
-      "title": "",
+      "title": "vutientrinh",
       "description": "Thuyền và biển...",
       "comment_counts": 8,
       "images": [
@@ -59,7 +59,7 @@
           "status": 1,
           "created_at": "2021-06-08T15:37:28+00:00",
           "updated_at": "2021-06-08T15:38:07+00:00",
-          "title": "",
+          "title": "vutientrinh",
           "description": "Thuyền và biển...",
           "image": {
             "url": "https://i.pinimg.com/736x/43/52/b0/4352b0b81b38814ab74e3e5556d49eaa--balloons-photography-hot-air-balloons.jpg",
@@ -582,7 +582,7 @@
             "first_name": "Tung",
             "last_name": "Duong",
             "avatar": {
-              "url": "https://th.bing.com/th/id/OIP.O342gQQq5ZpLA-g6NvVSYwHaEo?w=2560&h=1600&rs=1&pid=ImgDetMain",
+              "url": "https://pbs.twimg.com/media/E1GHWdZVkAEQ3nZ.jpg",
               "org_width": 1000,
               "org_height": 666,
               "org_url": "",
@@ -691,6 +691,182 @@
         }
       ],
       "liked": false
+    },
+    {
+      "id": "9KDHu29PfzXATf38G5",
+      "status": 1,
+      "created_at": "2022-02-10T09:15:24+00:00",
+      "updated_at": "2022-12-05T14:20:10+00:00",
+      "title": "Sunset Horizon",
+      "description": "Bình minh trên biển",
+      "comment_counts": 5,
+      "images": [
+        {
+          "id": "8Fs6reLAF2JqWaG1ti",
+          "url": "https://th.bing.com/th/id/OIP.W8GvjYLVfFrZyHkY7E8G6gHaEo?w=1000&h=625&rs=1&pid=ImgDetMain",
+          "org_width": 1920,
+          "org_height": 1280,
+          "org_url": "https://cdn.example.com/post/sunset_beach.jpeg",
+          "cloud_name": "cloudinary",
+          "dominant_color": "#FF5733",
+          "file_size": 732
+        }
+      ],
+      "like_counts": 54,
+      "view_counts": 247,
+      "pulse_score": 4.5,
+      "is_sensitive": false,
+      "is_private": true,
+      "tags": ["sunset", "beach", "nature"],
+      "user": {
+        "id": "3YKz5m4qM5NC8JKQL",
+        "username": "thuytran",
+        "first_name": "Thúy",
+        "last_name": "Trần",
+        "avatar": {
+          "url": "https://th.bing.com/th/id/OIP.5ytsCkP5Q3jMl9mPCZG_FgHaHa?rs=1&pid=ImgDetMain",
+          "org_width": 500,
+          "org_height": 500,
+          "org_url": "",
+          "cloud_name": "instagram",
+          "dominant_color": "#8A2BE2"
+        },
+        "system_role": "traveler",
+        "is_verified": true,
+        "created_at": "2020-06-15T11:45:32+00:00"
+      },
+      "category": "Travel",
+      "photos": [
+        {
+          "id": "8Ys5reLYqf32VaLoPi",
+          "status": 1,
+          "created_at": "2022-02-10T09:15:24+00:00",
+          "updated_at": "2022-02-10T09:15:24+00:00",
+          "title": "Golden Coastline",
+          "description": "Hoàng hôn trên bờ biển",
+          "image": {
+            "url": "https://cdn.pixabay.com/photo/2016/02/19/11/30/island-1210677__480.jpg",
+            "org_width": 1600,
+            "org_height": 1200,
+            "org_url": "",
+            "cloud_name": "imgur",
+            "dominant_color": "#FFA07A",
+            "file_size": 890
+          },
+          "exif": {
+            "camera": "Canon EOS 5D Mark IV",
+            "lens": "EF 24-70mm f/2.8L II USM",
+            "shutter_speed": "1/200 sec",
+            "aperture": "f/8",
+            "iso": 200
+          },
+          "tags": ["coastline", "ocean", "photography"],
+          "comment_counts": 2,
+          "like_counts": 38
+        }
+      ]
+    },
+    {
+      "id": "9JH7Gv3KpLQWAnR5n8",
+      "status": 1,
+      "created_at": "2025-03-26T08:00:00+00:00",
+      "updated_at": "2025-03-26T08:00:00+00:00",
+      "title": "Vietnamese Delicacies",
+      "description": "Exploring the rich flavors of Vietnamese cuisine",
+      "comment_counts": 5,
+      "images": [
+        {
+          "id": "3FD8reKBF5JsLpQ4qw",
+          "url": "https://www.pexels.com/photo/vietnamese-pho-noodle-soup-1234567/",
+          "org_width": 1920,
+          "org_height": 1280,
+          "org_url": "https://www.pexels.com/photo/vietnamese-pho-noodle-soup-1234567/",
+          "cloud_name": "pexels",
+          "dominant_color": "#A67B5B",
+          "file_size": 1024
+        }
+      ],
+      "like_counts": 150,
+      "view_counts": 1200,
+      "pulse_score": 9.5,
+      "is_sensitive": false,
+      "is_private": false,
+      "tags": ["Vietnamese cuisine", "pho", "noodle soup"],
+      "user": {
+        "id": "8LMnP4KqJpWQAnR6o9",
+        "username": "culinary_explorer",
+        "first_name": "Alex",
+        "last_name": "Nguyen",
+        "avatar": {
+          "url": "https://www.pexels.com/photo/portrait-of-alex-nguyen-2345678/",
+          "org_width": 500,
+          "org_height": 500,
+          "org_url": "",
+          "cloud_name": "pexels",
+          "dominant_color": "#F0EAD6"
+        },
+        "system_role": "food_blogger",
+        "is_verified": true,
+        "created_at": "2023-06-15T10:30:00+00:00"
+      },
+      "category": "Food",
+      "photos": [
+        {
+          "id": "7GHR3eLBpWFPqR6n10",
+          "status": 1,
+          "created_at": "2025-03-26T08:00:00+00:00",
+          "updated_at": "2025-03-26T08:00:00+00:00",
+          "title": "Bánh Mì Sandwich",
+          "description": "A classic Vietnamese sandwich with various fillings",
+          "image": {
+            "url": "https://www.pexels.com/photo/vietnamese-banh-mi-sandwich-3456789/",
+            "org_width": 1280,
+            "org_height": 720,
+            "org_url": "",
+            "cloud_name": "pexels",
+            "dominant_color": "#D2691E",
+            "file_size": 850
+          },
+          "exif": {
+            "camera_model": "Canon EOS R5",
+            "lens": "35mm f/1.8",
+            "shutter_speed": "1/200s",
+            "aperture": "f/2.8",
+            "iso": 400
+          },
+          "tags": ["banh mi", "sandwich", "Vietnamese food"],
+          "comment_counts": 8,
+          "like_counts": 95,
+          "view_counts": 800,
+          "collection_counts": 20,
+          "pulse_score": 8.7,
+          "pulse_type": "trending",
+          "is_private": false,
+          "is_sensitive": false,
+          "storage_length": 850,
+          "user": {
+            "id": "8LMnP4KqJpWQAnR6o9",
+            "username": "culinary_explorer",
+            "first_name": "Alex",
+            "last_name": "Nguyen",
+            "avatar": {
+              "url": "https://www.pexels.com/photo/portrait-of-alex-nguyen-2345678/",
+              "org_width": 500,
+              "org_height": 500,
+              "org_url": "",
+              "cloud_name": "pexels",
+              "dominant_color": "#F0EAD6"
+            },
+            "system_role": "food_blogger",
+            "is_verified": true,
+            "created_at": "2023-06-15T10:30:00+00:00"
+          },
+          "liked": true
+        }
+      ],
+      "liked": true
     }
+
+
   ]
 }

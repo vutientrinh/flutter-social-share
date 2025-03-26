@@ -39,7 +39,7 @@ class StringUtils {
       final createdAtLocal = createdAt.toLocal();
       final hour = createdAtLocal.hour.toString().padLeft(2, '0');
       final minute = createdAtLocal.minute.toString().padLeft(2, '0');
-
+      print("gio ne "+ hour);
       final format = DateFormat('MMMM d, yyyy');
       final timeAfterFormat = format.format(createdAt);
       return timeAfterFormat;

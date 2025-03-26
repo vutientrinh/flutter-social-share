@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/modules/posts/pages/list_posts_page.dart';
+import 'package:flutter_social_share/modules/home_screen/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: const ListPostsPage(),
+      home: const HomePage(),
     );
   }
 }

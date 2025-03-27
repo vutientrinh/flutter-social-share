@@ -31,18 +31,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  const Positioned(
-                    // bottom: 25,
-                    child: CircleAvatar(
-                        radius: 50,
-                        foregroundImage: NetworkImage(
-                            "https://th.bing.com/th/id/OIP.G-H-NFz2OoXJ2GkK74dX4wHaH_?rs=1&pid=ImgDetMain")),
-                  ),
                   const Padding(
-                    padding: EdgeInsets.only(top: 220),
+                    padding: EdgeInsets.only(top: 150),
                     // Moves the column down
                     child: Column(
                       children: [
+                        CircleAvatar(
+                            radius: 50,
+                            foregroundImage: NetworkImage(
+                                "https://th.bing.com/th/id/OIP.G-H-NFz2OoXJ2GkK74dX4wHaH_?rs=1&pid=ImgDetMain")),
                         Text(
                           'Vu Tien Trinh',
                           style: TextStyle(

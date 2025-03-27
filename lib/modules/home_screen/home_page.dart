@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/modules/ecommerce_screen/ecommerce_home_screen.dart';
 import 'package:flutter_social_share/modules/friend_screen/friend_screen.dart';
 import 'package:flutter_social_share/modules/mesages_screen/messages_screen.dart';
 import 'package:flutter_social_share/modules/notification_screen/notification_screen.dart';
@@ -20,9 +21,13 @@ class _HomePageState extends State<HomePage> {
     const BottomNavigationBarItem(
         icon: Icon(Icons.home, size: 26), label: "Home"),
     const BottomNavigationBarItem(
-        icon: Icon(Icons.person, size: 26), label: "Friends"),
+        icon: Icon(Icons.shopping_cart, size: 26), // Added Shopping Icon
+        label: "Shopping"),
     const BottomNavigationBarItem(
-        icon: Icon(Icons.circle_notifications_outlined, size: 26), label: "Notifications"),
+        icon: Icon(Icons.group, size: 26), label: "Friends"),
+    const BottomNavigationBarItem(
+        icon: Icon(Icons.circle_notifications_outlined, size: 26),
+        label: "Notifications"),
     const BottomNavigationBarItem(
         icon: Icon(Icons.person, size: 26), label: "Profile")
   ];
@@ -35,6 +40,7 @@ class _HomePageState extends State<HomePage> {
 
   static const List<Widget> _pages = [
     ListPostsScreen(),
+    EcommerceHomeScreen(),
     FriendScreen(),
     NotificationScreen(),
     ProfileScreen(),
@@ -45,9 +51,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            items: navbarItems,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          items: navbarItems,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.blue,
           unselectedItemColor: Colors.grey,

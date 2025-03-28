@@ -9,10 +9,10 @@ class EcommerceHomeScreen extends StatefulWidget {
 
 class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
   final slidersLists = [
-    "https://th.bing.com/th/id/OIP.Zu87gW73klh42UG7Q_28yQHaEn?w=294&h=183&c=7&r=0&o=5&pid=1.7",
-    "https://th.bing.com/th/id/OIP.90sDWdblfZFiciIEpsGFwwHaEY?w=310&h=183&c=7&r=0&o=5&pid=1.7",
-    "https://th.bing.com/th/id/OIP.EifbIt7AOgyTyGIXuuq6TAAAAA?w=234&h=183&c=7&r=0&o=5&pid=1.7",
-    "https://th.bing.com/th/id/OIP.oqmBe8wpnsCUUuxUwyv5TAHaE8?w=276&h=184&c=7&r=0&o=5&pid=1.7"
+    "assets/images/slider_1.png",
+    "assets/images/slider_2.png",
+    "assets/images/slider_3.png",
+    "assets/images/slider_4.png"
   ];
 
   int _currentIndex = 0;
@@ -62,6 +62,8 @@ class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
 
             // Image Slider
             Expanded(
+                child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
                   SizedBox(
@@ -96,7 +98,7 @@ class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       slidersLists.length,
-                          (index) => Container(
+                      (index) => Container(
                         margin: const EdgeInsets.symmetric(horizontal: 4),
                         width: 8,
                         height: 8,
@@ -109,8 +111,66 @@ class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
                       ),
                     ),
                   ),
+                  GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 6,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 8,
+                              mainAxisExtent: 300),
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            // RoundedSM equivalent
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                // Soft shadow
+                                blurRadius: 5,
+                                spreadRadius: 1,
+                                offset: const Offset(2, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                'assets/images/p1.jpeg',
+                                // Correct path to the image
+                                width: 150,
+                                fit: BoxFit.cover,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                "Laptop 4GB/64GB",
+                                style: TextStyle(color: Colors.black26),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                "\$600",
+                                style: TextStyle(color: Colors.black26),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                 ],
               ),
+            )),
+            const SizedBox(
+              height: 20,
             ),
           ],
         ),

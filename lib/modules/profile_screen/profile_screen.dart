@@ -11,8 +11,17 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen>
+    with TickerProviderStateMixin {
   final _postsBloc = ListPostsRxDartBloc();
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _postsBloc.getPosts();
+    _tabController = TabController(length: 2, vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,34 +82,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            StreamBuilder<List<Post>?>(
-              stream: _postsBloc.postsStream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return const Center(child: Text('Something went wrong'));
-                }
-
-                return Column(
-                  children: snapshot.data
-                          ?.map((post) => PostItem(post: post))
-                          .toList() ??
-                      [],
-                );
-              },
+            TabBar(
+              controller: _tabController,
+              labelColor: Colors.blueAccent,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: Colors.blueAccent,
+              tabs: const [
+                Tab(text: 'Posts'),
+                Tab(text: 'Products'),
+              ],
             ),
+            SizedBox(
+              height: 400, // Ensure content fits properly
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildPostsTab(),
+                  _buildProductsTab(),
+                ],
+              ),
+            )
           ],
         ),
       ),
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _postsBloc.getPosts();
+  Widget _buildPostsTab() {
+    return StreamBuilder<List<Post>?>(
+      stream: _postsBloc.postsStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong'));
+        }
+
+        return ListView(
+          children:
+              snapshot.data?.map((post) => PostItem(post: post)).toList() ?? [],
+        );
+      },
+    );
+  }
+
+  // Products Tab
+  Widget _buildProductsTab() {
+    final products = [
+      {'name': 'iPhone 13 Pro', 'price': '\$999'},
+      {'name': 'MacBook Air M2', 'price': '\$1199'},
+      {'name': 'Gaming Chair', 'price': '\$250'},
+    ];
+
+    return ListView.builder(
+      itemCount: products.length,
+      itemBuilder: (context, index) {
+        final product = products[index];
+        return ListTile(
+          leading: const Icon(Icons.shopping_bag, color: Colors.blueAccent),
+          title: Text(product['name']!),
+          subtitle: Text(product['price']!),
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Clicked on ${product['name']}")),
+            );
+          },
+        );
+      },
+    );
   }
 }

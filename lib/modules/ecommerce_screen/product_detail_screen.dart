@@ -45,9 +45,14 @@ class ProductDetailScreen extends StatelessWidget {
                           );
                         }),
                   ),
-                  const SizedBox(height: 10,),
-                  const Text("Item name",style: TextStyle(fontSize: 16,color: Colors.grey)),
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text("Item name",
+                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   const Row(
                     children: [
                       Expanded(
@@ -55,10 +60,24 @@ class ProductDetailScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Seller", style: TextStyle(color: Colors.black),),
-                            SizedBox(height: 10,),
-                            Text("In House Brands", style: TextStyle(color: Colors.black, fontSize: 16),),
-
+                            Text(
+                              "Seller",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: AssetImage('assets/image2/profile_image.png'),
+                            ),
+                            Text(
+                              "In House Brands",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
+                            ),
+                            Icon(Icons.star, color: Colors.amber),
+                            Text("4.5", style: TextStyle(fontSize: 16, color: Colors.black)),
                           ],
                         ),
                       ),
@@ -70,17 +89,43 @@ class ProductDetailScreen extends StatelessWidget {
                         ),
                       ),
                     ],
-
                   ),
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Row(
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: Text(
+                          "Quantity : ",
+                          style: TextStyle(),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
-                      SizedBox(width: 100,child:
-                        Text("Quantity : ",style: TextStyle(),),)
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green),
+                          child: const Text("Add to Cart"),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange),
+                          child: const Text("Buy Now"),
+                        ),
+                      ),
                     ],
-                  )
-
-                  
+                  ),
                 ],
               ),
             ),

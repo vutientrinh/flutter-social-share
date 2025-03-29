@@ -27,6 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             Center(
@@ -93,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               ],
             ),
             SizedBox(
-              height: 400, // Ensure content fits properly
+              height: MediaQuery.of(context).size.height * 0.6,
               child: TabBarView(
                 controller: _tabController,
                 children: [
@@ -102,6 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ],
               ),
             )
+
           ],
         ),
       ),

@@ -26,12 +26,29 @@ class NotificationScreen extends StatelessWidget {
         'icon': Icons.shopping_cart,
         'content': 'Your order has been shipped!',
         'time': '1 hour ago'
+      },
+      {
+        'icon': Icons.shopping_cart,
+        'content': 'Your order has been shipped!',
+        'time': '1 hour ago'
+      },
+      {
+        'icon': Icons.shopping_cart,
+        'content': 'Your order has been shipped!',
+        'time': '1 hour ago'
+      },
+      {
+        'icon': Icons.shopping_cart,
+        'content': 'Your order has been shipped!',
+        'time': '1 hour ago'
       }
+
+
     ];
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notifications"),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.white,
       ),
       body: ListView.builder(
         itemCount: notifications.length,

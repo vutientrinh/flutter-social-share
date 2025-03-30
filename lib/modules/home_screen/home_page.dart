@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     EcommerceHomeScreen(),
     FriendScreen(),
     NotificationScreen(),
-    ProfileScreen(),
+    ProfileScreen(followerName: "Vu tien trinh"),
   ];
 
   @override

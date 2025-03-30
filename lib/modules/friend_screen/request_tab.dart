@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../profile_screen/profile_screen.dart';
+
 class RequestsTab extends StatelessWidget {
   const RequestsTab({super.key});
 
@@ -12,6 +14,14 @@ class RequestsTab extends StatelessWidget {
         leading: const CircleAvatar(child: Icon(Icons.person_add)),
         title: Text("Request ${index + 1}"),
         subtitle: const Text("Wants to follow you"),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(followerName: "Follower ${index + 1}"),
+            ),
+          );
+        },
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../profile_screen/profile_screen.dart';
+
 class FollowersTab extends StatelessWidget {
   const FollowersTab({super.key});
 
@@ -11,9 +13,15 @@ class FollowersTab extends StatelessWidget {
         leading: const CircleAvatar(child: Icon(Icons.person)),
         title: Text("Follower ${index + 1}"),
         subtitle: const Text("Following you"),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(followerName: "Follower ${index + 1}"),
+            ),
+          );
+        },
       ),
     );
   }
 }
-
-

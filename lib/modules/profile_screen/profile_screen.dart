@@ -5,7 +5,8 @@ import '../posts/models/post.dart';
 import '../posts/widgets/post_item_remake.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final String followerName;
+  const ProfileScreen({super.key, required this.followerName});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -41,27 +42,27 @@ class _ProfileScreenState extends State<ProfileScreen>
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 150),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 150),
                     // Moves the column down
                     child: Column(
                       children: [
-                        CircleAvatar(
+                        const CircleAvatar(
                             radius: 50,
                             foregroundImage: NetworkImage(
                                 "https://th.bing.com/th/id/OIP.G-H-NFz2OoXJ2GkK74dX4wHaH_?rs=1&pid=ImgDetMain")),
                         Text(
-                          'Vu Tien Trinh',
-                          style: TextStyle(
+                          widget.followerName,
+                          style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 5),
-                        Text(
+                        const SizedBox(height: 5),
+                        const Text(
                           '@vutientrinh',
                           style: TextStyle(color: Colors.grey),
                         ),
-                        SizedBox(height: 20),
-                        Padding(
+                        const SizedBox(height: 20),
+                        const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             ],
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   )

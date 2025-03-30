@@ -19,7 +19,12 @@ class ProductDetailScreen extends StatelessWidget {
               onPressed: () {},
               icon: const Icon(
                 Icons.favorite_outline,
-              ))
+              )),
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.shopping_bag,
+              )),
         ],
       ),
       body: Column(

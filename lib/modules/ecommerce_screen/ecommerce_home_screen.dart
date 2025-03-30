@@ -36,93 +36,109 @@ class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      color: Colors.white,
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: SafeArea(
-        child: Column(
-          children: [
-            // Search Bar
-            Container(
-              alignment: Alignment.center,
-              height: 60,
-              color: Colors.white,
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    suffixIcon: Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: "Search ...",
-                    hintStyle: TextStyle(color: Colors.grey)),
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: SizedBox(
+            height: 40,
+            child: TextField(
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                hintText: "Search...",
+                hintStyle: const TextStyle(color: Colors.grey),
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                filled: true,
+                fillColor: Colors.grey[200],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
-
-            const SizedBox(height: 10),
-
-            // Image Slider
-            Expanded(
-                child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 150,
-                    child: PageView.builder(
-                      controller: PageController(initialPage: _currentIndex),
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                      },
-                      itemCount: slidersLists.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              slidersLists[index],
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // Dots Indicator
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      slidersLists.length,
-                      (index) => Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _currentIndex == index
-                              ? Colors.blue
-                              : Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const GridProductList(),
-                ],
-              ),
-            )),
-            const SizedBox(
-              height: 20,
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.shopping_bag, color: Colors.black),
+              onPressed: () {
+                // Shopping bag button action
+              },
             ),
           ],
         ),
-      ),
-    );
+        body: Container(
+          padding: const EdgeInsets.all(12),
+          color: Colors.white,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Search Bar
+                const SizedBox(height: 10),
+                // Image Slider
+                Expanded(
+                    child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 150,
+                        child: PageView.builder(
+                          controller:
+                              PageController(initialPage: _currentIndex),
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+                          },
+                          itemCount: slidersLists.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
+                                  slidersLists[index],
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // Dots Indicator
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          slidersLists.length,
+                          (index) => Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _currentIndex == index
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const GridProductList(),
+                    ],
+                  ),
+                )),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }

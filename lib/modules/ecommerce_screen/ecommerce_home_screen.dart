@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'card_screen.dart';
+import 'cart_screen.dart';
 import 'grid_product_list.dart';
 
 class EcommerceHomeScreen extends StatefulWidget {
@@ -65,7 +65,7 @@ class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const CardScreen()),
+                      builder: (context) => const CartScreen()),
                 );
               },
             ),

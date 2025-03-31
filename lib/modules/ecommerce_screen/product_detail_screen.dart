@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'card_screen.dart';
+import 'cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productName;
@@ -35,7 +35,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const CardScreen()),
+                      builder: (context) => const CartScreen()),
                 );
               },
               icon: const Icon(

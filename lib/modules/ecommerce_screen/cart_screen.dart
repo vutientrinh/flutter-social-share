@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CardScreen extends StatefulWidget {
-  const CardScreen({super.key});
+class CartScreen extends StatefulWidget {
+  const CartScreen({super.key});
 
   @override
-  State<CardScreen> createState() => _CartScreenState();
+  State<CartScreen> createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CardScreen> {
+class _CartScreenState extends State<CartScreen> {
   List<Map<String, dynamic>> cartItems = [
     {"name": "Product 1", "price": 20.0, "quantity": 1},
     {"name": "Product 2", "price": 15.5, "quantity": 2},

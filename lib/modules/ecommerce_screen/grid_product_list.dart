@@ -15,14 +15,14 @@ class GridProductList extends StatelessWidget {
             crossAxisCount: 2,
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
-            mainAxisExtent: 300),
+            mainAxisExtent: 250),
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const ProductDetailScreen()),
+                    builder: (context) => const ProductDetailScreen(productName: "Iphone 11 Promax",)),
               );
             },
             child: Container(
@@ -34,7 +34,7 @@ class GridProductList extends StatelessWidget {
                 // RoundedSM equivalent
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withOpacity(0.1),
                     // Soft shadow
                     blurRadius: 5,
                     spreadRadius: 1,
@@ -43,7 +43,7 @@ class GridProductList extends StatelessWidget {
                 ],
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
                     'assets/images/p1.jpeg',
@@ -56,14 +56,14 @@ class GridProductList extends StatelessWidget {
                   ),
                   const Text(
                     "Laptop 4GB/64GB",
-                    style: TextStyle(color: Colors.black26),
+                    style: TextStyle(color: Colors.black),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const Text(
                     "\$600",
-                    style: TextStyle(color: Colors.black26),
+                    style: TextStyle(color: Colors.black),
                   ),
                 ],
               ),

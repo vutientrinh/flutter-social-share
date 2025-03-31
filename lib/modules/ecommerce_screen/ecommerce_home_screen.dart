@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'card_screen.dart';
 import 'grid_product_list.dart';
 
 class EcommerceHomeScreen extends StatefulWidget {
@@ -61,7 +62,11 @@ class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
             IconButton(
               icon: const Icon(Icons.shopping_bag, color: Colors.black),
               onPressed: () {
-                // Shopping bag button action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CardScreen()),
+                );
               },
             ),
           ],

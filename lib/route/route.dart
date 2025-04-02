@@ -16,9 +16,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const RegisterScreen());
 
     case profileScreenRoute:
-      return MaterialPageRoute(builder: (context)=>const ProfileScreen(followerName: "followerName"));
+      return MaterialPageRoute(
+          builder: (context) =>
+              const ProfileScreen(followerName: "followerName"));
     case chatScreenRoute:
-      return MaterialPageRoute(builder: (context)=> const MessagesScreen());
+      return MaterialPageRoute(builder: (context) => const MessagesScreen());
+    case ecommerceScreenRoute:
+      return MaterialPageRoute(
+          builder: (context) => const EcommerceHomeScreen());
     default:
       return MaterialPageRoute(
         builder: (context) => const Scaffold(

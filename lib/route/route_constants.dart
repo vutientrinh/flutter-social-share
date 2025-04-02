@@ -4,6 +4,6 @@ const String homeScreenRoute = "home";
 const String profileScreenRoute = "profile";
 const String chatScreenRoute = "chat";
 const String notificationsScreenRoute = "notifications";
-const String productList = "product_list";
+const String ecommerceScreenRoute = "ecommerce";
 const String productDetailsScreenRoute = "product_details";
 const String cartScreenRoute = "cart";

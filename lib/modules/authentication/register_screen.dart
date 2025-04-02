@@ -1,33 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/modules/home_screen/home_page.dart';
 
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
+class RegisterScreen extends StatefulWidget {
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const RegisterScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _emailController = TextEditingController();
+
   final TextEditingController _usernameController = TextEditingController();
+
   final TextEditingController _passwordController = TextEditingController();
 
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Future<void> _signInWithGoogle() async {
-    // final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    // if (googleUser == null) return;
-    //
-    // final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    // final AuthCredential credential = GoogleAuthProvider.credential(
-    //   accessToken: googleAuth.accessToken,
-    //   idToken: googleAuth.idToken,
-    // );
-
-    // await _auth.signInWithCredential(credential);
+  void _registerWithGoogle() {
+    // Implement Google registration logic
   }
 
   @override
@@ -48,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'Welcome Back!',
+                    'Create Account',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -56,6 +45,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
                   TextField(
                     controller: _usernameController,
                     decoration: InputDecoration(
@@ -87,19 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 50),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 50),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()),
-                      );
-                      // Handle login
+                      // Handle registration
                     },
                     child: const Text(
-                      'Login',
+                      'Create',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
@@ -109,12 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 40),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
+                      backgroundColor: Colors.orange
                     ),
-                    onPressed: _signInWithGoogle,
+                    onPressed: _registerWithGoogle,
                     child: const Text(
-                      'Login with Google',
+                      'Create Account with Google',
                       style: TextStyle(fontSize: 16, color: Colors.black87),
                     ),
                   ),

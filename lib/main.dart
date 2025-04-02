@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/modules/authentication/login_screen.dart';
+import 'package:flutter_social_share/modules/authentication/register_screen.dart';
 import 'package:flutter_social_share/modules/home_screen/home_page.dart';
 
 void main() {
@@ -17,7 +19,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
+      home:  const LoginScreen(),
+
     );
   }
 }

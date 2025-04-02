@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'chat_detail.dart';
+
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
 
@@ -85,9 +87,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     // Add navigation to detailed chat screen if needed
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Opening chat with ${chatList[index]["name"]}'),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ChatDetail(userId: "1234")
                       ),
                     );
                   },

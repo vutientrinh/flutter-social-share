@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_social_share/modules/authentication/login_screen.dart';
 import 'package:flutter_social_share/modules/authentication/register_screen.dart';
 import 'package:flutter_social_share/modules/home_screen/home_page.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 

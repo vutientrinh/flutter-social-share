@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/modules/ecommerce_screen/ecommerce_home_screen.dart';
 import 'package:flutter_social_share/modules/friend_screen/friend_screen.dart';
-import 'package:flutter_social_share/modules/mesages_screen/messages_screen.dart';
 import 'package:flutter_social_share/modules/notification_screen/notification_screen.dart';
 import 'package:flutter_social_share/modules/profile_screen/profile_screen.dart';
 

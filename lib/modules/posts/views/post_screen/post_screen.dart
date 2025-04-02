@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/modules/mesages_screen/messages_screen.dart';
 import 'package:flutter_social_share/modules/posts/blocs/list_posts_rxdart_bloc.dart';
 import 'package:flutter_social_share/modules/posts/models/post.dart';
 import 'package:flutter_social_share/modules/posts/widgets/post_item_remake.dart';
+
+import '../../../messages_screen/messages_screen.dart';
 
 class ListPostsScreen extends StatefulWidget {
   const ListPostsScreen({Key? key}) : super(key: key);

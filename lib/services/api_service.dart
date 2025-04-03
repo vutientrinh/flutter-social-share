@@ -5,32 +5,6 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static final String baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080/api';
 
-  Future<dynamic> getRequest(String endpoint) async {
-    final Uri url = Uri.parse('$baseUrl$endpoint');
-
-    try {
-      final response = await http.get(url);
-      return _handleResponse(response);
-    } catch (e) {
-      throw Exception("Network error: $e");
-    }
-  }
-
-  Future<dynamic> postRequest(String endpoint, Map<String, dynamic> data) async {
-    final Uri url = Uri.parse('$baseUrl$endpoint');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(data),
-      );
-      return _handleResponse(response);
-    } catch (e) {
-      throw Exception("Network error: $e");
-    }
-  }
-
   dynamic _handleResponse(http.Response response) {
     switch (response.statusCode) {
       case 200:

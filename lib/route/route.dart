@@ -1,4 +1,4 @@
-import 'package:flutter_social_share/modules/home_screen/home_page.dart';
+import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:flutter_social_share/route/route_constants.dart';
 
 import 'screen_export.dart';

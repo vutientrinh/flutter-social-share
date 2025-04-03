@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 
-Future<void> main() async {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
-}
 
+  print("🌍 API Base URL: ${dotenv.env['API_BASE_URL']}");
+
+  runApp(MyApp());
+}
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 

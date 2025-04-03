@@ -4,15 +4,15 @@ import 'api_client.dart';
 class AuthService {
   final Dio _dio = ApiClient.dio;
 
-  Future<Response?> login(String email, String password) async {
+  Future<Response?> login(String username, String password) async {
     try {
       final response = await _dio.post('/auth/login', data: {
-        'email': email,
+        'username': username,
         'password': password,
       });
       print('Login successfull');
       print(response.data);
-      return response.data;
+      return response;
     } catch (e) {
       print('Login Error: $e');
       return null;

@@ -7,3 +7,4 @@ const String notificationsScreenRoute = "notifications";
 const String ecommerceScreenRoute = "ecommerce";
 const String productDetailsScreenRoute = "product_details";
 const String cartScreenRoute = "cart";
+const String createPostScreenRoute = "create_post";

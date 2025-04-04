@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/screens/posts/views/post_screen/create_post_screen.dart';
 
 class CreatePost extends StatelessWidget {
   const CreatePost({super.key});
@@ -17,17 +18,23 @@ class CreatePost extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "What do you think?",
-                hintStyle: const TextStyle(fontSize: 16),
-                border: OutlineInputBorder(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreatePostScreen()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(25),
-                  borderSide: BorderSide.none,
                 ),
-                filled: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                fillColor: Colors.grey[200],
+                child: const Text(
+                  "What do you think?",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
               ),
             ),
           ),

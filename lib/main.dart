@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
+import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
 
 void main() async {
@@ -9,13 +10,12 @@ void main() async {
 
   print("🌍 API Base URL: ${dotenv.env['API_BASE_URL']}");
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,12 +24,14 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home:  AuthCheck(),
-
+      home: const AuthCheck(),
     );
   }
 }
+
 class AuthCheck extends StatefulWidget {
+  const AuthCheck({Key? key}) : super(key: key);
+
   @override
   _AuthCheckState createState() => _AuthCheckState();
 }
@@ -47,58 +49,46 @@ class _AuthCheckState extends State<AuthCheck> {
   // Method to check if the token exists and is valid
   Future<void> _checkAuthStatus() async {
     final authService = AuthService();
-
     bool isValid = await authService.introspect();
 
-    if (isValid) {
-      setState(() {
-        _isAuthenticated = true;
-      });
-    } else {
-      setState(() {
-        _isAuthenticated = false;
-      });
-    }
-
     setState(() {
+      _isAuthenticated = isValid;
       _isLoading = false;
     });
 
-    if (!_isAuthenticated) {
+    // Navigate to the appropriate screen based on authentication status
+    if (_isAuthenticated) {
+      _navigateToHomeScreen();
+    } else {
       _navigateToLoginScreen();
     }
   }
 
   // Navigate to the login screen
   void _navigateToLoginScreen() {
-    // Using Navigator to redirect to the login screen if not authenticated
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
+  // Navigate to the home screen
+  void _navigateToHomeScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // If the user is authenticated, show the main content
-    return Scaffold(
-      body: Center(
-        child: _isAuthenticated
-            ? Text("Authenticated!") // Main screen or Home page
-            : ElevatedButton(
-          onPressed: () {
-            // Manually trigger login if necessary
-            _navigateToLoginScreen();
-          },
-          child: Text("Go to Login"),
-        ),
-      ),
-    );
+    return const SizedBox(); // This will not be used since we navigate immediately in _checkAuthStatus
   }
 }
+

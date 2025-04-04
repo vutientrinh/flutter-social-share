@@ -22,6 +22,27 @@ class AuthService {
     await prefs.remove('username');
     await prefs.remove('tokenType');
   }
+  Future<bool> introspect() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) {
+        return false; // No token found, so it's invalid
+      }
+
+      // Call the introspect endpoint to verify the token validity
+      final response = await _dio.post('/auth/introspect', data: {
+        'token': token,
+      });
+
+      // If the token is valid, return true, otherwise false
+      return response.data['valid'] == true;
+    } catch (e) {
+      print('Introspect Error: $e');
+      return false;
+    }
+  }
 
 
   Future<Response?> login(String username, String password) async {

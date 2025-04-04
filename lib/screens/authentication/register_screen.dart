@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/screens/authentication/login_screen.dart';
+import 'package:flutter_social_share/services/auth_service.dart'; // Adjust the path to match your project
 
 class RegisterScreen extends StatefulWidget {
-
   const RegisterScreen({super.key});
 
   @override
@@ -10,114 +11,163 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _usernameController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
 
-  void _registerWithGoogle() {
-    // Implement Google registration logic
+  final _formKey = GlobalKey<FormState>();
+  bool _isObscure = true;
+  bool _isLoading = false;
+
+  final AuthService _authService = AuthService(); // Replace with your service class name
+
+  void _registerWithGoogle() async {
+    // Placeholder: Add Google Sign-In logic using `google_sign_in` or Firebase Auth
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Google Sign-In not implemented")),
+    );
+  }
+
+  Future<void> _handleRegister() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      final name = _usernameController.text.trim();
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      final response = await _authService.register(name, email, password);
+
+      setState(() => _isLoading = false);
+
+      if (response != null && response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Registration successful!")),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Registration failed")),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Card(
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Create Account',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 40),
+                const Text(
+                  'Tell us about you',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                _buildTextField(
+                  controller: _emailController,
+                  label: 'Email',
+                  icon: Icons.email_outlined,
+                  validator: (value) => value!.contains('@') ? null : 'Enter a valid email',
+                ),
+                const SizedBox(height: 20),
+                _buildTextField(
+                  controller: _usernameController,
+                  label: 'Username',
+                  icon: Icons.person_outline,
+                  validator: (value) => value!.isNotEmpty ? null : 'Username is required',
+                ),
+                const SizedBox(height: 20),
+                _buildTextField(
+                  controller: _passwordController,
+                  label: 'Password',
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  isObscure: _isObscure,
+                  toggleObscure: () {
+                    setState(() => _isObscure = !_isObscure);
+                  },
+                  validator: (value) =>
+                  value!.length >= 6 ? null : 'Password must be at least 6 characters',
+                ),
+                const SizedBox(height: 30),
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 80),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
+                  onPressed: _handleRegister,
+                  child: const Text(
+                    'Create',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.login, color: Colors.white),
+                  label: const Text(
+                    'Create Account with Google',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  TextField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 50),
-                    ),
-                    onPressed: () {
-                      // Handle registration
-                    },
-                    child: const Text(
-                      'Create',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
-                      backgroundColor: Colors.orange
-                    ),
-                    onPressed: _registerWithGoogle,
-                    child: const Text(
-                      'Create Account with Google',
-                      style: TextStyle(fontSize: 16, color: Colors.black87),
-                    ),
-                  ),
-                ],
-              ),
+                  onPressed: _registerWithGoogle,
+                ),
+              ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool isPassword = false,
+    bool isObscure = false,
+    VoidCallback? toggleObscure,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword ? isObscure : false,
+      validator: validator,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        suffixIcon: isPassword
+            ? IconButton(
+          icon: Icon(isObscure ? Icons.visibility_off : Icons.visibility),
+          onPressed: toggleObscure,
+        )
+            : null,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

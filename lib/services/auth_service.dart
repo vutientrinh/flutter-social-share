@@ -22,9 +22,10 @@ class AuthService {
   Future<Response?> register(String name, String email, String password) async {
     try {
       final response = await _dio.post('/auth/register', data: {
-        'name': name,
+        'username': name,
         'email': email,
         'password': password,
+        'role':[]
       });
       return response;
     } catch (e) {

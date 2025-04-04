@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/screens/authentication/register_screen.dart';
 import '../../services/auth_service.dart';
 import '../home_screen/home_page.dart';
 
@@ -21,17 +22,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handleLogin() async {
     String username = _usernameController.text.trim();
     String password = _passwordController.text.trim();
-
-    // Print the username and password to the console
-    print('Username: $username');
-    print('Password: $password');
-
     setState(() {
       _isLoading = true; // Show loading indicator
     });
 
     final response = await _authService.login(username, password);
-    print(response);
     setState(() {
       _isLoading = false;
     });
@@ -159,7 +154,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text('Don\'t have an account?'),
                     const SizedBox(width: 5.0),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                        );
+                      },
                       child: Text(
                         'Sign Up',
                         style: TextStyle(

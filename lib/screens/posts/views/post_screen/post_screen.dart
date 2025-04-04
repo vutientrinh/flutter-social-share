@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/screens/posts/blocs/list_posts_rxdart_bloc.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
+import 'package:flutter_social_share/screens/posts/views/post_screen/create_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
 
 import '../../../messages_screen/messages_screen.dart';
@@ -50,6 +51,10 @@ class _ListPostsScreenState extends State<ListPostsScreen> {
               ),
             ],
           ),
+          const SliverToBoxAdapter(
+            child: CreatePost(),
+          ),
+
           CupertinoSliverRefreshControl(
             onRefresh: _postsBloc.getPosts,
           ),

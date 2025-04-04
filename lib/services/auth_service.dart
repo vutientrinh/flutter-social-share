@@ -13,6 +13,16 @@ class AuthService {
     await prefs.setString('username', data['username']);
     await prefs.setString('tokenType', data['type']); // Usually "Bearer"
   }
+  static Future<Map<String, dynamic>> getSavedData() async {
+    final prefs = await SharedPreferences.getInstance();
+    return {
+      'token': prefs.getString('token'),
+      'refreshToken': prefs.getString('refreshToken'),
+      'userId': prefs.getString('userId'),
+      'username': prefs.getString('username'),
+      'tokenType': prefs.getString('tokenType'),
+    };
+  }
 
   Future<void> clearLoginData() async {
     final prefs = await SharedPreferences.getInstance();

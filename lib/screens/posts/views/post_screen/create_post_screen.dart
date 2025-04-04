@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/services/auth_service.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -9,7 +10,7 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _controller = TextEditingController();
-
+  String? username;
   void _onPost() {
     final content = _controller.text.trim();
     if (content.isNotEmpty) {
@@ -18,7 +19,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       Navigator.pop(context);
     }
   }
+  void loadData() async {
+    final data = await AuthService.getSavedData();
+    setState(() {
+      username = data['username'];
+    });
+  }
 
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,16 +55,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            const Row(
+            Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 22,
-                  backgroundImage: AssetImage('assets/avatar.jpg'), // Use NetworkImage if needed
+                  backgroundImage: NetworkImage(
+                      'https://wallup.net/wp-content/uploads/2016/02/18/286966-nature-photography.jpg'),  // Use NetworkImage if needed
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
-                  'Your Name',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  username?? "Not found",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ],
             ),

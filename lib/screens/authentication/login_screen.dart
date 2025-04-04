@@ -31,7 +31,8 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
 
-    if (response != null) {
+    if (response != null && response.statusCode == 200) {
+      await _authService.saveLoginData(response.data);
       // Navigate to HomePage on successful login
       Navigator.pushReplacement(
         context,

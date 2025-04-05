@@ -19,13 +19,15 @@ class _ChatDetailState extends State<ChatDetail> {
   void initState() {
     super.initState();
     _webSocketService = WebSocketService(
+      userId: widget.userId,
       onMessageReceived: (message) {
         setState(() {
           messages.add(message);
         });
       },
     );
-
+    print(widget.userId);
+    print(widget.receiverName);
     _webSocketService.connect();
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
 
 import '../../model/user.dart';
+import '../../services/auth_service.dart';
 import '../../services/user_service.dart';
 import 'chat_detail.dart';
 
@@ -14,6 +15,7 @@ class MessagesScreen extends StatefulWidget {
 
 class _MessagesScreenState extends State<MessagesScreen> {
   // Sample data for users and chats
+  String? userId;
 
   final List<Map<String, String>> chatList = [
     {"name": "Alice", "message": "Hey! How's it going?"},
@@ -34,10 +36,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
       debugPrint("Error fetching users: $e");
     }
   }
+  Future<void> initData() async {
+    final data = await AuthService.getSavedData();
+    setState(() {
+      userId = data['userId']; // Assign userId once data is fetched
+    });
+
+    await fetchUsers(); // Fetch users after userId is fetched
+  }
+
   @override
   void initState() {
     super.initState();
-    fetchUsers(); // <--- this is important!
+    initData(); // Call initData to fetch data asynchronously
   }
 
 
@@ -80,7 +91,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ChatDetail(userId: "1234", receiverName: "Vutientrinh",)
+                          builder: (context) => ChatDetail(userId: userId!, receiverName: "Vutientrinh",)
                       ),
                     );
                   },

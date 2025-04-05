@@ -3,9 +3,10 @@ import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 class WebSocketService {
   late StompClient _stompClient;
+  final String userId;
   final Function(Map<String, dynamic>) onMessageReceived;
 
-  WebSocketService({required this.onMessageReceived});
+  WebSocketService({required this.userId, required this.onMessageReceived});
 
   void connect() {
     _stompClient = StompClient(
@@ -25,16 +26,14 @@ class WebSocketService {
   void _onConnect(StompFrame frame) {
     print("Connected to WebSocket");
 
-    // Subscribe to the public topic
-    _stompClient.subscribe(
-      destination: "/topic/public",
-      callback: (StompFrame frame) {
-        if (frame.body != null) {
-          Map<String, dynamic> message = json.decode(frame.body!);
-          onMessageReceived(message);
-        }
-      },
-    );
+    // Subscribe to /topic/{userId}
+    _subscribeToTopic("/topic/$userId");
+
+    // Subscribe to /topic/notifications
+    _subscribeToTopic("/topic/notifications");
+
+    // Subscribe to /topic/notifications/{userId}
+    _subscribeToTopic("/topic/notifications/$userId");
   }
   void _subscribeToTopic(String topic) {
     _stompClient.subscribe(

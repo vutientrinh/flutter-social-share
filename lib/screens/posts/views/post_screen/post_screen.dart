@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/component/horizontal_user_list.dart';
 import 'package:flutter_social_share/screens/posts/blocs/list_posts_rxdart_bloc.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
 
+import '../../../../model/user.dart';
+import '../../../../services/user_service.dart';
 import '../../../messages_screen/messages_screen.dart';
 
 class ListPostsScreen extends StatefulWidget {
@@ -16,11 +19,23 @@ class ListPostsScreen extends StatefulWidget {
 
 class _ListPostsScreenState extends State<ListPostsScreen> {
   final _postsBloc = ListPostsRxDartBloc();
+  List<User> users = [];
+  Future<void> fetchUsers() async {
+    try {
+      final response = await UserService().getAllUsers(); // Make sure it returns List<String> or List<Map>
+      setState(() {
+        users = response; // Adjust if response shape is different
+      });
+    } catch (e) {
+      debugPrint("Error fetching users: $e");
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _postsBloc.getPosts();
+    fetchUsers();
   }
 
   @override
@@ -46,16 +61,22 @@ class _ListPostsScreenState extends State<ListPostsScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const MessagesScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const MessagesScreen()),
                   );
                 },
               ),
             ],
           ),
+
+          SliverToBoxAdapter(
+            child: users.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : HorizontalUserList(users: users),
+          ),
           const SliverToBoxAdapter(
             child: CreatePost(),
           ),
-
           CupertinoSliverRefreshControl(
             onRefresh: _postsBloc.getPosts,
           ),

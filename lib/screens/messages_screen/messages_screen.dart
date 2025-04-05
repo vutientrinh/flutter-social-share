@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/component/horizontal_user_list.dart';
 
+import '../../model/user.dart';
+import '../../services/user_service.dart';
 import 'chat_detail.dart';
 
 class MessagesScreen extends StatefulWidget {
@@ -11,7 +14,7 @@ class MessagesScreen extends StatefulWidget {
 
 class _MessagesScreenState extends State<MessagesScreen> {
   // Sample data for users and chats
-  final List<String> users = ['Alice', 'Bob', 'Charlie', 'David', 'Emma'];
+
   final List<Map<String, String>> chatList = [
     {"name": "Alice", "message": "Hey! How's it going?"},
     {"name": "Bob", "message": "Don't forget our meeting."},
@@ -19,6 +22,24 @@ class _MessagesScreenState extends State<MessagesScreen> {
     {"name": "David", "message": "Let's hang out this weekend."},
     {"name": "Emma", "message": "Can you send me the files?"},
   ];
+
+  List<User> users = [];
+  Future<void> fetchUsers() async {
+    try {
+      final response = await UserService().getAllUsers(); // Make sure it returns List<String> or List<Map>
+      setState(() {
+        users = response; // Adjust if response shape is different
+      });
+    } catch (e) {
+      debugPrint("Error fetching users: $e");
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    fetchUsers(); // <--- this is important!
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -34,38 +55,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // User Slider (Top)
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.blue,
-                        child: Text(
-                          users[index][0], // Display the first letter
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        users[index],
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+          HorizontalUserList(users: users),
 
           const Divider(thickness: 1),
 

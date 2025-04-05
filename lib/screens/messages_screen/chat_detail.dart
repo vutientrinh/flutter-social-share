@@ -3,7 +3,8 @@ import '../../socket_service/websocket_service.dart';
 
 class ChatDetail extends StatefulWidget {
   final String userId; // The current user's ID
-  const ChatDetail({super.key, required this.userId});
+  final String receiverName;
+  const ChatDetail({super.key, required this.userId, required this.receiverName});
 
   @override
   State<ChatDetail> createState() => _ChatDetailState();
@@ -45,7 +46,7 @@ class _ChatDetailState extends State<ChatDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Chat")),
+      appBar: AppBar(title: Text(widget.receiverName)),
       body: Column(
         children: [
           Expanded(

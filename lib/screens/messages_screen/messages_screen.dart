@@ -80,7 +80,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ChatDetail(userId: "1234")
+                          builder: (context) => const ChatDetail(userId: "1234", receiverName: "Vutientrinh",)
                       ),
                     );
                   },

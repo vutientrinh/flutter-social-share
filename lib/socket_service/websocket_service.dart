@@ -36,6 +36,63 @@ class WebSocketService {
       },
     );
   }
+  void _subscribeToTopic(String topic) {
+    _stompClient.subscribe(
+      destination: topic,
+      callback: (StompFrame frame) {
+        if (frame.body != null) {
+          final Map<String, dynamic> message = json.decode(frame.body!);
+          _handleMessage(message);
+        }
+      },
+    );
+  }
+  void _handleMessage(Map<String, dynamic> message) {
+    final type = message['messageType'];
+
+    switch (type) {
+      case "CHAT":
+      case "UNSEEN":
+      // Gửi về UI xử lý CHAT hoặc UNSEEN
+        onMessageReceived(message);
+        break;
+
+      case "FRIEND_OFFLINE":
+      case "FRIEND_ONLINE":
+      // Cập nhật trạng thái online
+        onMessageReceived(message);
+        break;
+
+      case "MESSAGE_DELIVERY_UPDATE":
+      // Truyền delivery status
+        onMessageReceived(message);
+        break;
+
+      case "LIKE_COUNT":
+      case "FOLLOW_COUNT":
+      case "POST_COUNT":
+      case "COMMENT_POST_COUNT":
+      case "COMMENT_LIKED_COUNT":
+        print("General Notification: $type");
+        print("Message: $message");
+        break;
+
+      case "LIKE_POST":
+      case "FOLLOW_USER":
+      case "COMMENT_POST":
+      case "COMMENT_LIKED":
+      case "FRIEND_REQUEST":
+      case "FRIEND_REQUEST_ACCEPTED":
+        print("Personal Notification: $type");
+        print("Message: $message");
+        break;
+
+      default:
+        print("Unknown message type: $type");
+        print(message);
+    }
+  }
+
 
   void sendMessage(String content, String sender) {
     Map<String, dynamic> message = {

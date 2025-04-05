@@ -26,8 +26,6 @@ class _ChatDetailState extends State<ChatDetail> {
         });
       },
     );
-    print(widget.userId);
-    print(widget.receiverName);
     _webSocketService.connect();
   }
 

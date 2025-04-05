@@ -1,27 +1,37 @@
 import 'dart:convert';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
+import '../services/auth_service.dart';
+
 class WebSocketService {
   late StompClient _stompClient;
   final String userId;
   final Function(Map<String, dynamic>) onMessageReceived;
+  String? token;
 
-  WebSocketService({required this.userId,   required this.onMessageReceived});
+  WebSocketService({required this.userId, required this.onMessageReceived});
 
-  void connect() {
+  void connect() async {
+    final data = await AuthService.getSavedData();
+    token = data['token'];
+
     _stompClient = StompClient(
       config: StompConfig.sockJS(
-        url: 'http://172.21.192.1:8080/ws', // Use ws:// instead of http://
-        onConnect: _onConnect,
+        url: 'http://172.21.192.1:8080/ws',
         beforeConnect: () async {
           print("Waiting to connect...");
         },
+        webSocketConnectHeaders: {
+          'Authorization': 'Bearer $token',
+        },
+        onConnect: _onConnect,
         onWebSocketError: (dynamic error) => print("WebSocket Error: $error"),
       ),
     );
 
     _stompClient.activate();
   }
+
 
   void _onConnect(StompFrame frame) {
     print("Connected to WebSocket");
@@ -35,6 +45,7 @@ class WebSocketService {
     // Subscribe to /topic/notifications/{userId}
     _subscribeToTopic("/topic/notifications/$userId");
   }
+
   void _subscribeToTopic(String topic) {
     _stompClient.subscribe(
       destination: topic,
@@ -46,24 +57,25 @@ class WebSocketService {
       },
     );
   }
+
   void _handleMessage(Map<String, dynamic> message) {
     final type = message['messageType'];
 
     switch (type) {
       case "CHAT":
       case "UNSEEN":
-      // Gửi về UI xử lý CHAT hoặc UNSEEN
+        // Gửi về UI xử lý CHAT hoặc UNSEEN
         onMessageReceived(message);
         break;
 
       case "FRIEND_OFFLINE":
       case "FRIEND_ONLINE":
-      // Cập nhật trạng thái online
+        // Cập nhật trạng thái online
         onMessageReceived(message);
         break;
 
       case "MESSAGE_DELIVERY_UPDATE":
-      // Truyền delivery status
+        // Truyền delivery status
         onMessageReceived(message);
         break;
 
@@ -91,7 +103,6 @@ class WebSocketService {
         print(message);
     }
   }
-
 
   void sendMessage(String content, String sender) {
     Map<String, dynamic> message = {

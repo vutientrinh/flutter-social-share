@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -10,12 +13,16 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _controller = TextEditingController();
+  final List<File> _images = [];
   String? username;
+  String _layout = 'grid'; // options: grid, horizontal, vertical
+
   void _onPost() {
     final content = _controller.text.trim();
-    if (content.isNotEmpty) {
+    if (content.isNotEmpty || _images.isNotEmpty) {
       // Send post logic here
       print('Posting: $content');
+      print('Images count: ${_images.length}');
       Navigator.pop(context);
     }
   }
@@ -24,6 +31,92 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() {
       username = data['username'];
     });
+  }
+  Future<void> _pickImages() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickMultiImage();
+    if (picked.isNotEmpty) {
+      setState(() {
+        _images.addAll(picked.map((e) => File(e.path)));
+      });
+    }
+  }
+
+  Widget _buildImageLayout() {
+    if (_images.isEmpty) return const SizedBox();
+
+    if (_images.length == 1) {
+      return Image.file(_images.first, width: double.infinity, fit: BoxFit.cover);
+    }
+
+    if (_images.length == 2) {
+      return Row(
+        children: _images.map((img) {
+          return Expanded(child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.file(img, fit: BoxFit.cover),
+          ));
+        }).toList(),
+      );
+    }
+
+    if (_layout == 'horizontal') {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: _images.map((img) => Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.file(img, width: 120, height: 120, fit: BoxFit.cover),
+          )).toList(),
+        ),
+      );
+    }
+
+    if (_layout == 'vertical') {
+      return Column(
+        children: _images.map((img) => Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Image.file(img, width: double.infinity, height: 200, fit: BoxFit.cover),
+        )).toList(),
+      );
+    }
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _images.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _images.length <= 4 ? 2 : 3,
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+      ),
+      itemBuilder: (context, index) => Image.file(_images[index], fit: BoxFit.cover),
+    );
+  }
+
+  Widget _layoutSelector() {
+    if (_images.length < 2) return const SizedBox();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildLayoutButton('grid', Icons.grid_view),
+        _buildLayoutButton('horizontal', Icons.view_week),
+        _buildLayoutButton('vertical', Icons.view_agenda),
+      ],
+    );
+  }
+
+  Widget _buildLayoutButton(String type, IconData icon) {
+    final isSelected = _layout == type;
+    return IconButton(
+      icon: Icon(icon, color: isSelected ? Colors.blue : Colors.grey),
+      onPressed: () {
+        setState(() {
+          _layout = type;
+        });
+      },
+    );
   }
 
 
@@ -81,42 +174,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
             ),
-            const Divider(),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            const SizedBox(height: 10),
+            _buildImageLayout(),
+            const SizedBox(height: 10),
+            _layoutSelector(),
+            const SizedBox(height: 10),
+            Row(
               children: [
-                _MediaButton(icon: Icons.photo, label: 'Photo', color: Colors.green),
-                _MediaButton(icon: Icons.videocam, label: 'Video', color: Colors.red),
-                _MediaButton(icon: Icons.location_on, label: 'Check in', color: Colors.pink),
+                ElevatedButton.icon(
+                  onPressed: _pickImages,
+                  icon: const Icon(Icons.photo_library),
+                  label: const Text("Add Images"),
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _MediaButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  const _MediaButton({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.color,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton.icon(
-      onPressed: () {
-        // TODO: Handle media action
-      },
-      icon: Icon(icon, color: color),
-      label: Text(label, style: TextStyle(color: color)),
     );
   }
 }

@@ -21,6 +21,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
               const ProfileScreen(followerName: "followerName"));
     case chatScreenRoute:
       return MaterialPageRoute(builder: (context) => const MessagesScreen());
+    case :
+      return MaterialPageRoute(builder: (context) => const MessagesScreen());
     case ecommerceScreenRoute:
       return MaterialPageRoute(
           builder: (context) => const EcommerceHomeScreen());

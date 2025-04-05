@@ -6,7 +6,7 @@ class WebSocketService {
   final String userId;
   final Function(Map<String, dynamic>) onMessageReceived;
 
-  WebSocketService({required this.userId, required this.onMessageReceived});
+  WebSocketService({required this.userId,   required this.onMessageReceived});
 
   void connect() {
     _stompClient = StompClient(

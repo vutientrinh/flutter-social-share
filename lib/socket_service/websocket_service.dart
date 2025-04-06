@@ -16,12 +16,12 @@ class WebSocketService {
     token = data['token'];
 
     _stompClient = StompClient(
-      config: StompConfig.sockJS(
-        url: 'http://172.21.192.1:8080/ws',
+      config: StompConfig(
+        url: 'ws://172.21.192.1:8080/ws',
         beforeConnect: () async {
-          print("Waiting to connect...");
+          print("Connecting...");
         },
-        webSocketConnectHeaders: {
+        stompConnectHeaders: {
           'Authorization': 'Bearer $token',
         },
         onConnect: _onConnect,

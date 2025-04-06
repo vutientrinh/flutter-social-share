@@ -35,8 +35,8 @@ class _HorizontalUserListState extends State<HorizontalUserList> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ChatDetail(
-                    userId: user.id,
-                    receiverName: user.username,
+                    receiverId: user.id,
+                    receiverUsername: user.username,
                   ),
                 ),
               );

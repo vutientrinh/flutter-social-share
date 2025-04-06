@@ -104,15 +104,17 @@ class WebSocketService {
     }
   }
 
-  void sendMessage(String content, String sender) {
-    Map<String, dynamic> message = {
-      "content": content,
-      "sender": sender,
-    };
+  void sendMessage(String message, String convId, String connectionId,String connectionUsername) {
+    final body = json.encode({
+      "messageType": "CHAT",
+      "content": message,
+      "receiverId": connectionId,
+      "receiverUsername": connectionUsername,
+    });
 
     _stompClient.send(
-      destination: "/app/chat.sendMessage", // Corrected endpoint
-      body: json.encode(message),
+      destination: "/app/chat/sendMessage/$convId",
+      body: body,
     );
   }
 

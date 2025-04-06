@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import '../../socket_service/websocket_service.dart';
 
 class ChatDetail extends StatefulWidget {
-  final String userId; // The current user's ID
-  final String receiverName;
-  const ChatDetail({super.key, required this.userId, required this.receiverName});
+  final String receiverId; // The current user's ID
+  final String receiverUsername;
+  const ChatDetail({super.key, required this.receiverId, required this.receiverUsername});
 
   @override
   State<ChatDetail> createState() => _ChatDetailState();
@@ -19,7 +19,7 @@ class _ChatDetailState extends State<ChatDetail> {
   void initState() {
     super.initState();
     _webSocketService = WebSocketService(
-      userId: widget.userId,
+      userId: widget.receiverId,
       onMessageReceived: (message) {
         setState(() {
           messages.add(message);
@@ -38,7 +38,7 @@ class _ChatDetailState extends State<ChatDetail> {
   void _sendMessage() {
     String text = _messageController.text;
     if (text.isNotEmpty) {
-      _webSocketService.sendMessage(text, widget.userId);
+      _webSocketService.sendMessage(text, widget.receiverId,widget.receiverId,widget.receiverUsername);
       _messageController.clear();
     }
   }
@@ -46,7 +46,7 @@ class _ChatDetailState extends State<ChatDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.receiverName)),
+      appBar: AppBar(title: Text(widget.receiverUsername)),
       body: Column(
         children: [
           Expanded(
@@ -55,7 +55,7 @@ class _ChatDetailState extends State<ChatDetail> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                final bool isMe = message["sender"] == widget.userId;
+                final bool isMe = message["sender"] == widget.receiverId;
 
                 return Align(
                   alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,

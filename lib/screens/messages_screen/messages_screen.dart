@@ -88,12 +88,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     // Add navigation to detailed chat screen if needed
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChatDetail(userId: userId!, receiverName: "Vutientrinh",)
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => ChatDetail(userId: userId!, receiverName: "Vutientrinh",)
+                    //   ),
+                    // );
                   },
                 );
               },

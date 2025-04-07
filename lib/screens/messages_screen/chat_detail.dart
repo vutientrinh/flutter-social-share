@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/services/chat_service.dart';
 import '../../socket_service/websocket_service.dart';
 
 class ChatDetail extends StatefulWidget {
@@ -27,6 +28,7 @@ class _ChatDetailState extends State<ChatDetail> {
       },
     );
     _webSocketService.connect();
+    _fetchReadMessages();
   }
 
   @override
@@ -42,6 +44,37 @@ class _ChatDetailState extends State<ChatDetail> {
       _messageController.clear();
     }
   }
+  // Future<void> _fetchReadMessages() async {
+  //   try {
+  //     final response = await ChatService.setReadMessages(messages);
+  //     print(response);
+  //     // Assuming response.data is a list of messages
+  //     // final unseenMessages = List<Map<String, dynamic>>.from(response.data);
+  //     // print(unseenMessages);
+  //     setState(() {
+  //       messages.addAll(unseenMessages);
+  //     });
+  //   } catch (e) {
+  //     print("Error fetching unseen messages: $e");
+  //   }
+  // }
+  Future<void> _fetchReadMessages() async {
+    try {
+      final response = await ChatService.setReadMessages(messages);
+      print(response?.data);
+
+      // If the backend returns updated messages, extract them here:
+      final updatedMessages = List<Map<String, dynamic>>.from(response?.data ?? []);
+
+      setState(() {
+        messages.addAll(updatedMessages); // or replace if needed
+      });
+    } catch (e) {
+      print("Error setting messages as read: $e");
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +88,7 @@ class _ChatDetailState extends State<ChatDetail> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                final bool isMe = message["sender"] == widget.receiverId;
+                final bool isMe = message["sender"] != widget.receiverId;
 
                 return Align(
                   alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,

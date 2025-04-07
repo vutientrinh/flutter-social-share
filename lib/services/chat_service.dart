@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'auth_service.dart';
 
 class ChatService {
-  final Dio _dio = Dio(); // Initialize Dio
+  static final Dio _dio = Dio(); // Initialize Dio
   late String jwt; // use 'late' to assign it later
 
   Future<Response> getFriends() async {
@@ -21,7 +21,7 @@ class ChatService {
     jwt = data['token'];
   }
 
-  Future<Response> getUnSeenMessage(String fromUserId) async {
+  static Future<Response> getUnSeenMessage(String fromUserId) async {
     try {
       String url = '/conservation/unseenMessages';
       if (fromUserId.isNotEmpty) {
@@ -35,7 +35,7 @@ class ChatService {
     }
   }
 
-  Future<Response?> setReadMessages(
+  static Future<Response?> setReadMessages(
       List<Map<String, dynamic>> chatMessages) async {
     try {
       final response = await _dio.put(

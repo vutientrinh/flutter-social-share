@@ -21,7 +21,7 @@ class ChatService {
     jwt = data['token'];
   }
 
-  static Future<Response> getUnSeenMessage(String fromUserId) async {
+  Future<Response> getUnSeenMessage(String fromUserId) async {
     try {
       String url = '/conservation/unseenMessages';
       if (fromUserId.isNotEmpty) {
@@ -38,11 +38,12 @@ class ChatService {
   static Future<Response?> setReadMessages(
       List<Map<String, dynamic>> chatMessages) async {
     try {
+      print("Before get information ");
       final response = await _dio.put(
         '/conversation/setReadMessages',
         data: chatMessages, // ← This is a List
       );
-      print(response.data);
+      print("Response in service ${response.data}");
       return response;
     } catch (e) {
       rethrow;

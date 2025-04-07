@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/services/chat_service.dart';
+import '../../model/conversation.dart';
 import '../../socket_service/websocket_service.dart';
 
 class ChatDetail extends StatefulWidget {
@@ -13,7 +14,7 @@ class ChatDetail extends StatefulWidget {
 
 class _ChatDetailState extends State<ChatDetail> {
   late WebSocketService _webSocketService;
-  List<Map<String, dynamic>> messages = [];
+  List<Conversation> messages = [];
   final TextEditingController _messageController = TextEditingController();
 
   @override
@@ -23,7 +24,7 @@ class _ChatDetailState extends State<ChatDetail> {
       userId: widget.receiverId,
       onMessageReceived: (message) {
         setState(() {
-          messages.add(message);
+          messages.add(message as Conversation);
         });
       },
     );
@@ -44,36 +45,17 @@ class _ChatDetailState extends State<ChatDetail> {
       _messageController.clear();
     }
   }
-  // Future<void> _fetchReadMessages() async {
-  //   try {
-  //     final response = await ChatService.setReadMessages(messages);
-  //     print(response);
-  //     // Assuming response.data is a list of messages
-  //     // final unseenMessages = List<Map<String, dynamic>>.from(response.data);
-  //     // print(unseenMessages);
-  //     setState(() {
-  //       messages.addAll(unseenMessages);
-  //     });
-  //   } catch (e) {
-  //     print("Error fetching unseen messages: $e");
-  //   }
-  // }
   Future<void> _fetchReadMessages() async {
     try {
-      final response = await ChatService.setReadMessages(messages);
-      print(response?.data);
-
-      // If the backend returns updated messages, extract them here:
-      final updatedMessages = List<Map<String, dynamic>>.from(response?.data ?? []);
-
+      final response = await ChatService().setReadMessages(messages);
+      print("Response ne check di : ${response}");
       setState(() {
-        messages.addAll(updatedMessages); // or replace if needed
+        messages = response;
       });
     } catch (e) {
-      print("Error setting messages as read: $e");
+      print("Error fetching unseen messages: $e");
     }
   }
-
 
 
   @override
@@ -88,7 +70,7 @@ class _ChatDetailState extends State<ChatDetail> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                final bool isMe = message["sender"] != widget.receiverId;
+                final bool isMe = message.convId != widget.receiverId;
 
                 return Align(
                   alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -105,7 +87,7 @@ class _ChatDetailState extends State<ChatDetail> {
                       ),
                     ),
                     child: Text(
-                      message["content"],
+                      message.content ?? "Not found",
                       style: const TextStyle(fontSize: 16, color: Colors.black87),
                     ),
                   ),

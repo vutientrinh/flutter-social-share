@@ -1,51 +1,50 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_social_share/model/conversation.dart';
 
+import 'api_client.dart';
 import 'auth_service.dart';
 
 class ChatService {
-  static final Dio _dio = Dio(); // Initialize Dio
-  late String jwt; // use 'late' to assign it later
-
+  final Dio _dio = ApiClient.dio;
   Future<Response> getFriends() async {
-    final response = await _dio.get('/conservation/friends');
+    final response = await _dio.get('/users/all');
     print(response.data);
     return response;
   }
 
-  ChatService() {
-    _initializeJwt();
-  }
-
-  void _initializeJwt() async {
-    final data = await AuthService.getSavedData();
-    jwt = data['token'];
-  }
-
-  Future<Response> getUnSeenMessage(String fromUserId) async {
+  Future<List<Map<String, dynamic>>> getUnSeenMessage(String fromUserId) async {
     try {
-      String url = '/conservation/unseenMessages';
+      String url = '/conversation/unseenMessages';
       if (fromUserId.isNotEmpty) {
         url = '$url/$fromUserId';
       }
+
       final response = await _dio.put(url);
-      print(response.data);
-      return response;
+      final List<dynamic> data = response.data;
+
+      // Ensure you return raw map data, not a Conversation object
+      return List<Map<String, dynamic>>.from(data);
     } catch (e) {
+      print('Error fetching unseen messages: $e');
       rethrow;
     }
   }
 
-  static Future<Response?> setReadMessages(
-      List<Map<String, dynamic>> chatMessages) async {
+  Future<List<Conversation>> setReadMessages(
+      List<Conversation> chatMessages) async {
     try {
-      print("Before get information ");
-      final response = await _dio.put(
-        '/conversation/setReadMessages',
-        data: chatMessages, // ← This is a List
-      );
+      print("Before get information");
+      final response = await _dio.put('/conversation/setReadMessages');
+
       print("Response in service ${response.data}");
-      return response;
+
+      // if (response.data != null && response.data is List) {
+      //   // Directly return the response data as a list of maps
+      //   List<Map<String, dynamic>> responseData = List<Map<String, dynamic>>.from(response.data['data']);
+      //   return responseData;
+      return response.data;
     } catch (e) {
+      print('Error get Read message: $e');
       rethrow;
     }
   }

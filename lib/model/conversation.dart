@@ -31,4 +31,5 @@ class Conversation {
       deliveryStatus: json['deliveryStatus'],
     );
   }
+
 }

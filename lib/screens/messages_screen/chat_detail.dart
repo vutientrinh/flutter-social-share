@@ -6,7 +6,9 @@ import '../../socket_service/websocket_service.dart';
 class ChatDetail extends StatefulWidget {
   final String receiverId; // The current user's ID
   final String receiverUsername;
-  const ChatDetail({super.key, required this.receiverId, required this.receiverUsername});
+
+  const ChatDetail(
+      {super.key, required this.receiverId, required this.receiverUsername});
 
   @override
   State<ChatDetail> createState() => _ChatDetailState();
@@ -15,6 +17,7 @@ class ChatDetail extends StatefulWidget {
 class _ChatDetailState extends State<ChatDetail> {
   late WebSocketService _webSocketService;
   List<Conversation> messages = [];
+  List<Conversation> readMessages = [];
   final TextEditingController _messageController = TextEditingController();
 
   @override
@@ -29,7 +32,8 @@ class _ChatDetailState extends State<ChatDetail> {
       },
     );
     _webSocketService.connect();
-    _fetchReadMessages();
+    _fetchUnSeenMessages();
+    // _fetchReadMessage();
   }
 
   @override
@@ -41,13 +45,15 @@ class _ChatDetailState extends State<ChatDetail> {
   void _sendMessage() {
     String text = _messageController.text;
     if (text.isNotEmpty) {
-      _webSocketService.sendMessage(text, widget.receiverId,widget.receiverId,widget.receiverUsername);
+      _webSocketService.sendMessage(
+          text, widget.receiverId, widget.receiverId, widget.receiverUsername);
       _messageController.clear();
     }
   }
-  Future<void> _fetchReadMessages() async {
+
+  Future<void> _fetchUnSeenMessages() async {
     try {
-      final response = await ChatService().setReadMessages(messages);
+      final response = await ChatService().getUnSeenMessage(widget.receiverId);
       print("Response ne check di : ${response}");
       setState(() {
         messages = response;
@@ -57,6 +63,17 @@ class _ChatDetailState extends State<ChatDetail> {
     }
   }
 
+  Future<void> _fetchReadMessage() async {
+    try {
+      final response = await ChatService().setReadMessages(messages);
+      print(response);
+      setState(() {
+        readMessages = response;
+      });
+    } catch (e) {
+      print("Error fetching read message");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,22 +90,27 @@ class _ChatDetailState extends State<ChatDetail> {
                 final bool isMe = message.convId != widget.receiverId;
 
                 return Align(
-                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment:
+                      isMe ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: isMe ? Colors.blue[300] : Colors.grey[300],
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(12),
                         topRight: const Radius.circular(12),
-                        bottomLeft: isMe ? const Radius.circular(12) : Radius.zero,
-                        bottomRight: isMe ? Radius.zero : const Radius.circular(12),
+                        bottomLeft:
+                            isMe ? const Radius.circular(12) : Radius.zero,
+                        bottomRight:
+                            isMe ? Radius.zero : const Radius.circular(12),
                       ),
                     ),
                     child: Text(
                       message.content ?? "Not found",
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                      style:
+                          const TextStyle(fontSize: 16, color: Colors.black87),
                     ),
                   ),
                 );
@@ -108,7 +130,8 @@ class _ChatDetailState extends State<ChatDetail> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 15),
                     ),
                   ),
                 ),

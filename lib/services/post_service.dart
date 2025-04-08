@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_social_share/model/newPostPayload.dart';
 import 'api_client.dart';
 
 class PostService {
@@ -32,7 +33,7 @@ class PostService {
   }
 
   /// Create a new post
-  Future<Response> createPost(Map<String, dynamic> postCreateRequest) async {
+  Future<Response> createPost(createPostRequest postCreateRequest) async {
     try {
       return await _dio.post('/posts', data: postCreateRequest);
     } catch (e) {

@@ -5,12 +5,15 @@ import 'api_client.dart';
 
 class UserService {
   final Dio _dio = ApiClient.dio;
+
   Future<List<User>> getAllUsers() async {
     try {
-      final response = await _dio.get('/users/all');  // Adjust according to your backend endpoint
+      final response = await _dio
+          .get('/users/all'); // Adjust according to your backend endpoint
       if (response.statusCode == 200) {
         // Access 'data' field and cast it as a List of user objects
-        List<User> users = (response.data['data'] as List)  // Ensure 'data' is treated as a List
+        List<User> users = (response.data['data']
+                as List) // Ensure 'data' is treated as a List
             .map((userJson) => User.fromJson(userJson))
             .toList();
         return users;
@@ -20,6 +23,16 @@ class UserService {
     } catch (e) {
       print('Error fetching users: $e');
       return [];
+    }
+  }
+
+  Future<Response> follow(String userId) async {
+    try {
+      final response = await _dio.post('/users/$userId/follow');
+      return response;
+    } catch (e) {
+      print('Error adding follow: $e');
+      throw Exception('Failed to follow user: $e'); // Optional: rethrow to handle elsewhere
     }
   }
 

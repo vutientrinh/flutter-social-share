@@ -15,7 +15,7 @@ class PostService {
   }
 
   /// Get paginated posts
-  Future<Response> getPostsPerPage(int page, {int size = 10}) async {
+  Future<Response> listPost(int page, {int size = 10}) async {
     try {
       return await _dio.get('/posts?page=$page&size=$size');
     } catch (e) {
@@ -33,16 +33,23 @@ class PostService {
   }
 
   /// Create a new post
-  Future<Response> createPost(createPostRequest postCreateRequest) async {
+  Future<Response> createPost(
+      String content, String images, String authorId, String topicId) async {
     try {
-      return await _dio.post('/posts', data: postCreateRequest);
+      return await _dio.post('/posts', data: {
+        'content': content,
+        'images': images,
+        'authorId': authorId,
+        'topicId': topicId
+      });
     } catch (e) {
       throw Exception('Failed to create post: $e');
     }
   }
 
   /// Update a post by UUID
-  Future<Response> updatePost(String uuid, Map<String, dynamic> postUpdateRequest) async {
+  Future<Response> updatePost(
+      String uuid, Map<String, dynamic> postUpdateRequest) async {
     try {
       return await _dio.put('/posts/$uuid', data: postUpdateRequest);
     } catch (e) {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_social_share/model/conversation.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 import '../services/auth_service.dart';
@@ -6,7 +7,7 @@ import '../services/auth_service.dart';
 class WebSocketService {
   late StompClient _stompClient;
   final String userId;
-  final Function(Map<String, dynamic>) onMessageReceived;
+  final Function(Conversation) onMessageReceived;
   String? token;
 
   WebSocketService({required this.userId, required this.onMessageReceived});
@@ -40,10 +41,10 @@ class WebSocketService {
     _subscribeToTopic("/topic/$userId");
 
     // Subscribe to /topic/notifications
-    _subscribeToTopic("/topic/notifications");
-
-    // Subscribe to /topic/notifications/{userId}
-    _subscribeToTopic("/topic/notifications/$userId");
+    // _subscribeToTopic("/topic/notifications");
+    //
+    // // Subscribe to /topic/notifications/{userId}
+    // _subscribeToTopic("/topic/notifications/$userId");
   }
 
   void _subscribeToTopic(String topic) {
@@ -51,15 +52,16 @@ class WebSocketService {
       destination: topic,
       callback: (StompFrame frame) {
         if (frame.body != null) {
-          final Map<String, dynamic> message = json.decode(frame.body!);
+          print(frame.body);
+          final message = json.decode(frame.body!);
           _handleMessage(message);
         }
       },
     );
   }
 
-  void _handleMessage(Map<String, dynamic> message) {
-    final type = message['messageType'];
+  void _handleMessage(Conversation message) {
+    final type = message.deliveryStatus;
 
     switch (type) {
       case "CHAT":

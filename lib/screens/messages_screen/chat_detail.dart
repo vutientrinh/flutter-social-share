@@ -27,7 +27,7 @@ class _ChatDetailState extends State<ChatDetail> {
       userId: widget.receiverId,
       onMessageReceived: (message) {
         setState(() {
-          messages.add(message as Conversation);
+          messages.add(message);
         });
       },
     );
@@ -45,6 +45,7 @@ class _ChatDetailState extends State<ChatDetail> {
   void _sendMessage() {
     String text = _messageController.text;
     if (text.isNotEmpty) {
+      print(text);
       _webSocketService.sendMessage(
           text, widget.receiverId, widget.receiverId, widget.receiverUsername);
       _messageController.clear();

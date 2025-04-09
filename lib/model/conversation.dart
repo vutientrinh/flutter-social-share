@@ -6,7 +6,7 @@ class Conversation {
   final DateTime? time;
   final DateTime? lastModified;
   final String? content;
-  final String? deliveryStatus;
+  final dynamic deliveryStatus;
 
   Conversation({
     required this.id,

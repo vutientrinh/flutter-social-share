@@ -18,4 +18,20 @@ class TopicService {
       throw Exception('Failed to create post: $e');
     }
   }
+
+  Future<Response> getAllTopics({int page = 1,int size = 10}) async {
+    try {
+      final response = await _dio.get(
+        '/topic/all',
+        data: {
+          'page': page,
+          'size': size,
+        },
+      );
+      return response;
+    } catch (e) {
+      throw Exception('Failed to get all topic: $e');
+    }
+  }
 }
+

@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
+import 'package:flutter_social_share/services/post_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../../../../model/post.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -14,16 +17,47 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<File> _images = [];
+  final List<String> _images = [];
   String? username;
+  String? userId;
 
-  void _onPost() {
+  Future<void> _onPost() async {
+    try {
 
+      final postRequest = Post(
+        content: _controller.text.trim(),
+        images: _images,
+        authorId: userId, // Or whatever field you saved
+        topicId: '5117162b-94af-45ec-a27e-6ab7664a7486', // Fill this appropriately
+      );
+
+      final response = await PostService().createPost(postRequest);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Post created')),
+        );
+        setState(() {
+          _controller.clear();
+          _images.clear();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error posting: $e')),
+      );
+    }
   }
   void loadData() async {
     final data = await AuthService.getSavedData();
     setState(() {
       username = data['username'];
+      userId = data['userId'];
     });
   }
   Future<void> _pickImages() async {
@@ -70,22 +104,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         SnackBar(content: Text('Failed to pick images: $e')),
       );
     }
-  }
-
-  Widget _buildImageLayout() {
-    if (_images.isEmpty) return const SizedBox();
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Row(
-        children: _images.map((img) {
-          return Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Image.file(img, width: double.infinity, height: 120, fit: BoxFit.cover),
-          );
-        }).toList(),
-      ),
-    );
   }
 
 

@@ -1,6 +1,6 @@
 class Post {
   final String content;
-  final String images;
+  final List<String> images;
   final String authorId;
   final String topicId;
 

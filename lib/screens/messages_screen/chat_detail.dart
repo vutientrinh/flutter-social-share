@@ -59,6 +59,7 @@ class _ChatDetailState extends State<ChatDetail> {
       setState(() {
         messages = response;
       });
+      ChatService().setReadMessages(response);
     } catch (e) {
       print("Error fetching unseen messages: $e");
     }

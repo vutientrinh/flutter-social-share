@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/newPostPayload.dart';
+import '../model/post.dart';
 import 'api_client.dart';
 
 class PostService {
@@ -34,13 +35,13 @@ class PostService {
 
   /// Create a new post
   Future<Response> createPost(
-      String content, String images, String authorId, String topicId) async {
+      Post postRequest) async {
     try {
       return await _dio.post('/posts', data: {
-        'content': content,
-        'images': images,
-        'authorId': authorId,
-        'topicId': topicId
+        'content': postRequest.content,
+        'images': postRequest.images,
+        'authorId': postRequest.authorId,
+        'topicId': postRequest.topicId
       });
     } catch (e) {
       throw Exception('Failed to create post: $e');

@@ -4,9 +4,9 @@ class User {
   final String? avatar;
   final String? firstName;
   final String? lastName;
-  final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   User({
     required this.id,
@@ -14,9 +14,9 @@ class User {
     this.avatar,
     this.firstName,
     this.lastName,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -27,8 +27,8 @@ class User {
       firstName: json['firstName'],
       lastName: json['lastName'],
       status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 }

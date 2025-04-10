@@ -40,7 +40,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       final postRequest = Post(
         content: "text status",
         images:_images,
-        authorId: "177e8cef-e0e3-41c9-92cd-4031348941f2", // Or whatever field you saved
+        authorId: userId??"", // Or whatever field you saved
         topicId:
             "57ffa366-c9e9-4658-b58b-a1c14ad0934b", // Fill this appropriately
       );

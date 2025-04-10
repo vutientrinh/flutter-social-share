@@ -1,6 +1,8 @@
+import 'dart:io';
+
 class Post {
   final String content;
-  final String images;
+  final List<File> images;
   final String authorId;
   final String topicId;
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/newPostPayload.dart';
 import '../model/post.dart';
@@ -33,20 +35,36 @@ class PostService {
     }
   }
 
-  /// Create a new post
-  Future<Response> createPost(
-      Post postRequest) async {
+  Future<Response> createPost(Post postRequest) async {
     try {
-      return await _dio.post('/posts', data: {
+      // Prepare list of MultipartFile
+      List<MultipartFile> imageFiles = [];
+      if (postRequest.images != null && postRequest.images!.isNotEmpty) {
+        for (File image in postRequest.images) {
+          imageFiles.add(await MultipartFile.fromFile(
+            image.path,
+            filename: image.path.split('/').last,
+          ));
+        }
+      }
+
+      FormData formData = FormData.fromMap({
         'content': postRequest.content,
-        'images': postRequest.images,
         'authorId': postRequest.authorId,
-        'topicId': postRequest.topicId
+        'topicId': postRequest.topicId,
+        'images': imageFiles, // important: must match backend param name
       });
+
+      return await _dio.post('/posts',
+          data: formData,
+          options: Options(
+            contentType: 'multipart/form-data',
+          ));
     } catch (e) {
       throw Exception('Failed to create post: $e');
     }
   }
+
 
   /// Update a post by UUID
   Future<Response> updatePost(

@@ -17,18 +17,34 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<String> _images = [];
+  final List<File> _images = [];
   String? username;
   String? userId;
 
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  void loadData() async {
+    final data = await AuthService.getSavedData();
+    setState(() {
+      username = data['username'];
+      userId = data['userId'];
+    });
+  }
+
   Future<void> _onPost() async {
     try {
-
       final postRequest = Post(
-        content: _controller.text.trim(),
-        images: _images,
-        authorId: userId, // Or whatever field you saved
-        topicId: '5117162b-94af-45ec-a27e-6ab7664a7486', // Fill this appropriately
+        content: "text status",
+        images:
+          "http://localhost:9001/api/v1/download-shared-object/aHR0cDovLzEyNy4wLjAuMTo5MDAwL3NhdGNoYXQvZGFyay1ibHVlLXBpbmstMzg0MHgyMTYwLTEyNjYxLmpwZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPVpKS0M3RjNNODkyMlNFN1FSRjRMJTJGMjAyNTA0MTAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNDEwVDA2NTQxMlomWC1BbXotRXhwaXJlcz00MzE5OSZYLUFtei1TZWN1cml0eS1Ub2tlbj1leUpoYkdjaU9pSklVelV4TWlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKaFkyTmxjM05MWlhraU9pSmFTa3RETjBZelRUZzVNakpUUlRkUlVrWTBUQ0lzSW1WNGNDSTZNVGMwTkRNeE1USTBNaXdpY0dGeVpXNTBJam9pYldsdWFXOWhaRzFwYmlKOS50VFI2ZHgzTk1zQ3JpVjUzTTdDY3BBS2VyMXIwU044Ry1WLS16aTRidWFQOEpOTkx3d1FMWjZrREFuZF90cmJoRjNkVC1hSG5KN2lzaURIUXZqRFFPUSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmdmVyc2lvbklkPW51bGwmWC1BbXotU2lnbmF0dXJlPWQ4M2E4MzQ3MjljMWFmODcxNTgwMzhkOTIzZDY1OGNiOTU0MDVhMmU1ZWY5ODVjYjg1N2NiOWM4YTk4NGJkNTE"
+        ,
+        authorId: "19b41e5a-f550-4ef2-b5e3-60d47688e55e", // Or whatever field you saved
+        topicId:
+            "5117162b-94af-45ec-a27e-6ab7664a7486", // Fill this appropriately
       );
 
       final response = await PostService().createPost(postRequest);
@@ -53,13 +69,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
     }
   }
-  void loadData() async {
-    final data = await AuthService.getSavedData();
-    setState(() {
-      username = data['username'];
-      userId = data['userId'];
-    });
-  }
+
   Future<void> _pickImages() async {
     final picker = ImagePicker();
 
@@ -68,8 +78,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       final sdkInt = (await Permission.mediaLibrary.status).isGranted
           ? 33
           : (await Permission.storage.status).isGranted
-          ? 30
-          : 0;
+              ? 30
+              : 0;
 
       if (sdkInt >= 33) {
         final status = await Permission.photos.request();
@@ -83,7 +93,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         final status = await Permission.storage.request();
         if (!status.isGranted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Permission to access storage denied')),
+            const SnackBar(
+                content: Text('Permission to access storage denied')),
           );
           return;
         }
@@ -106,12 +117,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
-
-  @override
-  void initState() {
-    super.initState();
-    loadData();
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +127,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           TextButton(
-            onPressed: _onPost,
+            onPressed: userId == null ? null : _onPost,
             child: const Text(
               'Post',
               style: TextStyle(
@@ -139,7 +144,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
               child: Row(
                 children: [
                   const CircleAvatar(
@@ -216,6 +222,4 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       ),
     );
   }
-
-
 }

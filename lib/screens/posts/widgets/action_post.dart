@@ -28,7 +28,7 @@ class _ActionPostState extends State<ActionPost> {
     super.initState();
 
     likeCount = post.commentCount ?? 0;
-    isLiked = (post.likedCount ?? 0) as bool;
+    isLiked = post.hasLiked;
   }
 
   @override
@@ -36,7 +36,7 @@ class _ActionPostState extends State<ActionPost> {
     super.didUpdateWidget(oldWidget);
 
     likeCount = widget.post.likedCount ?? 0;
-    isLiked = widget.post.hasLiked ?? false;
+    isLiked = widget.post.hasLiked ;
   }
 
   @override

@@ -3,7 +3,7 @@ import 'dart:io';
 class Topic {
   final String id;
   final String name;
-  final String postCount;
+  final int postCount;
   final String color;
 
   Topic({

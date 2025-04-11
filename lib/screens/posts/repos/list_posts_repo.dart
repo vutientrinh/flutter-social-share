@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_social_share/model/post.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
 
 const assetKey = 'assets/posts.json';

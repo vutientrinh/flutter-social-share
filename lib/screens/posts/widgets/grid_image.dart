@@ -4,7 +4,7 @@ import 'package:flutter_social_share/screens/posts/models/photo.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_img_item.dart';
 
 class GridImage extends StatelessWidget {
-  final List<Photo> photos;
+  final List<String> photos;
   final double padding;
 
   const GridImage({
@@ -20,16 +20,16 @@ class GridImage extends StatelessWidget {
   }
 
   Widget buildImageGrid(
-      List<Photo> photos, double width, BuildContext context) {
+      List<String> photos, double width, BuildContext context) {
     switch (photos.length) {
       case 0:
         return const SizedBox();
       case 1:
         return _buildOneImage(photos[0], width, context);
       case 2:
-        return _buildTwoImage(photos, width, context);
+        return _buildTwoImage(photos[0], width, context);
       case 3:
-        return _buildThreeImage(photos, width, context);
+        return _buildThreeImage([], width, context);
       case 4:
         return const SizedBox();
       case 5:
@@ -39,16 +39,16 @@ class GridImage extends StatelessWidget {
     }
   }
 
-  Widget _buildOneImage(Photo photo, double width, BuildContext context) {
-    final image = photo.image;
+  Widget _buildOneImage(String photo, double width, BuildContext context) {
+    final image = photo;
 
     return GestureDetector(
-      onTap: () => navigateToPhotoPage([photo], 0, context),
+      onTap: () => navigateToPhotoPage([], 0, context),
       child: SizedBox(
         height: 300,
         width: width,
         child: CachedNetworkImage(
-          imageUrl: image!.url!,
+          imageUrl: image,
           fit: BoxFit.cover,
         ),
       ),

@@ -11,8 +11,8 @@ class Post {
   final int likedCount;
   final String type;
   final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
   final Topic topic;
   final User author;
   final bool hasLiked;
@@ -47,11 +47,11 @@ class Post {
       likedCount: json['likedCount'],
       type: json['type'],
       status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
       topic: Topic.fromJson(json['topic']),
       author: User.fromJson(json['author']),
-      hasLiked: json['hasLiked'],
+      hasLiked: json['hasLiked'] as bool,
       hasSaved: json['hasSaved'],
     );
   }

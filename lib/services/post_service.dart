@@ -12,9 +12,12 @@ class PostService {
   Future<List<Post>> getAllPosts() async {
     try {
       final response = await _dio.get('/posts');
-
+      print("befor get service");
       // ✅ Get the nested list inside: response.data["data"]["data"]
       final postListJson = response.data['data']['data'] as List;
+      print(postListJson);
+
+      print("after get service");
 
       // ✅ Convert each JSON object into a Post model
       return postListJson.map((json) => Post.fromJson(json)).toList();
@@ -70,7 +73,6 @@ class PostService {
       throw Exception('Failed to create post: $e');
     }
   }
-
 
   /// Update a post by UUID
   Future<Response> updatePost(

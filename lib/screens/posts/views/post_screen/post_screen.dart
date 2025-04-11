@@ -84,30 +84,38 @@ class _ListPostsScreenState extends State<ListPostsScreen> {
           StreamBuilder<List<Post>?>(
               stream: _postsBloc.postsStream,
               builder: (context, snapshot) {
-                if (snapshot.data == null) {
+                print("🔥 Snapshot updated: ${snapshot}");
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const SliverFillRemaining(
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                final posts = snapshot.data;
 
                 if (snapshot.hasError) {
+                  return SliverFillRemaining(
+                    child: Center(child: Text('Error: ${snapshot.error}')),
+                  );
+                }
+
+                final posts = snapshot.data;
+
+                if (posts == null || posts.isEmpty) {
                   return const SliverFillRemaining(
-                      child: Center(
-                    child: Text('Something went wrong'),
-                  ));
+                    child: Center(child: Text('No posts yet')),
+                  );
                 }
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final post = snapshot.data![index];
+                        (context, index) {
+                      final post = posts[index];
                       return PostItem(post: post);
                     },
-                    childCount: snapshot.data?.length ?? 0,
+                    childCount: posts.length,
                   ),
                 );
-              }),
+              }
+              ),
           const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
         ],
       ),

@@ -13,6 +13,7 @@ class LINK_IMAGE {
   static final String PUBLIC_URL_IMAGE = dotenv.env['PUBLIC_URL_IMAGE'] ?? '';
 
   static String publicImage(String imageName) {
+    print('Public url ne $PUBLIC_URL_IMAGE');
     if (imageName.isEmpty) return ''; // or return a default placeholder path
     return '$PUBLIC_URL_IMAGE$imageName';
   }

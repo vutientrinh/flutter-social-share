@@ -49,7 +49,7 @@ class GridImage extends StatelessWidget {
         height: 300,
         width: width,
         child: CachedNetworkImage(
-          imageUrl: image,
+          imageUrl: LINK_IMAGE.publicImage(image),
           fit: BoxFit.cover,
         ),
       ),

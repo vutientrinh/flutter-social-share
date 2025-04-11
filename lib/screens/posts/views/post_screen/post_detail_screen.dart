@@ -24,6 +24,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('Post image ne $post.images');
     return Scaffold(
       body: Stack(
         children: [
@@ -65,8 +66,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ),
                       ),
                     ),
-                    if (post.images != null)
-                      GridImage(photos: post.images!, padding: 0),
+                    GridImage(photos: post.images, padding: 0),
                     ActionPost(post: post),
                     const Divider(thickness: 1),
                     ListComment(

@@ -6,6 +6,7 @@ import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
 
+import '../../../../model/post.dart';
 import '../../../../model/user.dart';
 import '../../../../services/user_service.dart';
 import '../../../messages_screen/messages_screen.dart';
@@ -88,6 +89,7 @@ class _ListPostsScreenState extends State<ListPostsScreen> {
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
+                final posts = snapshot.data;
 
                 if (snapshot.hasError) {
                   return const SliverFillRemaining(

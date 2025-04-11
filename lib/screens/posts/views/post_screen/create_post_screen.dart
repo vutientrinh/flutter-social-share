@@ -6,7 +6,7 @@ import 'package:flutter_social_share/services/post_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../model/post.dart';
+import '../../../../model/post_request.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -37,7 +37,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Future<void> _onPost() async {
     try {
-      final postRequest = Post(
+      final postRequest = PostRequest(
         content: "text status",
         images:_images,
         authorId: userId??"", // Or whatever field you saved

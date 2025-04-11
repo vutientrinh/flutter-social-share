@@ -1,17 +1,23 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_social_share/model/newPostPayload.dart';
 import '../model/post.dart';
+import '../model/post_request.dart';
 import 'api_client.dart';
 
 class PostService {
   final Dio _dio = ApiClient.dio;
 
   /// Get all posts (default first page)
-  Future<Response> getAllPosts() async {
+  Future<List<Post>> getAllPosts() async {
     try {
-      return await _dio.get('/posts');
+      final response = await _dio.get('/posts');
+
+      // ✅ Get the nested list inside: response.data["data"]["data"]
+      final postListJson = response.data['data']['data'] as List;
+
+      // ✅ Convert each JSON object into a Post model
+      return postListJson.map((json) => Post.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch posts: $e');
     }
@@ -35,7 +41,7 @@ class PostService {
     }
   }
 
-  Future<Response> createPost(Post postRequest) async {
+  Future<Response> createPost(PostRequest postRequest) async {
     try {
       // Prepare list of MultipartFile
       List<MultipartFile> imageFiles = [];

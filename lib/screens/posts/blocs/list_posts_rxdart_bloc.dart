@@ -1,28 +1,27 @@
 import 'dart:async';
-
-import 'package:flutter_social_share/screens/posts/models/post.dart';
-import 'package:flutter_social_share/screens/posts/repos/list_posts_repo.dart';
 import 'package:flutter_social_share/providers/bloc_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../model/post.dart';
+import '../../../services/post_service.dart';
+
 class ListPostsRxDartBloc extends BlocBase {
-  final _postsCtrl = BehaviorSubject<List<Post>?>();
-  Stream<List<Post>?> get postsStream => _postsCtrl.stream;
-  List<Post>? get postsValue => _postsCtrl.stream.value;
+  final _postsController = BehaviorSubject<List<Post>?>();
+
+  Stream<List<Post>?> get postsStream => _postsController.stream;
+  List<Post>? get postsValue => _postsController.value;
 
   Future<void> getPosts() async {
     try {
-      final res = await ListPostsRepo().getPosts();
-      if (res != null) {
-        _postsCtrl.sink.add(res);
-      }
+      final posts = await PostService().getAllPosts();
+      _postsController.sink.add(posts);
     } catch (e) {
-      _postsCtrl.sink.addError('Cannot fetch list posts right now!!!');
+      _postsController.sink.addError('Failed to fetch posts');
     }
   }
 
   @override
   void dispose() {
-    _postsCtrl.close();
+    _postsController.close();
   }
 }

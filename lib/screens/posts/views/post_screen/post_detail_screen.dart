@@ -5,6 +5,8 @@ import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
 
+import '../../../../model/post.dart';
+
 class PostDetailScreen extends StatefulWidget {
   final Post post;
 
@@ -54,17 +56,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                       child: ItemRow(
-                        avatarUrl: post.urlUserAvatar,
-                        title: post.displayName,
-                        subtitle: post.displayTimePostCreated,
+                        avatarUrl: post.author.avatar,
+                        title: post.author.username,
+                        subtitle: post.createdAt,
                         rightWidget: IconButton(
                           onPressed: () {},
                           icon: const Icon(Icons.more_horiz),
                         ),
                       ),
                     ),
-                    if (post.photos != null)
-                      GridImage(photos: post.photos!, padding: 0),
+                    if (post.images != null)
+                      GridImage(photos: post.images!, padding: 0),
                     ActionPost(post: post),
                     const Divider(thickness: 1),
                     ListComment(

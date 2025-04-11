@@ -1,8 +1,11 @@
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/icon_post_comment.dart';
 import 'package:flutter_social_share/screens/posts/widgets/text_count_number.dart';
+
+import '../../../model/post.dart';
 
 class ActionPost extends StatefulWidget {
   final Post post;
@@ -18,22 +21,22 @@ class _ActionPostState extends State<ActionPost> {
   int likeCount = 0;
   bool isLiked = false;
 
-  int get commentCount => post.commentCounts ?? 0;
+  // int get commentCount => post.commentCounts ?? 0;
 
   @override
   void initState() {
     super.initState();
 
-    likeCount = post.likeCounts ?? 0;
-    isLiked = post.liked ?? false;
+    likeCount = post.commentCount ?? 0;
+    isLiked = (post.likedCount ?? 0) as bool;
   }
 
   @override
   void didUpdateWidget(ActionPost oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    likeCount = widget.post.likeCounts ?? 0;
-    isLiked = widget.post.liked ?? false;
+    likeCount = widget.post.likedCount ?? 0;
+    isLiked = widget.post.hasLiked ?? false;
   }
 
   @override
@@ -41,11 +44,11 @@ class _ActionPostState extends State<ActionPost> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (post.description != null && post.description!.trim().isNotEmpty)
+        if (post.content != null && post.content!.trim().isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(left: 12, top: 8),
             child: Text(
-              post.description!,
+              post.content!,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -121,7 +124,7 @@ class _ActionPostState extends State<ActionPost> {
                 subText: 'lượt thích',
               ),
               TextCountNumber(
-                number: post.commentCounts!,
+                number: post.commentCount!,
                 subText: 'bình luận',
               ),
             ],

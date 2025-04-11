@@ -99,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildPostsTab(),
+                  // _buildPostsTab(),
                   _buildProductsTab(),
                 ],
               ),
@@ -111,25 +111,25 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildPostsTab() {
-    return StreamBuilder<List<Post>?>(
-      stream: _postsBloc.postsStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.hasError) {
-          return const Center(child: Text('Something went wrong'));
-        }
-
-        return ListView(
-          children:
-              snapshot.data?.map((post) => PostItem(post: post)).toList() ?? [],
-        );
-      },
-    );
-  }
+  // Widget _buildPostsTab() {
+  //   return StreamBuilder<List<Post>?>(
+  //     stream: _postsBloc.postsStream,
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       }
+  //
+  //       if (snapshot.hasError) {
+  //         return const Center(child: Text('Something went wrong'));
+  //       }
+  //
+  //       return ListView(
+  //         children:
+  //             snapshot.data?.map((post) => PostItem(post: post)).toList() ?? [],
+  //       );
+  //     },
+  //   );
+  // }
 
   // Products Tab
   Widget _buildProductsTab() {

@@ -5,6 +5,8 @@ import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
 
+import '../../../model/post.dart';
+
 class PostItem extends StatefulWidget {
   final Post post;
 
@@ -35,8 +37,8 @@ class _PostItemState extends State<PostItem> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                   child: ItemRow(
-                    avatarUrl: widget.post.urlUserAvatar,
-                    title: widget.post.displayName,
+                    avatarUrl: widget.post.author.avatar,
+                    title: widget.post.author.username,
                     // subtitle: widget.post.displayTimePostCreated,
                     subtitle: "khdsljfhalsdhfljashdj",
 
@@ -46,7 +48,7 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                 ),
-                GridImage(photos: widget.post.photos!),
+                GridImage(photos: widget.post.images),
                 ActionPost(post: widget.post),
               ],
             ),

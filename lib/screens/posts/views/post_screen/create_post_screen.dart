@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/screens/posts/views/post_screen/post_screen.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
 import 'package:flutter_social_share/services/post_service.dart';
 import 'package:image_picker/image_picker.dart';
@@ -38,7 +39,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Future<void> _onPost() async {
     try {
       final postRequest = PostRequest(
-        content: "text status",
+        content: _controller.text,
         images:_images,
         authorId: userId??"", // Or whatever field you saved
         topicId:
@@ -55,6 +56,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           _controller.clear();
           _images.clear();
         });
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ListPostsScreen()), // Replace with your target page
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed: ${response.statusCode}')),

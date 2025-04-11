@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/screens/posts/models/photo.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_img_item.dart';
+import 'package:flutter_social_share/utils/uidata.dart';
 
 class GridImage extends StatelessWidget {
   final List<String> photos;
@@ -27,9 +28,9 @@ class GridImage extends StatelessWidget {
       case 1:
         return _buildOneImage(photos[0], width, context);
       case 2:
-        return _buildTwoImage(photos[0], width, context);
+        return _buildTwoImage(photos, width, context);
       case 3:
-        return _buildThreeImage([], width, context);
+        return _buildThreeImage(photos, width, context);
       case 4:
         return const SizedBox();
       case 5:
@@ -56,48 +57,20 @@ class GridImage extends StatelessWidget {
   }
 
   Widget _buildTwoImage(
-      List<Photo> photos, double width, BuildContext context) {
-    final firstImg = photos[0].image;
-
-    // Vertical style
-    if (firstImg!.orgWidth! > firstImg.orgHeight!) {
-      final height = width - padding;
-      return SizedBox(
-        height: width,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            PostImgItem(
-              url: photos[0].url,
-              width: width,
-              height: height / 2,
-              onTap: () => navigateToPhotoPage(photos, 0, context),
-            ),
-            _buildPadding(),
-            PostImgItem(
-              url: photos[1].url,
-              width: width,
-              height: height / 2,
-              onTap: () => navigateToPhotoPage(photos, 0, context),
-            ),
-          ],
-        ),
-      );
-    }
-
+      List<String> photos, double width, BuildContext context) {
     final height = width;
     width = width - padding;
     return Row(
       children: <Widget>[
         PostImgItem(
-          url: photos[0].url,
+          url:  LINK_IMAGE.publicImage(photos[0]),
           width: width / 2,
           height: height,
           onTap: () => navigateToPhotoPage(photos, 0, context),
         ),
         _buildPadding(),
         PostImgItem(
-          url: photos[1].url,
+          url: photos[1],
           width: width / 2,
           height: height,
           onTap: () => navigateToPhotoPage(photos, 0, context),
@@ -111,47 +84,47 @@ class GridImage extends StatelessWidget {
       );
 
   Widget _buildThreeImage(
-      List<Photo> photos, double width, BuildContext context) {
-    final firstImg = photos[0].image;
+      List<String> photos, double width, BuildContext context) {
+    final firstImg = photos;
 
     // first vertical style images
-    if (firstImg!.orgHeight! > firstImg.orgWidth!) {
-      final height = width;
-      final itemHeight = height;
-      final itemWidth = width - padding;
-      return SizedBox(
-        height: height,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            PostImgItem(
-              url: photos[0].url,
-              width: itemWidth / 2,
-              height: itemHeight,
-              onTap: () => navigateToPhotoPage(photos, 0, context),
-            ),
-            _buildPadding(),
-            Column(
-              children: <Widget>[
-                PostImgItem(
-                  url: photos[1].url,
-                  width: itemWidth / 2,
-                  height: (itemHeight - padding) / 2,
-                  onTap: () => navigateToPhotoPage(photos, 1, context),
-                ),
-                _buildPadding(),
-                PostImgItem(
-                  url: photos[2].url,
-                  width: itemWidth / 2,
-                  height: (itemHeight - padding) / 2,
-                  onTap: () => navigateToPhotoPage(photos, 2, context),
-                ),
-              ],
-            )
-          ],
-        ),
-      );
-    }
+    // if (firstImg!.orgHeight! > firstImg.orgWidth!) {
+    //   final height = width;
+    //   final itemHeight = height;
+    //   final itemWidth = width - padding;
+    //   return SizedBox(
+    //     height: height,
+    //     child: Row(
+    //       crossAxisAlignment: CrossAxisAlignment.stretch,
+    //       children: <Widget>[
+    //         PostImgItem(
+    //           url: photos[0].url,
+    //           width: itemWidth / 2,
+    //           height: itemHeight,
+    //           onTap: () => navigateToPhotoPage(photos, 0, context),
+    //         ),
+    //         _buildPadding(),
+    //         Column(
+    //           children: <Widget>[
+    //             PostImgItem(
+    //               url: photos[1].url,
+    //               width: itemWidth / 2,
+    //               height: (itemHeight - padding) / 2,
+    //               onTap: () => navigateToPhotoPage(photos, 1, context),
+    //             ),
+    //             _buildPadding(),
+    //             PostImgItem(
+    //               url: photos[2].url,
+    //               width: itemWidth / 2,
+    //               height: (itemHeight - padding) / 2,
+    //               onTap: () => navigateToPhotoPage(photos, 2, context),
+    //             ),
+    //           ],
+    //         )
+    //       ],
+    //     ),
+    //   );
+    // }
 
     final height = width;
     final itemWidth = (width - padding) / 2;
@@ -164,14 +137,14 @@ class GridImage extends StatelessWidget {
           Row(
             children: <Widget>[
               PostImgItem(
-                url: photos[1].url,
+                url: LINK_IMAGE.publicImage(photos[1]),
                 width: itemWidth,
                 height: itemHeight,
                 onTap: () => navigateToPhotoPage(photos, 1, context),
               ),
               _buildPadding(),
               PostImgItem(
-                url: photos[2].url,
+                url: LINK_IMAGE.publicImage(photos[2]),
                 width: itemWidth,
                 height: itemHeight,
                 onTap: () => navigateToPhotoPage(photos, 2, context),
@@ -180,7 +153,7 @@ class GridImage extends StatelessWidget {
           ),
           _buildPadding(),
           PostImgItem(
-            url: photos[0].url,
+            url: LINK_IMAGE.publicImage(photos[0]),
             width: width,
             height: itemHeight,
             onTap: () => navigateToPhotoPage(photos, 0, context),
@@ -191,5 +164,5 @@ class GridImage extends StatelessWidget {
   }
 
   void navigateToPhotoPage(
-      List<Photo> photos, int index, BuildContext context) {}
+      List<String> photos, int index, BuildContext context) {}
 }

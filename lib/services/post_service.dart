@@ -9,17 +9,36 @@ class PostService {
   final Dio _dio = ApiClient.dio;
 
   /// Get all posts (default first page)
-  Future<List<Post>> getAllPosts() async {
+  Future<List<Post>> getAllPosts({
+    int page = 1,
+    int size = 10,
+    int? type,
+    String? topicName,
+    String? authorId,
+    String? keyword,
+  }) async {
     try {
-      final response = await _dio.get('/posts');
-      print("befor get service");
-      // ✅ Get the nested list inside: response.data["data"]["data"]
+      print("before get service");
+
+      // ✅ Build query parameters
+      final queryParams = {
+        'page': page,
+        'size': size,
+        if (type != null) 'type': type,
+        if (topicName != null && topicName.isNotEmpty) 'topicName': topicName,
+        if (keyword != null && keyword.isNotEmpty) 'keyword': keyword,
+        if (authorId != null && authorId.isNotEmpty) 'authorId': authorId,
+      };
+
+      final response = await _dio.get('/posts', queryParameters: queryParams);
+
+      // ✅ Extract the nested list
       final postListJson = response.data['data']['data'] as List;
       print(postListJson);
 
       print("after get service");
 
-      // ✅ Convert each JSON object into a Post model
+      // ✅ Parse into Post objects
       return postListJson.map((json) => Post.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch posts: $e');

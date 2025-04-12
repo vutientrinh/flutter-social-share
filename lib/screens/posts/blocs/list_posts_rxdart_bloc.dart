@@ -24,6 +24,19 @@ class ListPostsRxDartBloc extends BlocBase {
     }
   }
 
+  Future<void> getPostAuthor(String authorId) async {
+    try {
+      print("Fetching posts...");
+      final posts = await PostService().getAllPosts(authorId: authorId);
+      print("Fetched posts: $posts");
+      _postsController.sink.add(posts);
+    } catch (e, stack) {
+      print("🔥 Error in getPosts(): $e");
+      print(stack);
+      _postsController.sink.addError('Failed to fetch posts');
+    }
+  }
+
 
   @override
   void dispose() {

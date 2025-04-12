@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/services/auth_service.dart';
 
+import '../../model/post.dart';
 import '../posts/blocs/list_posts_rxdart_bloc.dart';
 import '../posts/models/post.dart';
 import '../posts/widgets/post_item_remake.dart';
@@ -16,11 +18,26 @@ class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
   final _postsBloc = ListPostsRxDartBloc();
   late TabController _tabController;
+  String? authorId;
+
+  Future<void> loadData() async {
+    final data = await AuthService.getSavedData();
+    setState(() {
+      authorId = data['userId']; // Assign userId once data is fetched
+    });
+    if (authorId != null) {
+      _postsBloc.getPostAuthor(authorId!);
+    } else {
+      print("Author ID is null. Skipping getPostAuthor call.");
+    }
+  }
+
 
   @override
   void initState() {
     super.initState();
-    _postsBloc.getPosts();
+    loadData();
+    print(authorId);
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -99,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // _buildPostsTab(),
+                  _buildPostsTab(),
                   _buildProductsTab(),
                 ],
               ),
@@ -111,25 +128,25 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  // Widget _buildPostsTab() {
-  //   return StreamBuilder<List<Post>?>(
-  //     stream: _postsBloc.postsStream,
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return const Center(child: CircularProgressIndicator());
-  //       }
-  //
-  //       if (snapshot.hasError) {
-  //         return const Center(child: Text('Something went wrong'));
-  //       }
-  //
-  //       return ListView(
-  //         children:
-  //             snapshot.data?.map((post) => PostItem(post: post)).toList() ?? [],
-  //       );
-  //     },
-  //   );
-  // }
+  Widget _buildPostsTab() {
+    return StreamBuilder<List<Post>?>(
+      stream: _postsBloc.postsStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong'));
+        }
+
+        return ListView(
+          children:
+              snapshot.data?.map((post) => PostItem(post: post)).toList() ?? [],
+        );
+      },
+    );
+  }
 
   // Products Tab
   Widget _buildProductsTab() {

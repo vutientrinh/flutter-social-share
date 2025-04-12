@@ -25,7 +25,9 @@ class _ProfileScreenState extends State<ProfileScreen>
     setState(() {
       authorId = data['userId']; // Assign userId once data is fetched
     });
+
     if (authorId != null) {
+
       _postsBloc.getPostAuthor(authorId!);
     } else {
       print("Author ID is null. Skipping getPostAuthor call.");

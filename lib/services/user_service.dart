@@ -59,5 +59,16 @@ class UserService {
       throw Exception('Failed to fetch followers: $e');
     }
   }
+  Future<Response> getProfileById(String userId) async {
+    try {
+      final response = await _dio.get(
+        '/users/profile/$userId',
+      );
+      return response;
+    } catch (e) {
+      print('Error fetching profile: $e');
+      throw Exception('Failed to fetch profile: $e');
+    }
+  }
 
 }

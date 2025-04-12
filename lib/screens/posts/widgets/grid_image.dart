@@ -70,7 +70,7 @@ class GridImage extends StatelessWidget {
         ),
         _buildPadding(),
         PostImgItem(
-          url: photos[1],
+          url: LINK_IMAGE.publicImage(photos[1]),
           width: width / 2,
           height: height,
           onTap: () => navigateToPhotoPage(photos, 0, context),

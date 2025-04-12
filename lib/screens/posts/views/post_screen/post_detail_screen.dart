@@ -66,7 +66,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ),
                       ),
                     ),
-                    GridImage(photos: post.images, padding: 0),
+                    GridImage(photos: post.images, padding: 10),
                     ActionPost(post: post),
                     const Divider(thickness: 1),
                     ListComment(

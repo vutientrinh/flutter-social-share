@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ItemRow extends StatelessWidget {
   final String? avatarUrl;
@@ -86,7 +87,9 @@ class ItemRow extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 2),
       child: Text(
-        subtitle!,
+        subtitle != null
+            ? timeago.format(DateTime.parse(subtitle!))
+            : 'Unknown time',
         style: Theme.of(context)
             .textTheme
             .bodyMedium!

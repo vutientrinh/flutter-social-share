@@ -49,6 +49,7 @@ class _PostItemState extends State<PostItem> {
                 ),
                 GridImage(photos: widget.post.images),
                 ActionPost(post: widget.post),
+
               ],
             ),
           ),

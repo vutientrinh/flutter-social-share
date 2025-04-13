@@ -4,6 +4,7 @@ import 'package:flutter_social_share/component/horizontal_user_list.dart';
 import 'package:flutter_social_share/screens/posts/blocs/list_posts_rxdart_bloc.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/component/create_post.dart';
+import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
 
 import '../../../../model/post.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/screens/comment/widgets/list_comment.dart';
-import 'package:flutter_social_share/screens/posts/models/post.dart';
+import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
 import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
@@ -24,7 +24,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('Post image ne $post.images');
     return Scaffold(
       body: Stack(
         children: [
@@ -70,8 +69,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ActionPost(post: post),
                     const Divider(thickness: 1),
                     ListComment(
-                      postId: post.id!,
+                      postId: post.id,
                     ),
+                    const SizedBox(height: 80),
                   ],
                 ),
               ),
@@ -79,6 +79,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
         ],
       ),
+      bottomSheet: const CommentInput(),
     );
   }
 }

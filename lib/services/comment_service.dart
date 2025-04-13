@@ -18,4 +18,16 @@ class CommentService{
       throw Exception('Failed to get comment by postId: $e');
     }
   }
+  Future<List<Comment>> createComment(String postId) async {
+    try {
+      final response = await _dio.get(
+        '/comments/create',
+      );
+      final List<dynamic> listCommentJson = response.data['data']['data'];
+      return listCommentJson.map((json) => Comment.fromJson(json)).toList();
+    } catch (e) {
+      print('Error like comment by postId: $e');
+      throw Exception('Failed to get comment by postId: $e');
+    }
+  }
 }

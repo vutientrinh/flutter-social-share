@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/services/comment_service.dart';
 
 class CommentInput extends StatefulWidget {
-  const CommentInput({super.key});
+  final String? postId;
+  const CommentInput({super.key, required this.postId});
 
   @override
   State<CommentInput> createState() => _CommentInputState();
@@ -9,10 +11,11 @@ class CommentInput extends StatefulWidget {
 
 class _CommentInputState extends State<CommentInput> {
   final TextEditingController _commentController = TextEditingController();
-  void _sendComment() {
+  void _sendComment() async {
     final content = _commentController.text.trim();
     if (content.isNotEmpty) {
-      print("Send comment: $content to postId: ");
+      final comment = await CommentService().createComment(widget.postId!, content);
+      print("Send comment: $comment to postId: $widget.postId");
       _commentController.clear();
       FocusScope.of(context).unfocus(); // hide keyboard
     }

@@ -79,7 +79,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
         ],
       ),
-      bottomSheet: const CommentInput(),
+      bottomSheet: CommentInput(
+        postId: post.id,
+      ),
     );
   }
 }

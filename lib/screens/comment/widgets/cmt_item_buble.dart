@@ -65,7 +65,7 @@ class _CommentItemBubbleState extends State<CommentItemBubble> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cmt.author.username,
+                      cmt.author!.username,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium,

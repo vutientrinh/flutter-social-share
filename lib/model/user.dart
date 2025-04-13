@@ -18,9 +18,9 @@ class User {
   User({
     required this.id,
     required this.username,
-    this.avatar,
-    this.firstName,
-    this.lastName,
+    required this.avatar,
+    required this.firstName,
+    required this.lastName,
     this.roles,
     this.bio,
     this.websiteUrl,

@@ -8,7 +8,7 @@ class CommentService{
 
   Future<List<Comment>> getCommentsAPI(String postId) async {
     try {
-      final response = await _dio.post(
+      final response = await _dio.get(
         '/comments/$postId',
       );
       final List<dynamic> listCommentJson = response.data['data']['data'];

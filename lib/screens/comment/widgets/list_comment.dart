@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/screens/comment/blocs/list_comment_bloc.dart';
-import 'package:flutter_social_share/screens/comment/models/comment.dart';
-import 'package:flutter_social_share/screens/comment/repos/list_comments_repo.dart';
 import 'package:flutter_social_share/screens/comment/widgets/cmt_item_buble.dart';
 import 'package:flutter_social_share/services/comment_service.dart';
 

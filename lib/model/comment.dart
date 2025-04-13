@@ -3,28 +3,37 @@ import 'package:flutter_social_share/model/user.dart';
 
 class Comment {
   final String id;
-  final User author;
-  final Post post;
+  final String authorId;
+  final String postId;
   final String? content;
+  final User? author;
+  final Post? post;
   final int? likedCount;
+  final bool hasLiked;
   final String? status;
 
   Comment({
     required this.id,
-    required this.author,
-    required this.post,
+    required this.authorId,
+    required this.postId,
     this.content,
+    this.author,
+    this.post,
     this.likedCount,
+    required this.hasLiked,
     this.status,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
       id: json['id'],
-      author: User.fromJson(json['author']),
-      post: Post.fromJson(json['post']),
+      authorId: json['authorId'],
+      postId: json['postId'],
       content: json['content'],
+      author: json['author'] != null ? User.fromJson(json['author']) : null,
+      post: json['post'] != null ? Post.fromJson(json['post']) : null,
       likedCount: json['likedCount'],
+      hasLiked: json['hasLiked'],
       status: json['status'],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/model/friend_request.dart';
 import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
 import 'package:flutter_social_share/services/friend_service.dart';
 
@@ -14,15 +15,41 @@ class RequestsTab extends StatefulWidget {
 }
 
 class _RequestsTabState extends State<RequestsTab> {
-  late Future<List<User>> getRequest;
+  late Future<List<FriendRequest>> getRequest;
 
   @override
   void initState() {
     super.initState();
     getRequest = loadData();
+    print(getRequest);
   }
 
-  Future<List<User>> loadData() async {
+  Future<void> _acceptRequest(String username, String friendRequestId) async {
+    final response = await FriendService().acceptFriend(friendRequestId);
+    if (response != false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Accepted Request ${username ?? 'User'}",
+            style: const TextStyle(color: Colors.black),
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _rejectRequest(String username) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "Rejected Request ${username ?? 'User'}",
+          style: const TextStyle(color: Colors.black),
+        ),
+      ),
+    );
+  }
+
+  Future<List<FriendRequest>> loadData() async {
     final data = await AuthService.getSavedData();
     final userId = data['userId'];
     return FriendService().getFriendRequests(userId);
@@ -30,7 +57,7 @@ class _RequestsTabState extends State<RequestsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<User>>(
+    return FutureBuilder<List<FriendRequest>>(
       future: getRequest,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -43,15 +70,16 @@ class _RequestsTabState extends State<RequestsTab> {
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final user = snapshot.data![index];
+              final request = snapshot.data![index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 child: Row(
                   children: [
                     Expanded(
                       child: UserAvatar(
-                        userName: user.username ?? "Unknown",
-                        avatarUrl: user.avatar ??
+                        userName: request.username ?? "Unknown",
+                        avatarUrl: request.avatar ??
                             "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
                       ),
                     ),
@@ -59,33 +87,23 @@ class _RequestsTabState extends State<RequestsTab> {
                       children: [
                         ElevatedButton.icon(
                           icon: const Icon(Icons.check),
-                          label: const Text("Accept", style: TextStyle(color: Colors.black)),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                          label: const Text("Accept",
+                              style: TextStyle(color: Colors.black)),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green),
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Accepted Request ${user.username ?? 'User'}",
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            );
+                            _acceptRequest(request.username, request.requestId);
                           },
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton.icon(
                           icon: const Icon(Icons.close),
-                          label: const Text("Reject", style: TextStyle(color: Colors.black)),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                          label: const Text("Reject",
+                              style: TextStyle(color: Colors.black)),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red),
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Rejected Request ${user.username ?? 'User'}",
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            );
+                            _rejectRequest(request.username);
                           },
                         ),
                       ],

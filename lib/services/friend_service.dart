@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_social_share/model/friend_request.dart';
 import 'package:flutter_social_share/model/user.dart';
 import 'api_client.dart';
 
@@ -54,7 +55,7 @@ class FriendService {
     }
   }
 
-  Future<List<User>> getFriendRequests(String userId, {int page = 1, int size = 10}) async {
+  Future<List<FriendRequest>> getFriendRequests(String userId, {int page = 1, int size = 10}) async {
     try {
       final response =  await _dio.get(
         '/users/$userId/get-friends-request',
@@ -63,8 +64,8 @@ class FriendService {
           'size': size,
         },
       );
-      final List<dynamic> userListJson = response.data['data']['data'];
-      return userListJson.map((json) => User.fromJson(json)).toList();
+      final List<dynamic> friendListJson = response.data['data']['data'];
+      return friendListJson.map((json) => FriendRequest.fromJson(json)).toList();
     } catch (e) {
       print('Error getting friend requests: $e');
       throw Exception('Failed to get friend requests: $e');

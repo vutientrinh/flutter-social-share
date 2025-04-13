@@ -50,7 +50,8 @@ class _FollowingTabState extends State<FollowingTab> {
             itemBuilder: (context, index) {
               final user = snapshot.data![index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                padding:
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 // Optional padding between items
                 child: UserAvatar(
                   userName: user.username,

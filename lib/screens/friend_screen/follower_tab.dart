@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
+import 'package:flutter_social_share/screens/friend_screen/list_user.dart';
 import '../../model/user.dart';
 import '../../services/auth_service.dart';
 import '../../services/follow_service.dart';
-import '../profile_screen/profile_screen.dart';
 
 class FollowersTab extends StatefulWidget {
   const FollowersTab({super.key});
@@ -14,6 +13,8 @@ class FollowersTab extends StatefulWidget {
 
 class _FollowersTabState extends State<FollowersTab> {
   late Future<List<User>> getFollowers;
+
+  @override
   void initState() {
     super.initState();
     getFollowers = loadData();
@@ -43,16 +44,9 @@ class _FollowersTabState extends State<FollowersTab> {
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final user = snapshot.data![index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                // Optional padding between items
-                child: UserAvatar(
-                  userName: user.username,
-                  avatarUrl:
-                  "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
-                ),
-              );
+              final follower = snapshot.data![index];
+              return ListUser(
+                  username: follower.username, avatar: follower.avatar);
             },
           );
         }

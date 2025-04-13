@@ -48,13 +48,13 @@ class _FollowingTabState extends State<FollowingTab> {
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final user = snapshot.data![index];
+              final following = snapshot.data![index];
               return Padding(
                 padding:
                 const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 // Optional padding between items
                 child: UserAvatar(
-                  userName: user.username,
+                  userName: following.username,
                   avatarUrl:
                       "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
                 ),

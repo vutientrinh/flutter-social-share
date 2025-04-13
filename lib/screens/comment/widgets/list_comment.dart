@@ -3,6 +3,9 @@ import 'package:flutter_social_share/screens/comment/blocs/list_comment_bloc.dar
 import 'package:flutter_social_share/screens/comment/models/comment.dart';
 import 'package:flutter_social_share/screens/comment/repos/list_comments_repo.dart';
 import 'package:flutter_social_share/screens/comment/widgets/cmt_item_buble.dart';
+import 'package:flutter_social_share/services/comment_service.dart';
+
+import '../../../model/comment.dart';
 
 class ListComment extends StatefulWidget {
   final String postId;
@@ -14,19 +17,22 @@ class ListComment extends StatefulWidget {
 }
 
 class _ListCommentState extends State<ListComment> {
-  late final ListCommentsBloc commentBloc;
+  final _commentsBloc = ListCommentsBloc();
 
   @override
   void initState() {
     super.initState();
-    commentBloc = ListCommentsBloc(ListCommentsRepo(widget.postId))
-      ..getComments();
+    _commentsBloc.getComment(widget.postId);
+  }
+  Future<List<Comment>> getComment(String postId) async{
+    final response = await CommentService().getCommentsAPI(postId);
+    return response;
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Comment>?>(
-      stream: commentBloc.listCmtStream,
+      stream: _commentsBloc.listCmtStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {

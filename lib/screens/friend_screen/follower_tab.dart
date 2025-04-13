@@ -3,15 +3,16 @@ import 'package:flutter_social_share/screens/friend_screen/list_user.dart';
 import '../../model/user.dart';
 import '../../services/auth_service.dart';
 import '../../services/follow_service.dart';
+import '../../services/friend_service.dart';
 
-class FollowersTab extends StatefulWidget {
-  const FollowersTab({super.key});
+class FriendsTab extends StatefulWidget {
+  const FriendsTab({super.key});
 
   @override
-  State<FollowersTab> createState() => _FollowersTabState();
+  State<FriendsTab> createState() => _FriendsTabState();
 }
 
-class _FollowersTabState extends State<FollowersTab> {
+class _FriendsTabState extends State<FriendsTab> {
   late Future<List<User>> getFollowers;
 
   @override
@@ -24,7 +25,9 @@ class _FollowersTabState extends State<FollowersTab> {
     final data = await AuthService.getSavedData();
 
     final userId = data['userId'];
-    return FollowService().getFollowers(userId);
+    return FriendService().getFriends(userId);
+
+    // return FollowService().getFollowers(userId);
   }
 
   @override

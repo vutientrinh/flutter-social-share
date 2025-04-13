@@ -5,6 +5,8 @@ import 'package:flutter_social_share/common/widgets/stateful/react_button/reacti
 import 'package:flutter_social_share/screens/comment/models/comment.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 
+import '../../../model/comment.dart';
+
 class CommentItemBubble extends StatefulWidget {
   final Comment cmt;
   final Function(int, bool) onReact;
@@ -45,7 +47,7 @@ class _CommentItemBubbleState extends State<CommentItemBubble> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(sizeAvatar / 2),
               child: CachedNetworkImage(
-                imageUrl: cmt.urlUserAvatar!,
+                imageUrl: "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
               ),
             ),
           ),
@@ -63,7 +65,7 @@ class _CommentItemBubbleState extends State<CommentItemBubble> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cmt.displayName,
+                      cmt.author.username,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium,
@@ -84,10 +86,6 @@ class _CommentItemBubbleState extends State<CommentItemBubble> {
               ),
               Row(
                 children: [
-                  Text(
-                    cmt.displayTimePostCreated,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
                   buildReactButton(),
                   const SizedBox(
                     width: 4,

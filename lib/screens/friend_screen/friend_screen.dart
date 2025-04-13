@@ -19,7 +19,7 @@ class FriendScreen extends StatelessWidget {
             unselectedLabelColor: Colors.black,
             indicatorColor: Colors.black,
             tabs: [
-              Tab(text: "Followers"),
+              Tab(text: "Friends"),
               Tab(text: "Following"),
               Tab(text: "Requests"),
             ],
@@ -28,7 +28,7 @@ class FriendScreen extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            FollowersTab(),
+            FriendsTab(),
             FollowingTab(),
             RequestsTab(),
           ],

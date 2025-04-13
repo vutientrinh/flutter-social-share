@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_social_share/screens/comment/models/comment.dart';
 
+import '../../../model/comment.dart';
+
 const assetKey = 'assets/comments.json';
 
 class ListCommentsRepo {

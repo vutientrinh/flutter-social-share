@@ -40,17 +40,21 @@ class FriendService {
     }
   }
 
-  Future<Response> getFriends(String userId, {int page = 1, int size = 10}) async {
+  Future<List<User>> getFriends(String userId, {int page = 1, int size = 10}) async {
+
     try {
-      return await _dio.get(
+      final response = await _dio.get(
         '/users/$userId/get-friends',
         queryParameters: {
           'page': page,
           'size': size,
         },
-      );
+          data: {"page": page, "size": size});
+      final List<dynamic> userListJson = response.data['data']['data'];
+
+      return userListJson.map((json) => User.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting friends: $e');
+      print('Error get friend: $e');
       throw Exception('Failed to get friends: $e');
     }
   }

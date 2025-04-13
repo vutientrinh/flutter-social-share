@@ -38,7 +38,8 @@ class _RequestsTabState extends State<RequestsTab> {
     }
   }
 
-  Future<void> _rejectRequest(String username) async {
+  Future<void> _rejectRequest(String username, String friendRequestId) async {
+    final response = await FriendService().deleteFriend(friendRequestId);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -103,7 +104,7 @@ class _RequestsTabState extends State<RequestsTab> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red),
                           onPressed: () {
-                            _rejectRequest(request.username);
+                            _rejectRequest(request.username, request.requestId);
                           },
                         ),
                       ],

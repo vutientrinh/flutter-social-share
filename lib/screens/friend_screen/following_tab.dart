@@ -4,6 +4,7 @@ import 'package:flutter_social_share/services/follow_service.dart';
 import '../../model/user.dart';
 import '../../services/auth_service.dart';
 import '../../services/user_service.dart';
+import 'list_user.dart';
 import 'user_avatar.dart'; // Your custom widget
 import '../profile_screen/profile_screen.dart';
 
@@ -49,16 +50,8 @@ class _FollowingTabState extends State<FollowingTab> {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final following = snapshot.data![index];
-              return Padding(
-                padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                // Optional padding between items
-                child: UserAvatar(
-                  userName: following.username,
-                  avatarUrl:
-                      "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
-                ),
-              );
+              return ListUser(
+                  username: following.username, avatar: following.avatar);
             },
           );
         }

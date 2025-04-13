@@ -1,44 +1,26 @@
-import 'package:flutter_social_share/screens/comment/models/comment.dart';
-import 'package:flutter_social_share/screens/comment/repos/list_comments_repo.dart';
 import 'package:flutter_social_share/providers/bloc_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../model/comment.dart';
+import '../../../services/comment_service.dart';
+
 class ListCommentsBloc extends BlocBase {
-  final ListCommentsRepo _listCmtRepo;
+  final _commentsCtr = BehaviorSubject<List<Comment>?>();
 
-  final _listCmtCtrl = BehaviorSubject<List<Comment>?>();
-  Stream<List<Comment>?> get listCmtStream =>
-      _listCmtCtrl.stream.map(transformData);
+  Stream<List<Comment>?> get listCmtStream => _commentsCtr.stream;
 
-  ListCommentsBloc(this._listCmtRepo);
+  List<Comment>? get postsValue => _commentsCtr.value;
 
-  List<Comment> transformData(List<Comment>? list) {
-    if (list == null || list.isEmpty) {
-      return [];
-    }
-
-    var result = <Comment>[];
-
-    for (final cmt in list) {
-      result = [cmt, ...result];
-    }
-
-    return result;
-  }
-
-  Future<void> getComments() async {
+  Future<void> getComment(String postId) async {
     try {
-      final res = await _listCmtRepo.getComments();
-      if (res != null) {
-        _listCmtCtrl.sink.add(res);
-      }
+      final comments = await CommentService().getCommentsAPI(postId);
+      _commentsCtr.sink.add(comments);
     } catch (e) {
-      rethrow;
+      print("Error in getComment $e");
     }
   }
-
   @override
   void dispose() {
-    _listCmtCtrl.close();
+    _commentsCtr.close();
   }
 }

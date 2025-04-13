@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/screens/friend_screen/request_tab.dart';
 
-import 'follower_tab.dart';
+import 'friend_tab.dart';
 import 'following_tab.dart';
 
 class FriendScreen extends StatelessWidget {

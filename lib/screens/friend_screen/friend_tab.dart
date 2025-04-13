@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/screens/friend_screen/list_user.dart';
+import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
 import '../../model/user.dart';
 import '../../services/auth_service.dart';
 import '../../services/follow_service.dart';
@@ -48,8 +49,17 @@ class _FriendsTabState extends State<FriendsTab> {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final follower = snapshot.data![index];
-              return ListUser(
-                  username: follower.username, avatar: follower.avatar);
+              return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+                  // Optional padding between items
+                  child:
+                      UserAvatar(
+                        userName: follower.username,
+                        avatarUrl: follower.avatar ?? "",
+                      ),
+                      // const Icon(Icons.more_vert),
+                  );
             },
           );
         }

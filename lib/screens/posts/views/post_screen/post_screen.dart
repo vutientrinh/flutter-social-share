@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
+import 'package:flutter_social_share/providers/post_provider.dart';
 import 'package:flutter_social_share/screens/posts/blocs/list_posts_rxdart_bloc.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
+import 'package:http/http.dart';
 
 import '../../../../model/post.dart';
 import '../../../../model/user.dart';
+import '../../../../providers/post_nofitier.dart';
 import '../../../../services/user_service.dart';
 import '../../../messages_screen/messages_screen.dart';
 
+final postProvider = FutureProvider<List<Post>>((ref) async {
+  final postService = ref.watch(postServiceProvider);
+  return await postService.getAllPosts();
+});
 class ListPostsScreen extends ConsumerStatefulWidget {
   const ListPostsScreen({Key? key}) : super(key: key);
 
@@ -20,7 +27,6 @@ class ListPostsScreen extends ConsumerStatefulWidget {
 }
 
 class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
-  final _postsBloc = ListPostsRxDartBloc();
   List<User> users = [];
   Future<void> fetchUsers() async {
     // try {
@@ -32,16 +38,15 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
     //   debugPrint("Error fetching users: $e");
     // }
   }
-
   @override
   void initState() {
     super.initState();
-    // _postsBloc.getPosts();
     fetchUsers();
   }
 
   @override
   Widget build(BuildContext context) {
+    final postState = ref.watch(postProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
@@ -82,41 +87,31 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
           // CupertinoSliverRefreshControl(
           //   onRefresh: _postsBloc.getPosts,
           // ),
-          StreamBuilder<List<Post>?>(
-              stream: _postsBloc.postsStream,
-              builder: (context, snapshot) {
-                print("🔥 Snapshot updated: ${snapshot}");
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  return SliverFillRemaining(
-                    child: Center(child: Text('Error: ${snapshot.error}')),
-                  );
-                }
-
-                final posts = snapshot.data;
-
-                if (posts == null || posts.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(child: Text('No posts yet')),
-                  );
-                }
-
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                      final post = posts[index];
-                      return PostItem(post: post);
-                    },
-                    childCount: posts.length,
-                  ),
+          postState.when(
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (error, _) => SliverFillRemaining(
+              child: Center(child: Text('Error: $error')),
+            ),
+            data: (posts) {
+              if (posts.isEmpty) {
+                return const SliverFillRemaining(
+                  child: Center(child: Text('No posts yet')),
                 );
               }
-              ),
+
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                    final post = posts[index];
+                    return PostItem(post: post); // PostItemRemake if you prefer
+                  },
+                  childCount: posts.length,
+                ),
+              );
+            },
+          ),
           const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
         ],
       ),

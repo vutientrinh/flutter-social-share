@@ -18,7 +18,7 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen>
     with TickerProviderStateMixin {
-  final _postsBloc = ListPostsRxDartBloc();
+  // final _postsBloc = ListPostsRxDartBloc();
   late TabController _tabController;
   String? authorId;
 
@@ -135,7 +135,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
   Widget _buildPostsTab() {
     return StreamBuilder<List<Post>?>(
-      stream: _postsBloc.postsStream,
+      // stream: _postsBloc.postsStream,
+      stream: null,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

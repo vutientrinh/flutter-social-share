@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/auth_provider.dart';
 import 'package:flutter_social_share/services/chat_service.dart';
 import '../../model/conversation.dart';
 import '../../socket_service/websocket_service.dart';
 
-class ChatDetail extends StatefulWidget {
+class ChatDetail extends ConsumerStatefulWidget {
   final String receiverId; // The current user's ID
   final String receiverUsername;
 
@@ -11,20 +13,21 @@ class ChatDetail extends StatefulWidget {
       {super.key, required this.receiverId, required this.receiverUsername});
 
   @override
-  State<ChatDetail> createState() => _ChatDetailState();
+  ConsumerState<ChatDetail> createState() => _ChatDetailState();
 }
 
-class _ChatDetailState extends State<ChatDetail> {
+class _ChatDetailState extends ConsumerState<ChatDetail> {
   late WebSocketService _webSocketService;
   List<Conversation> messages = [];
   List<Conversation> readMessages = [];
   final TextEditingController _messageController = TextEditingController();
-
   @override
   void initState() {
+    final authService = ref.read(authServiceProvider);
     super.initState();
     _webSocketService = WebSocketService(
       userId: widget.receiverId,
+      authService: authService,
       onMessageReceived: (message) {
         setState(() {
           messages.add(message);
@@ -32,7 +35,7 @@ class _ChatDetailState extends State<ChatDetail> {
       },
     );
     _webSocketService.connect();
-    _fetchUnSeenMessages();
+    // _fetchUnSeenMessages();
     // _fetchReadMessage();
   }
 
@@ -52,30 +55,30 @@ class _ChatDetailState extends State<ChatDetail> {
     }
   }
 
-  Future<void> _fetchUnSeenMessages() async {
-    try {
-      final response = await ChatService().getUnSeenMessage(widget.receiverId);
-      print("Response ne check di : ${response}");
-      setState(() {
-        messages = response;
-      });
-      ChatService().setReadMessages(response);
-    } catch (e) {
-      print("Error fetching unseen messages: $e");
-    }
-  }
-
-  Future<void> _fetchReadMessage() async {
-    try {
-      final response = await ChatService().setReadMessages(messages);
-      print(response);
-      setState(() {
-        readMessages = response;
-      });
-    } catch (e) {
-      print("Error fetching read message");
-    }
-  }
+  // Future<void> _fetchUnSeenMessages() async {
+  //   try {
+  //     final response = await ChatService().getUnSeenMessage(widget.receiverId);
+  //     print("Response ne check di : ${response}");
+  //     setState(() {
+  //       messages = response;
+  //     });
+  //     ChatService().setReadMessages(response);
+  //   } catch (e) {
+  //     print("Error fetching unseen messages: $e");
+  //   }
+  // }
+  //
+  // Future<void> _fetchReadMessage() async {
+  //   try {
+  //     final response = await ChatService().setReadMessages(messages);
+  //     print(response);
+  //     setState(() {
+  //       readMessages = response;
+  //     });
+  //   } catch (e) {
+  //     print("Error fetching read message");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

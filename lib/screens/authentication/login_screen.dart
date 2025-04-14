@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/auth_provider.dart';
 import 'package:flutter_social_share/screens/authentication/register_screen.dart';
-import '../../services/auth_service.dart';
 import '../home_screen/home_page.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget  {
   const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isObscure = true; // State to track password visibility
   bool _isLoading = false; // Track login state
-  final AuthService _authService = AuthService(); // Create instance of AuthService
 
   // Function to handle login
   // Function to handle login
   Future<void> _handleLogin() async {
+    final  _authService = ref.read(authServiceProvider); // Create instance of AuthService
+
     String username = _usernameController.text.trim();
     String password = _passwordController.text.trim();
     setState(() {

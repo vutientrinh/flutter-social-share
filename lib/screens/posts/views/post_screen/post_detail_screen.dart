@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/screens/comment/widgets/list_comment.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
 import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
 
 import '../../../../model/post.dart';
 
-class PostDetailScreen extends StatefulWidget {
+class PostDetailScreen extends ConsumerStatefulWidget {
   final Post post;
 
   const PostDetailScreen({
@@ -19,7 +20,7 @@ class PostDetailScreen extends StatefulWidget {
   _PostDetailScreenState createState() => _PostDetailScreenState();
 }
 
-class _PostDetailScreenState extends State<PostDetailScreen> {
+class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   Post get post => widget.post;
 
   @override

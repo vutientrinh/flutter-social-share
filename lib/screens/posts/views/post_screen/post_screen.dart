@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
 import 'package:flutter_social_share/screens/posts/blocs/list_posts_rxdart_bloc.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
@@ -12,31 +12,31 @@ import '../../../../model/user.dart';
 import '../../../../services/user_service.dart';
 import '../../../messages_screen/messages_screen.dart';
 
-class ListPostsScreen extends StatefulWidget {
+class ListPostsScreen extends ConsumerStatefulWidget {
   const ListPostsScreen({Key? key}) : super(key: key);
 
   @override
   _ListPostsScreenState createState() => _ListPostsScreenState();
 }
 
-class _ListPostsScreenState extends State<ListPostsScreen> {
+class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
   final _postsBloc = ListPostsRxDartBloc();
   List<User> users = [];
   Future<void> fetchUsers() async {
-    try {
-      final response = await UserService().getAllUsers(); // Make sure it returns List<String> or List<Map>
-      setState(() {
-        users = response; // Adjust if response shape is different
-      });
-    } catch (e) {
-      debugPrint("Error fetching users: $e");
-    }
+    // try {
+    //   final response = await UserService().getAllUsers(); // Make sure it returns List<String> or List<Map>
+    //   setState(() {
+    //     users = response; // Adjust if response shape is different
+    //   });
+    // } catch (e) {
+    //   debugPrint("Error fetching users: $e");
+    // }
   }
 
   @override
   void initState() {
     super.initState();
-    _postsBloc.getPosts();
+    // _postsBloc.getPosts();
     fetchUsers();
   }
 
@@ -71,17 +71,17 @@ class _ListPostsScreenState extends State<ListPostsScreen> {
             ],
           ),
 
-          SliverToBoxAdapter(
-            child: users.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : HorizontalUserList(users: users),
-          ),
+          // SliverToBoxAdapter(
+          //   child: users.isEmpty
+          //       ? const Center(child: CircularProgressIndicator())
+          //       : HorizontalUserList(users: users),
+          // ),
           const SliverToBoxAdapter(
             child: CreatePost(avatar: "",),
           ),
-          CupertinoSliverRefreshControl(
-            onRefresh: _postsBloc.getPosts,
-          ),
+          // CupertinoSliverRefreshControl(
+          //   onRefresh: _postsBloc.getPosts,
+          // ),
           StreamBuilder<List<Post>?>(
               stream: _postsBloc.postsStream,
               builder: (context, snapshot) {

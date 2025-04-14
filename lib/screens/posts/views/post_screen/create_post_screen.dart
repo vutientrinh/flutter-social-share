@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/auth_provider.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/post_screen.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
 import 'package:flutter_social_share/services/post_service.dart';
@@ -9,14 +11,14 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../model/post_request.dart';
 
-class CreatePostScreen extends StatefulWidget {
+class CreatePostScreen extends ConsumerStatefulWidget {
   const CreatePostScreen({super.key});
 
   @override
-  State<CreatePostScreen> createState() => _CreatePostScreenState();
+  ConsumerState<CreatePostScreen> createState() => _CreatePostScreenState();
 }
 
-class _CreatePostScreenState extends State<CreatePostScreen> {
+class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<File> _images = [];
   String? username;
@@ -29,7 +31,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   void loadData() async {
-    final data = await AuthService.getSavedData();
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
     setState(() {
       username = data['username'];
       userId = data['userId'];
@@ -46,7 +49,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             "57ffa366-c9e9-4658-b58b-a1c14ad0934b", // Fill this appropriately
       );
 
-      final response = await PostService().createPost(postRequest);
+      // final response = await PostService().createPost(postRequest);
+      final response = null;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(

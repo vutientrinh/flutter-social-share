@@ -1,34 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/auth_provider.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
 
 import '../../model/post.dart';
 import '../posts/blocs/list_posts_rxdart_bloc.dart';
 import '../posts/models/post.dart';
 import '../posts/widgets/post_item_remake.dart';
-
-class ProfileScreen extends StatefulWidget {
+import 'package:riverpod/riverpod.dart';
+class ProfileScreen extends ConsumerStatefulWidget {
   final String followerName;
   const ProfileScreen({super.key, required this.followerName});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
+class _ProfileScreenState extends ConsumerState<ProfileScreen>
     with TickerProviderStateMixin {
   final _postsBloc = ListPostsRxDartBloc();
   late TabController _tabController;
   String? authorId;
 
   Future<void> loadData() async {
-    final data = await AuthService.getSavedData();
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
     setState(() {
       authorId = data['userId']; // Assign userId once data is fetched
     });
 
     if (authorId != null) {
 
-      _postsBloc.getPostAuthor(authorId!);
+      // _postsBloc.getPostAuthor(authorId!);
     } else {
       print("Author ID is null. Skipping getPostAuthor call.");
     }

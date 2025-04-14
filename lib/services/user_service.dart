@@ -4,7 +4,8 @@ import '../model/user.dart';
 import 'api_client.dart';
 
 class UserService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
+  UserService(this._dio);
 
   Future<List<User>> getAllUsers() async {
     try {

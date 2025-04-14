@@ -20,12 +20,12 @@ class _ListCommentState extends State<ListComment> {
   @override
   void initState() {
     super.initState();
-    _commentsBloc.getComment(widget.postId);
+    // _commentsBloc.getComment(widget.postId);
   }
-  Future<List<Comment>> getComment(String postId) async{
-    final response = await CommentService().getCommentsAPI(postId);
-    return response;
-  }
+  // Future<List<Comment>> getComment(String postId) async{
+  //   // final response = await CommentService().getCommentsAPI(postId);
+  //   return response;
+  // }
 
   @override
   Widget build(BuildContext context) {

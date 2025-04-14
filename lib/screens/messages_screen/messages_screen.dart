@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
+import 'package:flutter_social_share/providers/auth_provider.dart';
 
 import '../../model/user.dart';
 import '../../services/auth_service.dart';
 import '../../services/user_service.dart';
 import 'chat_detail.dart';
 
-class MessagesScreen extends StatefulWidget {
+class MessagesScreen extends ConsumerStatefulWidget {
   const MessagesScreen({super.key});
 
   @override
-  State<MessagesScreen> createState() => _MessagesScreenState();
+  ConsumerState<MessagesScreen> createState() => _MessagesScreenState();
 }
 
-class _MessagesScreenState extends State<MessagesScreen> {
+class _MessagesScreenState extends ConsumerState<MessagesScreen> {
   // Sample data for users and chats
   String? userId;
 
@@ -27,17 +29,18 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   List<User> users = [];
   Future<void> fetchUsers() async {
-    try {
-      final response = await UserService().getAllUsers(); // Make sure it returns List<String> or List<Map>
-      setState(() {
-        users = response; // Adjust if response shape is different
-      });
-    } catch (e) {
-      debugPrint("Error fetching users: $e");
-    }
+    // try {
+    //   final response = await UserService().getAllUsers(); // Make sure it returns List<String> or List<Map>
+    //   setState(() {
+    //     users = response; // Adjust if response shape is different
+    //   });
+    // } catch (e) {
+    //   debugPrint("Error fetching users: $e");
+    // }
   }
   Future<void> initData() async {
-    final data = await AuthService.getSavedData();
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
     setState(() {
       userId = data['userId']; // Assign userId once data is fetched
     });

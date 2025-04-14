@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/providers/auth_provider.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
@@ -23,18 +24,21 @@ class _AuthCheckState extends ConsumerState<AuthCheck> {
     _checkAuthStatus();
   }
 
+
   // Method to check if the token exists and is valid
   Future<void> _checkAuthStatus() async {
-    bool isValid = await AuthService().introspect();
-    final savedData = await AuthService.getSavedData();
-    final user = await UserService().getProfileById(savedData['userId']);
+    final authService = ref.read(authServiceProvider);
+    bool isValid = await authService.introspect();
+    print(isValid);
+    final savedData = await authService.getSavedData();
+    // final user = await UserService().getProfileById(savedData['userId']);
 
     // Navigate to the appropriate screen based on authentication status
-    if (!isValid) {
-      _navigateToLoginScreen();
+    if (isValid == true) {
+      _navigateToHomeScreen();
     }
-    ref.read(userProvider.notifier).state = user;
-    _navigateToHomeScreen();
+    // ref.read(userProvider.notifier).state = user;
+    _navigateToLoginScreen();
   }
 
   // Navigate to the login screen

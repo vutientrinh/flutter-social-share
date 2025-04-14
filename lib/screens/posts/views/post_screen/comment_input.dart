@@ -14,8 +14,8 @@ class _CommentInputState extends State<CommentInput> {
   void _sendComment() async {
     final content = _commentController.text.trim();
     if (content.isNotEmpty) {
-      final comment = await CommentService().createComment(widget.postId!, content);
-      print("Send comment: $comment to postId: $widget.postId");
+      // final comment = await CommentService().createComment(widget.postId!, content);
+      print("Send comment: to postId: $widget.postId");
       _commentController.clear();
       FocusScope.of(context).unfocus(); // hide keyboard
     }

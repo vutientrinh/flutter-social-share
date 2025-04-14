@@ -19,17 +19,17 @@ class _FriendsTabState extends State<FriendsTab> {
   @override
   void initState() {
     super.initState();
-    getFollowers = loadData();
+    // getFollowers = loadData();
   }
 
-  Future<List<User>> loadData() async {
-    final data = await AuthService.getSavedData();
-
-    final userId = data['userId'];
-    return FriendService().getFriends(userId);
-
-    // return FollowService().getFollowers(userId);
-  }
+  // Future<List<User>> loadData() async {
+  //   final data = await AuthService.getSavedData();
+  //
+  //   final userId = data['userId'];
+  //   return FriendService().getFriends(userId);
+  //
+  //   // return FollowService().getFollowers(userId);
+  // }
 
   @override
   Widget build(BuildContext context) {

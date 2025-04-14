@@ -1,13 +1,14 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/icon_post_comment.dart';
 import 'package:flutter_social_share/screens/posts/widgets/text_count_number.dart';
 
 import '../../../model/post.dart';
 
-class ActionPost extends StatefulWidget {
+class ActionPost extends ConsumerStatefulWidget {
   final Post post;
 
   const ActionPost({Key? key, required this.post}) : super(key: key);
@@ -16,7 +17,7 @@ class ActionPost extends StatefulWidget {
   _ActionPostState createState() => _ActionPostState();
 }
 
-class _ActionPostState extends State<ActionPost> {
+class _ActionPostState extends ConsumerState<ActionPost> {
   Post get post => widget.post;
   int likeCount = 0;
   bool isLiked = false;

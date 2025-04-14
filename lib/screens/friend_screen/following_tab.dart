@@ -22,15 +22,15 @@ class _FollowingTabState extends State<FollowingTab> {
   @override
   void initState() {
     super.initState();
-    getFollowing = loadData();
+    // getFollowing = loadData();
   }
 
-  Future<List<User>> loadData() async {
-    final data = await AuthService.getSavedData();
-
-    final userId = data['userId'];
-    return FollowService().getFollowings(userId);
-  }
+  // Future<List<User>> loadData() async {
+  //   final data = await AuthService.getSavedData();
+  //
+  //   final userId = data['userId'];
+  //   // return FollowService().getFollowings(userId);
+  // }
 
   @override
   Widget build(BuildContext context) {

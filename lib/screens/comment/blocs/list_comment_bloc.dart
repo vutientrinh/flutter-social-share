@@ -11,14 +11,14 @@ class ListCommentsBloc extends BlocBase {
 
   List<Comment>? get postsValue => _commentsCtr.value;
 
-  Future<void> getComment(String postId) async {
-    try {
-      final comments = await CommentService().getCommentsAPI(postId);
-      _commentsCtr.sink.add(comments);
-    } catch (e) {
-      print("Error in getComment $e");
-    }
-  }
+  // Future<void> getComment(String postId) async {
+  //   try {
+  //     final comments = await CommentService().getCommentsAPI(postId);
+  //     _commentsCtr.sink.add(comments);
+  //   } catch (e) {
+  //     print("Error in getComment $e");
+  //   }
+  // }
   @override
   void dispose() {
     _commentsCtr.close();

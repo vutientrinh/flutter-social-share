@@ -9,11 +9,12 @@ class WebSocketService {
   final String userId;
   final Function(Conversation) onMessageReceived;
   String? token;
+  AuthService authService;
 
-  WebSocketService({required this.userId, required this.onMessageReceived});
+  WebSocketService({required this.userId, required this.authService, required this.onMessageReceived});
 
   void connect() async {
-    final data = await AuthService.getSavedData();
+    final data = await authService.getSavedData();
     token = data['token'];
 
     _stompClient = StompClient(

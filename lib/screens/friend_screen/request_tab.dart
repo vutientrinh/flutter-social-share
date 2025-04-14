@@ -20,41 +20,41 @@ class _RequestsTabState extends State<RequestsTab> {
   @override
   void initState() {
     super.initState();
-    getRequest = loadData();
+    // getRequest = loadData();
     print(getRequest);
   }
 
   Future<void> _acceptRequest(String username, String friendRequestId) async {
-    final response = await FriendService().acceptFriend(friendRequestId);
-    if (response != false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Accepted Request ${username ?? 'User'}",
-            style: const TextStyle(color: Colors.black),
-          ),
-        ),
-      );
-    }
+    // final response = await FriendService().acceptFriend(friendRequestId);
+    // if (response != false) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text(
+    //         "Accepted Request ${username ?? 'User'}",
+    //         style: const TextStyle(color: Colors.black),
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 
   Future<void> _rejectRequest(String username, String friendRequestId) async {
-    final response = await FriendService().deleteFriend(friendRequestId);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "Rejected Request ${username ?? 'User'}",
-          style: const TextStyle(color: Colors.black),
-        ),
-      ),
-    );
+    // final response = await FriendService().deleteFriend(friendRequestId);
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Text(
+    //       "Rejected Request ${username ?? 'User'}",
+    //       style: const TextStyle(color: Colors.black),
+    //     ),
+    //   ),
+    // );
   }
 
-  Future<List<FriendRequest>> loadData() async {
-    final data = await AuthService.getSavedData();
-    final userId = data['userId'];
-    return FriendService().getFriendRequests(userId);
-  }
+  // Future<List<FriendRequest>> loadData() async {
+  //   final data = await AuthService.getSavedData();
+  //   final userId = data['userId'];
+  //   // return FriendService().getFriendRequests(userId);
+  // }
 
   @override
   Widget build(BuildContext context) {

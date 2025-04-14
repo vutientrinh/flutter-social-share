@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/create_post_screen.dart';
 
-class CreatePost extends StatelessWidget {
-  const CreatePost({super.key});
+import '../utils/uidata.dart';
 
+class CreatePost extends StatefulWidget {
+  final String avatar;
+  const CreatePost({super.key, required this.avatar});
+
+  @override
+  State<CreatePost> createState() => _CreatePostState();
+}
+
+class _CreatePostState extends State<CreatePost> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -11,10 +19,10 @@ class CreatePost extends StatelessWidget {
       color: Colors.white,
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 22,
             backgroundImage:  NetworkImage(
-                'https://wallup.net/wp-content/uploads/2016/02/18/286966-nature-photography.jpg'), // replace with your asset or NetworkImage
+              LINK_IMAGE.publicImage(widget.avatar)), // replace with your asset or NetworkImage
           ),
           const SizedBox(width: 10),
           Expanded(

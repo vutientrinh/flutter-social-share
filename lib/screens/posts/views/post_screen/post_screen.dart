@@ -77,7 +77,7 @@ class _ListPostsScreenState extends State<ListPostsScreen> {
                 : HorizontalUserList(users: users),
           ),
           const SliverToBoxAdapter(
-            child: CreatePost(),
+            child: CreatePost(avatar: "",),
           ),
           CupertinoSliverRefreshControl(
             onRefresh: _postsBloc.getPosts,

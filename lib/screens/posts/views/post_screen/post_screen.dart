@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
 import 'package:flutter_social_share/providers/post_provider.dart';
-import 'package:flutter_social_share/screens/posts/blocs/list_posts_rxdart_bloc.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
@@ -11,7 +10,6 @@ import 'package:http/http.dart';
 
 import '../../../../model/post.dart';
 import '../../../../model/user.dart';
-import '../../../../providers/post_nofitier.dart';
 import '../../../../services/user_service.dart';
 import '../../../messages_screen/messages_screen.dart';
 

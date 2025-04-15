@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/component/horizontal_user_list.dart';
-import 'package:flutter_social_share/providers/state_provider/post_provider.dart';
-import 'package:flutter_social_share/screens/posts/models/post.dart';
-import 'package:flutter_social_share/component/create_post.dart';
-import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
-import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
-import 'package:http/http.dart';
 
-import '../../../../model/post.dart';
+import 'package:flutter_social_share/component/create_post.dart';
+import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
+
 import '../../../../model/user.dart';
 import '../../../../providers/async_provider/post_async_provider.dart';
-import '../../../../services/user_service.dart';
 import '../../../messages_screen/messages_screen.dart';
 
 

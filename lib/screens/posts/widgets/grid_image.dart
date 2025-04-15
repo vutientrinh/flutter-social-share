@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/screens/posts/models/photo.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_img_item.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 

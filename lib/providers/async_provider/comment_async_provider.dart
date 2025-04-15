@@ -16,6 +16,7 @@ class CommentNotifier extends AsyncNotifier<List<Comment>> {
   Future<void> getCommentAPI(String postId) async {
     final commentService = ref.watch(commentServiceProvider);
     final comments = await commentService.getCommentsAPI(postId);
+    print(comments);
     state = AsyncData(comments); // ✅ update UI
   }
 

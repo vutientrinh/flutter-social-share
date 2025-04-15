@@ -4,7 +4,6 @@ import 'package:flutter_social_share/providers/state_provider/auth_provider.dart
 import 'package:flutter_social_share/services/auth_service.dart';
 
 import '../../model/post.dart';
-import '../posts/models/post.dart';
 import '../posts/widgets/post_item_remake.dart';
 import 'package:riverpod/riverpod.dart';
 class ProfileScreen extends ConsumerStatefulWidget {

@@ -2,7 +2,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/icon_post_comment.dart';
 import 'package:flutter_social_share/screens/posts/widgets/text_count_number.dart';
 

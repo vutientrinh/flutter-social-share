@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/post_detail_screen.dart';
 import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';

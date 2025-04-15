@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
-
 import '../../model/user.dart';
-import '../../services/auth_service.dart';
-import '../../services/user_service.dart';
-import 'chat_detail.dart';
 
 class MessagesScreen extends ConsumerStatefulWidget {
   const MessagesScreen({super.key});

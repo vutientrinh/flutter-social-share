@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_social_share/model/friend_request.dart';
 import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
-import 'package:flutter_social_share/services/friend_service.dart';
-
-import '../../model/user.dart';
-import '../../services/auth_service.dart';
-import '../profile_screen/profile_screen.dart';
 
 class RequestsTab extends StatefulWidget {
   const RequestsTab({super.key});

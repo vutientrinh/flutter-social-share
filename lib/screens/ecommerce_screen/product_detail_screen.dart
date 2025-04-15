@@ -4,6 +4,7 @@ import 'cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productName;
+
   const ProductDetailScreen({super.key, required this.productName});
 
   @override
@@ -11,8 +12,6 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +33,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const CartScreen()),
+                  MaterialPageRoute(builder: (context) => const CartScreen()),
                 );
               },
               icon: const Icon(
@@ -70,7 +68,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   widget.productName,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(

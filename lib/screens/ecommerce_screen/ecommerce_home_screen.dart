@@ -64,8 +64,7 @@ class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const CartScreen()),
+                  MaterialPageRoute(builder: (context) => const CartScreen()),
                 );
               },
             ),

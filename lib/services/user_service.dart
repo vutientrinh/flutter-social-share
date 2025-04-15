@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 
 import '../model/user.dart';
-import 'api_client.dart';
 
 class UserService {
   final Dio _dio;
+
   UserService(this._dio);
 
   Future<List<User>> getAllUsers() async {
@@ -33,19 +33,24 @@ class UserService {
       return response;
     } catch (e) {
       print('Error adding follow: $e');
-      throw Exception('Failed to follow user: $e'); // Optional: rethrow to handle elsewhere
+      throw Exception(
+          'Failed to follow user: $e'); // Optional: rethrow to handle elsewhere
     }
   }
+
   Future<Response> unfollow(String userId) async {
     try {
       final response = await _dio.delete('/users/$userId/unfollow');
       return response;
     } catch (e) {
       print('Error adding follow: $e');
-      throw Exception('Failed to follow user: $e'); // Optional: rethrow to handle elsewhere
+      throw Exception(
+          'Failed to follow user: $e'); // Optional: rethrow to handle elsewhere
     }
   }
-  Future<Response> getFollowers(String userId, {int page = 1, int size = 10}) async {
+
+  Future<Response> getFollowers(String userId,
+      {int page = 1, int size = 10}) async {
     try {
       final response = await _dio.get(
         '/users/$userId/followers',
@@ -60,7 +65,9 @@ class UserService {
       throw Exception('Failed to fetch followers: $e');
     }
   }
-  Future<Response> getFollowings(String userId, {int page = 1, int size = 10}) async {
+
+  Future<Response> getFollowings(String userId,
+      {int page = 1, int size = 10}) async {
     try {
       final response = await _dio.get(
         '/users/$userId/followings',
@@ -75,6 +82,7 @@ class UserService {
       throw Exception('Failed to fetch followers: $e');
     }
   }
+
   Future<User> getProfileById(String userId) async {
     try {
       final response = await _dio.get(
@@ -87,5 +95,4 @@ class UserService {
       throw Exception('Failed to fetch profile: $e');
     }
   }
-
 }

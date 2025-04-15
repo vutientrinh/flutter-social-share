@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
-import 'package:flutter_social_share/screens/comment/blocs/list_comment_bloc.dart';
 import 'package:flutter_social_share/screens/comment/widgets/cmt_item_buble.dart';
-import 'package:flutter_social_share/services/comment_service.dart';
-
-import '../../../model/comment.dart';
 
 class ListComment extends ConsumerStatefulWidget {
   final String postId;
@@ -21,7 +17,9 @@ class _ListCommentState extends ConsumerState<ListComment> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.read(commentAsyncNotifierProvider.notifier).getCommentAPI(widget.postId);
+      ref
+          .read(commentAsyncNotifierProvider.notifier)
+          .getCommentAPI(widget.postId);
     });
   }
 

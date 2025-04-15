@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 
 class UploadFileService {
   final Dio _dio;
+
   UploadFileService(this._dio);
 
   Future<Response> uploadFile(File file, String bucketName) async {

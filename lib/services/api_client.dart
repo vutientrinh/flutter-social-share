@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/main.dart'; // for navigatorKey
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +46,7 @@ final apiClientProvider = Provider<Dio>((ref) {
           await ref.read(authTokenProvider.notifier).clearToken(); // logout
           navigatorKey.currentState?.pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const LoginScreen()),
-                (_) => false,
+            (_) => false,
           );
         }
 
@@ -58,4 +57,3 @@ final apiClientProvider = Provider<Dio>((ref) {
 
   return dio;
 });
-

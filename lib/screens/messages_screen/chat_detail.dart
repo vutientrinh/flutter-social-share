@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
-import 'package:flutter_social_share/services/chat_service.dart';
 import '../../model/conversation.dart';
 import '../../socket_service/websocket_service.dart';
 

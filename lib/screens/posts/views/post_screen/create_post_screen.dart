@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
-import 'package:flutter_social_share/screens/posts/views/post_screen/post_screen.dart';
-import 'package:flutter_social_share/services/auth_service.dart';
-import 'package:flutter_social_share/services/post_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 

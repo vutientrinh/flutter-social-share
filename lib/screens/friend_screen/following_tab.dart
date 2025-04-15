@@ -1,12 +1,6 @@
-import 'package:dio/src/response.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/services/follow_service.dart';
 import '../../model/user.dart';
-import '../../services/auth_service.dart';
-import '../../services/user_service.dart';
 import 'list_user.dart';
-import 'user_avatar.dart'; // Your custom widget
-import '../profile_screen/profile_screen.dart';
 
 class FollowingTab extends StatefulWidget {
   const FollowingTab({super.key});

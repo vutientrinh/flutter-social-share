@@ -46,7 +46,8 @@ class _CommentItemBubbleState extends State<CommentItemBubble> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(sizeAvatar / 2),
               child: CachedNetworkImage(
-                imageUrl: "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
+                imageUrl:
+                    "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
               ),
             ),
           ),
@@ -193,7 +194,8 @@ class _CommentItemBubbleState extends State<CommentItemBubble> {
           assetIcon: UIData.angryGif,
           code: '6',
         ),
-      ], //_flags,
+      ],
+      //_flags,
       onTap: () {},
       onSelected: (ReactiveIconDefinition? value) {
         yourReact = int.parse(value!.code);

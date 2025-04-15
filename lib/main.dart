@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'auth.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
@@ -12,7 +13,8 @@ void main() async {
   print("🌍 API Base URL: ${dotenv.env['API_BASE_URL']}");
 
   runApp(
-    const ProviderScope( // <-- THIS IS REQUIRED
+    const ProviderScope(
+      // <-- THIS IS REQUIRED
       child: MyApp(), // your root widget
     ),
   );
@@ -34,4 +36,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

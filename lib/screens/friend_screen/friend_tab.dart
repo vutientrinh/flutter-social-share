@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/screens/friend_screen/list_user.dart';
 import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
 import '../../model/user.dart';
-import '../../services/auth_service.dart';
-import '../../services/follow_service.dart';
-import '../../services/friend_service.dart';
 
 class FriendsTab extends StatefulWidget {
   const FriendsTab({super.key});

@@ -1,66 +1,67 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_social_share/providers/auth_provider.dart';
-import 'package:flutter_social_share/screens/authentication/login_screen.dart';
-import 'package:flutter_social_share/screens/home_screen/home_page.dart';
-import 'package:flutter_social_share/services/auth_service.dart';
-import 'package:flutter_social_share/services/user_service.dart';
-import '../providers/user_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'model/user.dart';
+  import 'package:flutter/material.dart';
+  import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+  import 'package:flutter_social_share/screens/authentication/login_screen.dart';
+  import 'package:flutter_social_share/screens/home_screen/home_page.dart';
+  import 'package:flutter_social_share/services/auth_service.dart';
+  import 'package:flutter_social_share/services/user_service.dart';
+  import 'providers/state_provider/user_provider.dart';
+  import 'package:flutter_riverpod/flutter_riverpod.dart';
+  import 'model/user.dart';
 
-class AuthCheck extends ConsumerStatefulWidget {
-  const AuthCheck({Key? key}) : super(key: key);
+  class AuthCheck extends ConsumerStatefulWidget {
+    const AuthCheck({Key? key}) : super(key: key);
 
-  @override
-  _AuthCheckState createState() => _AuthCheckState();
-}
-
-class _AuthCheckState extends ConsumerState<AuthCheck> {
-  String userId = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _checkAuthStatus();
+    @override
+    _AuthCheckState createState() => _AuthCheckState();
   }
 
+  class _AuthCheckState extends ConsumerState<AuthCheck> {
+    String userId = "";
 
-  // Method to check if the token exists and is valid
-  Future<void> _checkAuthStatus() async {
-    final authService = ref.read(authServiceProvider);
-    bool isValid = await authService.introspect();
-    print(isValid);
-    final savedData = await authService.getSavedData();
-    // final user = await UserService().getProfileById(savedData['userId']);
-
-    // Navigate to the appropriate screen based on authentication status
-    if (isValid == true) {
-      _navigateToHomeScreen();
+    @override
+    void initState() {
+      super.initState();
+      _checkAuthStatus();
     }
-    // ref.read(userProvider.notifier).state = user;
-    _navigateToLoginScreen();
-  }
 
-  // Navigate to the login screen
-  void _navigateToLoginScreen() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-    );
-  }
 
-  // Navigate to the home screen
-  void _navigateToHomeScreen() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
-    );
-  }
+    // Method to check if the token exists and is valid
+    Future<void> _checkAuthStatus() async {
+      final authService = ref.read(authServiceProvider);
+      // final userService = ref.read(userProvider);
+      bool isValid = await authService.introspect();
+      print(isValid);
+      final savedData = await authService.getSavedData();
+      // final user = await user.getProfileById(savedData['userId']);
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+      // Navigate to the appropriate screen based on authentication status
+      if (isValid == true) {
+        _navigateToHomeScreen();
+      } else {
+        _navigateToLoginScreen();
+      }
+    }
+
+    // Navigate to the login screen
+    void _navigateToLoginScreen() {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
+
+    // Navigate to the home screen
+    void _navigateToHomeScreen() {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
   }
-}

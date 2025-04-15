@@ -1,7 +1,7 @@
 class User {
   final String id;
   final String username;
-  final String? avatar;
+  final String avatar;
   final String? firstName;
   final String? lastName;
   final List<dynamic>? roles;

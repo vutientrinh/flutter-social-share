@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
-import 'package:flutter_social_share/providers/post_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/post_provider.dart';
 import 'package:flutter_social_share/screens/posts/models/post.dart';
 import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
@@ -10,13 +10,11 @@ import 'package:http/http.dart';
 
 import '../../../../model/post.dart';
 import '../../../../model/user.dart';
+import '../../../../providers/async_provider/post_async_provider.dart';
 import '../../../../services/user_service.dart';
 import '../../../messages_screen/messages_screen.dart';
 
-final postProvider = FutureProvider<List<Post>>((ref) async {
-  final postService = ref.watch(postServiceProvider);
-  return await postService.getAllPosts();
-});
+
 class ListPostsScreen extends ConsumerStatefulWidget {
   const ListPostsScreen({Key? key}) : super(key: key);
 
@@ -26,25 +24,15 @@ class ListPostsScreen extends ConsumerStatefulWidget {
 
 class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
   List<User> users = [];
-  Future<void> fetchUsers() async {
-    // try {
-    //   final response = await UserService().getAllUsers(); // Make sure it returns List<String> or List<Map>
-    //   setState(() {
-    //     users = response; // Adjust if response shape is different
-    //   });
-    // } catch (e) {
-    //   debugPrint("Error fetching users: $e");
-    // }
-  }
   @override
   void initState() {
     super.initState();
-    fetchUsers();
   }
 
   @override
   Widget build(BuildContext context) {
-    final postState = ref.watch(postProvider);
+    final postsAsync = ref.watch(postAsyncNotifierProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
@@ -80,12 +68,12 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
           //       : HorizontalUserList(users: users),
           // ),
           const SliverToBoxAdapter(
-            child: CreatePost(avatar: "",),
+            child: CreatePost(avatar: "https://wallup.net/wp-content/uploads/2016/02/18/286966-nature-photography.jpg",),
           ),
           // CupertinoSliverRefreshControl(
           //   onRefresh: _postsBloc.getPosts,
           // ),
-          postState.when(
+          postsAsync.when(
             loading: () => const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
             ),

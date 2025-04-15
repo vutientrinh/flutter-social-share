@@ -7,6 +7,7 @@ import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
 
 import '../../../../model/post.dart';
+import '../../../../utils/uidata.dart';
 
 class PostDetailScreen extends ConsumerStatefulWidget {
   final Post post;
@@ -57,7 +58,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                       child: ItemRow(
-                        avatarUrl: post.author.avatar,
+                        avatarUrl: LINK_IMAGE.publicImage(post.author.avatar),
                         title: post.author.username,
                         subtitle: post.createdAt,
                         rightWidget: IconButton(

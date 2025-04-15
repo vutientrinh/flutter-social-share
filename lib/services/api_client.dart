@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_social_share/providers/user_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/main.dart'; // for navigatorKey
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../providers/auth_token_provider.dart';
 
 final apiClientProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
@@ -40,11 +42,9 @@ final apiClientProvider = Provider<Dio>((ref) {
         print("✅ [Response] ${response.statusCode} - ${response.data}");
         return handler.next(response);
       },
-      onError: (e, handler) {
+      onError: (e, handler) async {
         if (e.response?.statusCode == 401) {
-          // Clear user and redirect to login
-          ref.read(userProvider.notifier).state = null;
-
+          await ref.read(authTokenProvider.notifier).clearToken(); // logout
           navigatorKey.currentState?.pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const LoginScreen()),
                 (_) => false,

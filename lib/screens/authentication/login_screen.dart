@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/providers/auth_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/screens/authentication/register_screen.dart';
 import '../home_screen/home_page.dart';
 
@@ -29,6 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     final response = await _authService.login(username, password);
+    print('Login response value : $response');
     setState(() {
       _isLoading = false;
     });

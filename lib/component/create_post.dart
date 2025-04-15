@@ -19,10 +19,11 @@ class _CreatePostState extends State<CreatePost> {
       color: Colors.white,
       child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 22,
             backgroundImage:  NetworkImage(
-              LINK_IMAGE.publicImage(widget.avatar)), // replace with your asset or NetworkImage
+              // LINK_IMAGE.publicImage(widget.avatar)
+                "https://wallup.net/wp-content/uploads/2016/02/18/286966-nature-photography.jpg"), // replace with your asset or NetworkImage
           ),
           const SizedBox(width: 10),
           Expanded(

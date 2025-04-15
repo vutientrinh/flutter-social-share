@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/providers/auth_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/post_screen.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
 import 'package:flutter_social_share/services/post_service.dart';
@@ -10,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../model/post_request.dart';
+import '../../../../providers/async_provider/post_async_provider.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   const CreatePostScreen({super.key});
@@ -33,6 +35,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   void loadData() async {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
+    print(data['userId']);
     setState(() {
       username = data['username'];
       userId = data['userId'];
@@ -40,77 +43,106 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   }
 
   Future<void> _onPost() async {
+    if (_controller.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post content  missing')),
+      );
+      return;
+    }
     try {
-      final postRequest = PostRequest(
+      final notifier = ref.read(postAsyncNotifierProvider.notifier);
+
+      final newPost = PostRequest(
         content: _controller.text,
-        images:_images,
-        authorId: userId??"", // Or whatever field you saved
-        topicId:
-            "57ffa366-c9e9-4658-b58b-a1c14ad0934b", // Fill this appropriately
+        images: _images,
+        authorId: userId!,
+        topicId: "57ffa366-c9e9-4658-b58b-a1c14ad0934b", // Change if needed
       );
 
-      // final response = await PostService().createPost(postRequest);
-      final response = null;
+      await notifier.addPost(newPost);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Post created')),
-        );
-        setState(() {
-          _controller.clear();
-          _images.clear();
-        });
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ListPostsScreen()), // Replace with your target page
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed: ${response.statusCode}')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post created')),
+      );
+
+      setState(() {
+        _controller.clear();
+        _images.clear();
+      });
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
     } catch (e) {
-      debugPrint('Error: $e');
+      debugPrint('Post error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error posting: $e')),
       );
     }
   }
 
+  // Future<void> _pickImages() async {
+  //   final picker = ImagePicker();
+  //
+  //   // Request permissions depending on Android version
+  //   if (Platform.isAndroid) {
+  //     final sdkInt = (await Permission.mediaLibrary.status).isGranted
+  //         ? 33
+  //         : (await Permission.storage.status).isGranted
+  //             ? 30
+  //             : 0;
+  //
+  //     if (sdkInt >= 33) {
+  //       final status = await Permission.photos.request();
+  //       if (!status.isGranted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text('Permission to access media denied')),
+  //         );
+  //         return;
+  //       }
+  //     } else {
+  //       final status = await Permission.storage.request();
+  //       if (!status.isGranted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(
+  //               content: Text('Permission to access storage denied')),
+  //         );
+  //         return;
+  //       }
+  //     }
+  //   }
+  //
+  //   try {
+  //     final picked = await picker.pickMultiImage(imageQuality: 85);
+  //
+  //     if (picked.isNotEmpty) {
+  //       setState(() {
+  //         _images.addAll(picked.map((e) => File(e.path)));
+  //       });
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Image pick error: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to pick images: $e')),
+  //     );
+  //   }
+  // }
   Future<void> _pickImages() async {
     final picker = ImagePicker();
 
-    // Request permissions depending on Android version
-    if (Platform.isAndroid) {
-      final sdkInt = (await Permission.mediaLibrary.status).isGranted
-          ? 33
-          : (await Permission.storage.status).isGranted
-              ? 30
-              : 0;
-
-      if (sdkInt >= 33) {
-        final status = await Permission.photos.request();
-        if (!status.isGranted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Permission to access media denied')),
-          );
-          return;
-        }
-      } else {
-        final status = await Permission.storage.request();
-        if (!status.isGranted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Permission to access storage denied')),
-          );
-          return;
-        }
+    if (Platform.isAndroid || Platform.isIOS) {
+      final status = await Permission.photos.request();
+      if (!status.isGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Permission denied to access photos')),
+        );
+        return;
       }
     }
 
     try {
       final picked = await picker.pickMultiImage(imageQuality: 85);
-
       if (picked.isNotEmpty) {
         setState(() {
           _images.addAll(picked.map((e) => File(e.path)));
@@ -134,7 +166,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           TextButton(
-            onPressed: userId == null ? null : _onPost,
+            onPressed: _onPost,
             child: const Text(
               'Post',
               style: TextStyle(
@@ -203,6 +235,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                     fit: BoxFit.cover,
                                     gaplessPlayback: true,
                                   ),
+
                                 );
                               }).toList(),
                             ),

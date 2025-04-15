@@ -95,4 +95,24 @@ class UserService {
       throw Exception('Failed to fetch profile: $e');
     }
   }
+  Future<bool> updateProfile(String avatar,String cover,String firstName,String lastName,String bio,String websiteUrl) async {
+    try {
+      final response = await _dio.put(
+        '/users/profile',
+        data: {
+          "avatar":avatar,
+          "cover":cover,
+          "firstName":firstName,
+          "lastName":lastName,
+          "bio":bio,
+          "websiteUrl":websiteUrl
+        }
+      );
+
+      return response.data;
+    } catch (e) {
+      print('Error fetching profile: $e');
+      throw Exception('Failed to fetch profile: $e');
+    }
+  }
 }

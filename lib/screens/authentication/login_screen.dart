@@ -4,7 +4,7 @@ import 'package:flutter_social_share/providers/state_provider/auth_provider.dart
 import 'package:flutter_social_share/screens/authentication/register_screen.dart';
 import '../home_screen/home_page.dart';
 
-class LoginScreen extends ConsumerStatefulWidget  {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
@@ -20,7 +20,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   // Function to handle login
   // Function to handle login
   Future<void> _handleLogin() async {
-    final  _authService = ref.read(authServiceProvider); // Create instance of AuthService
+    final _authService =
+        ref.read(authServiceProvider); // Create instance of AuthService
 
     String username = _usernameController.text.trim();
     String password = _passwordController.text.trim();
@@ -48,7 +49,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +113,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _isObscure = !_isObscure; // Toggle password visibility
+                          _isObscure =
+                              !_isObscure; // Toggle password visibility
                         });
                       },
                     ),
@@ -137,20 +138,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 _isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 50),
-                  ),
-                  onPressed: _handleLogin, // Call login function
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 50),
+                        ),
+                        onPressed: _handleLogin, // Call login function
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +162,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => const RegisterScreen()),
                         );
                       },
                       child: Text(

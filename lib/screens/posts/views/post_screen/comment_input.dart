@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/services/comment_service.dart';
 
-class CommentInput extends StatefulWidget {
+class CommentInput extends ConsumerStatefulWidget {
   final String? postId;
   const CommentInput({super.key, required this.postId});
 
   @override
-  State<CommentInput> createState() => _CommentInputState();
+  ConsumerState<CommentInput> createState() => _CommentInputState();
 }
 
-class _CommentInputState extends State<CommentInput> {
+class _CommentInputState extends ConsumerState<CommentInput> {
   final TextEditingController _commentController = TextEditingController();
   void _sendComment() async {
     final content = _commentController.text.trim();

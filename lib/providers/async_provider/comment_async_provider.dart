@@ -8,16 +8,20 @@ final commentAsyncNotifierProvider =
 AsyncNotifierProvider<CommentNotifier, List<Comment>>(CommentNotifier.new);
 
 class CommentNotifier extends AsyncNotifier<List<Comment>> {
+  String? _currentPostId;
   @override
   Future<List<Comment>> build() async {
     return []; // Nothing is fetched automatically
   }
 
   Future<void> getCommentAPI(String postId) async {
+    _currentPostId = postId;
+    state = const AsyncLoading();
     final commentService = ref.watch(commentServiceProvider);
     final comments = await commentService.getCommentsAPI(postId);
-    print(comments);
-    state = AsyncData(comments); // ✅ update UI
+    if (_currentPostId == postId) {
+      state = AsyncData(comments);
+    }// ✅ update UI
   }
 
   Future<void> createComment(String postId, String content) async {

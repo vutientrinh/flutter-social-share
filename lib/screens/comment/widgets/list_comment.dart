@@ -17,17 +17,6 @@ class ListComment extends ConsumerStatefulWidget {
 }
 
 class _ListCommentState extends ConsumerState<ListComment> {
-  final _commentsBloc = ListCommentsBloc();
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // _commentsBloc.getComment(widget.postId);
-  // }
-  // Future<List<Comment>> getComment(String postId) async{
-  //   // final response = await CommentService().getCommentsAPI(postId);
-  //   return response;
-  // }
   @override
   void initState() {
     super.initState();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/component/more_option_bottomsheet.dart';
 import 'package:flutter_social_share/model/follow_response.dart';
 import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
@@ -47,7 +48,15 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
             return ListUser(
               username: following.username ?? "Unknown",
               avatar: following.avatar ?? "",
-
+              trailing: IconButton(
+                icon: const Icon(Icons.more_horiz),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => MoreOptionBottomsheet(user: following, option: "Following",),
+                  );
+                },
+              ),
             );
           },
         );

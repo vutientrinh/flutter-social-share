@@ -40,6 +40,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
   Widget build(BuildContext context) {
     final friendState = ref.watch(friendRequestAsyncProvider);
     return Column(
+
       children: [
         // Top title button
         const Padding(
@@ -56,7 +57,6 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
           ),
         ),
         Expanded(
-          // ✅ fix
           child: friendState.when(
             data: (friendRequests) {
               if (friendRequests.isEmpty) {

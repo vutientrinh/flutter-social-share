@@ -5,7 +5,7 @@ class FollowUserResponse {
   final String? lastName;
   final String? avatar;
   final bool hasFollowedBack;
-  final DateTime followAt;
+  final String followAt;
 
   FollowUserResponse({
     required this.id,
@@ -25,7 +25,7 @@ class FollowUserResponse {
       lastName: json['lastName'],
       avatar: json['avatar'],
       hasFollowedBack: json['hasFollowedBack'],
-      followAt: DateTime.parse(json['followAt']),
+      followAt: json['followAt'],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/follow_response.dart';
 
 import '../../providers/async_provider/follow_async_provider.dart';
 import '../../providers/state_provider/auth_provider.dart';
@@ -61,7 +62,7 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
-                        builder: (context) => _buildBottomSheet(context),
+                        builder: (context) => _buildBottomSheet(context, following),
                       );
                     },
                   )
@@ -75,7 +76,7 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
       error: (error, _) => Center(child: Text('Error: $error')),
     );
   }
-  Widget _buildBottomSheet(BuildContext context) {
+  Widget _buildBottomSheet(BuildContext context, FollowUserResponse following) {
     return Container(
       padding: const EdgeInsets.all(16),
       height: 200,

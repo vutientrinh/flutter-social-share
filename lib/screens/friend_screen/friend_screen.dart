@@ -19,8 +19,8 @@ class FriendScreen extends StatelessWidget {
             indicatorColor: Colors.black,
             tabs: [
               Tab(text: "Friends"),
+              Tab(text: "Follower"),
               Tab(text: "Following"),
-              Tab(text: "Requests"),
             ],
           ),
           backgroundColor: Colors.white,

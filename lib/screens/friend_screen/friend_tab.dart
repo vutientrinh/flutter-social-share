@@ -1,65 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/friend_request_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/friend_provider.dart';
 import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
 import '../../model/user.dart';
+import '../../providers/async_provider/friend_async_provider.dart';
+import '../../providers/state_provider/auth_provider.dart';
+import 'list_user.dart';
 
-class FriendsTab extends StatefulWidget {
+class FriendsTab extends ConsumerStatefulWidget {
   const FriendsTab({super.key});
 
   @override
-  State<FriendsTab> createState() => _FriendsTabState();
+  ConsumerState<FriendsTab> createState() => _FriendsTabState();
 }
 
-class _FriendsTabState extends State<FriendsTab> {
-  late Future<List<User>> getFollowers;
+class _FriendsTabState extends ConsumerState<FriendsTab> {
+  String? userId;
 
   @override
   void initState() {
     super.initState();
-    // getFollowers = loadData();
+    getFriendRequest();
   }
 
-  // Future<List<User>> loadData() async {
-  //   final data = await AuthService.getSavedData();
-  //
-  //   final userId = data['userId'];
-  //   return FriendService().getFriends(userId);
-  //
-  //   // return FollowService().getFollowers(userId);
-  // }
+  Future<void> getFriendRequest() async {
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
+    userId = data['userId'];
+    print(userId);
+    if (userId != null) {
+      await ref
+          .read(friendRequestAsyncProvider.notifier)
+          .getFriendRequests(userId!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<User>>(
-      future: getFollowers,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child: CircularProgressIndicator()); // Show loading indicator
-        } else if (snapshot.hasError) {
-          return Center(
-              child: Text('Error: ${snapshot.error}')); // Handle error
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No users found.')); // Handle no data
-        } else {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final follower = snapshot.data![index];
-              return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-                  // Optional padding between items
-                  child:
-                      UserAvatar(
-                        userName: follower.username,
-                        avatarUrl: follower.avatar ?? "",
-                      ),
-                      // const Icon(Icons.more_vert),
+    final friendState = ref.watch(friendRequestAsyncProvider);
+    return Column(
+      children: [
+        // Top title button
+        const Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Icon(Icons.people_alt),
+              SizedBox(width: 8),
+              Text(
+                "Friend Requests",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          // ✅ fix
+          child: friendState.when(
+            data: (friendRequests) {
+              if (friendRequests.isEmpty) {
+                return const Center(child: Text('No users found.'));
+              }
+              return ListView.builder(
+                itemCount: friendRequests.length,
+                itemBuilder: (context, index) {
+                  final friendRequest = friendRequests[index];
+                  return ListUser(
+                    username: friendRequest.username ?? "Unknown",
+                    avatar: friendRequest.avatar ?? "",
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => ref
+                              .read(friendAsyncNotifierProvider.notifier)
+                              .acceptFriend(friendRequest.id),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue),
+                          child: const Text("Accept"),
+                        ),
+                        const SizedBox(width: 10),
+                        OutlinedButton(
+                          onPressed: () => ref
+                              .read(friendAsyncNotifierProvider.notifier)
+                              .removeFriend(friendRequest.id),
+                          child: const Text("Deny"),
+                        ),
+                      ],
+                    ),
                   );
+                },
+              );
             },
-          );
-        }
-      },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => Center(child: Text('Error: $error')),
+          ),
+        )
+      ],
     );
   }
 }

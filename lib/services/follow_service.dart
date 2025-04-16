@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_social_share/model/follow_response.dart';
 import 'package:flutter_social_share/model/user.dart';
 
 class FollowService {
@@ -26,29 +27,29 @@ class FollowService {
     }
   }
 
-  Future<List<User>> getFollowers(String userId,
+  Future<List<FollowUserResponse>> getFollowers(String userId,
       {int page = 1, int size = 10}) async {
     try {
       final response = await _dio
           .get('/users/$userId/followers', data: {"page": page, "size": size});
-      final List<dynamic> userListJson = response.data['data']['data'];
+      final List<dynamic> followersListJson = response.data['data']['data'];
 
-      return userListJson.map((json) => User.fromJson(json)).toList();
+      return followersListJson.map((json) => FollowUserResponse.fromJson(json)).toList();
     } catch (e) {
       print('Error get followers: $e');
       throw Exception('Failed to get followers: $e');
     }
   }
 
-  Future<List<User>> getFollowings(String userId,
+  Future<List<FollowUserResponse>> getFollowings(String userId,
       {int page = 1, int size = 10}) async {
     try {
       final response = await _dio
           .get('/users/$userId/followings', data: {"page": page, "size": size});
 
-      final List<dynamic> userListJson = response.data['data']['data'];
+      final List<dynamic> followingsListJson = response.data['data']['data'];
 
-      return userListJson.map((json) => User.fromJson(json)).toList();
+      return followingsListJson.map((json) => FollowUserResponse.fromJson(json)).toList();
     } catch (e) {
       print('Error get followings: $e');
       throw Exception('Failed to get followings: $e');

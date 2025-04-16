@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/friend_request.dart';
 import 'package:flutter_social_share/model/user.dart';
 
+import '../model/follow_response.dart';
+
 class FriendService {
   final Dio _dio;
 
@@ -16,6 +18,7 @@ class FriendService {
           'receiverId': receiverId,
         },
       );
+      print(response);
       return response;
     } catch (e) {
       print('Error adding friend: $e');
@@ -52,9 +55,9 @@ class FriendService {
         "page": page,
         "size": size
       });
-      final List<dynamic> userListJson = response.data['data']['data'];
+      final List<dynamic> friendListJson = response.data['data']['data'];
 
-      return userListJson.map((json) => User.fromJson(json)).toList();
+      return friendListJson.map((json) => User.fromJson(json)).toList();
     } catch (e) {
       print('Error get friend: $e');
       throw Exception('Failed to get friends: $e');

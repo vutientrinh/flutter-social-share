@@ -79,52 +79,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     }
   }
 
-  // Future<void> _pickImages() async {
-  //   final picker = ImagePicker();
-  //
-  //   // Request permissions depending on Android version
-  //   if (Platform.isAndroid) {
-  //     final sdkInt = (await Permission.mediaLibrary.status).isGranted
-  //         ? 33
-  //         : (await Permission.storage.status).isGranted
-  //             ? 30
-  //             : 0;
-  //
-  //     if (sdkInt >= 33) {
-  //       final status = await Permission.photos.request();
-  //       if (!status.isGranted) {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(content: Text('Permission to access media denied')),
-  //         );
-  //         return;
-  //       }
-  //     } else {
-  //       final status = await Permission.storage.request();
-  //       if (!status.isGranted) {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(
-  //               content: Text('Permission to access storage denied')),
-  //         );
-  //         return;
-  //       }
-  //     }
-  //   }
-  //
-  //   try {
-  //     final picked = await picker.pickMultiImage(imageQuality: 85);
-  //
-  //     if (picked.isNotEmpty) {
-  //       setState(() {
-  //         _images.addAll(picked.map((e) => File(e.path)));
-  //       });
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Image pick error: $e');
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to pick images: $e')),
-  //     );
-  //   }
-  // }
+
   Future<void> _pickImages() async {
     final picker = ImagePicker();
 

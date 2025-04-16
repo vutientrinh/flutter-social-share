@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/component/more_option_bottomsheet.dart';
 import 'package:flutter_social_share/model/follow_response.dart';
 
 import '../../providers/async_provider/follow_async_provider.dart';
@@ -33,24 +34,24 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
 
   @override
   Widget build(BuildContext context) {
-    final followingState = ref.watch(followAsyncNotifierProvider);
+    final followerState = ref.watch(followAsyncNotifierProvider);
 
-    return followingState.when(
-      data: (followings) {
-        if (followings.isEmpty) {
+    return followerState.when(
+      data: (followers) {
+        if (followers.isEmpty) {
           return const Center(child: Text('No users found.'));
         }
         return ListView.builder(
-          itemCount: followings.length,
+          itemCount: followers.length,
           itemBuilder: (context, index) {
-            final following = followings[index];
+            final follower = followers[index];
             return ListUser(
-              username: following.username ?? "Unknown",
-              avatar: following.avatar ?? "",
+              username: follower.username ?? "Unknown",
+              avatar: follower.avatar ?? "",
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (!following.hasFollowedBack)
+                  if (!follower.hasFollowedBack)
                     ElevatedButton(
                       onPressed: () {
                         // TODO: Handle follow back action here
@@ -62,7 +63,7 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
-                        builder: (context) => _buildBottomSheet(context, following),
+                        builder: (context) => MoreOptionBottomsheet(user: follower, option: "Follower"),
                       );
                     },
                   )
@@ -76,22 +77,5 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
       error: (error, _) => Center(child: Text('Error: $error')),
     );
   }
-  Widget _buildBottomSheet(BuildContext context, FollowUserResponse following) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      height: 200,
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("More options", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 16),
-          Text("Block"),
-          SizedBox(height: 8),
-          Text("Report"),
-          SizedBox(height: 8),
-          Text("Mute"),
-        ],
-      ),
-    );
-  }
+
 }

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
-import 'package:flutter_social_share/services/auth_service.dart';
-import 'package:flutter_social_share/services/user_service.dart';
-import '../providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'model/user.dart';
 
 class AuthCheck extends ConsumerStatefulWidget {
   const AuthCheck({Key? key}) : super(key: key);
@@ -25,16 +22,19 @@ class _AuthCheckState extends ConsumerState<AuthCheck> {
 
   // Method to check if the token exists and is valid
   Future<void> _checkAuthStatus() async {
-    bool isValid = await AuthService().introspect();
-    final savedData = await AuthService.getSavedData();
-    final user = await UserService().getProfileById(savedData['userId']);
+    final authService = ref.read(authServiceProvider);
+    // final userService = ref.read(userProvider);
+    bool isValid = await authService.introspect();
+    print(isValid);
+    final savedData = await authService.getSavedData();
+    // final user = await user.getProfileById(savedData['userId']);
 
     // Navigate to the appropriate screen based on authentication status
-    if (!isValid) {
+    if (isValid == true) {
+      _navigateToHomeScreen();
+    } else {
       _navigateToLoginScreen();
     }
-    ref.read(userProvider.notifier).state = user;
-    _navigateToHomeScreen();
   }
 
   // Navigate to the login screen

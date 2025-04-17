@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/screens/friend_screen/request_tab.dart';
-
+import 'package:flutter_social_share/screens/friend_screen/follower_tab.dart';
 import 'friend_tab.dart';
 import 'following_tab.dart';
 
@@ -20,8 +19,8 @@ class FriendScreen extends StatelessWidget {
             indicatorColor: Colors.black,
             tabs: [
               Tab(text: "Friends"),
+              Tab(text: "Follower"),
               Tab(text: "Following"),
-              Tab(text: "Requests"),
             ],
           ),
           backgroundColor: Colors.white,
@@ -29,8 +28,8 @@ class FriendScreen extends StatelessWidget {
         body: const TabBarView(
           children: [
             FriendsTab(),
+            FollowerTab(),
             FollowingTab(),
-            RequestsTab(),
           ],
         ),
       ),

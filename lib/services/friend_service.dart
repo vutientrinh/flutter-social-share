@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/friend_request.dart';
 import 'package:flutter_social_share/model/user.dart';
-import 'api_client.dart';
+
+import '../model/follow_response.dart';
 
 class FriendService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
+
+  FriendService(this._dio);
 
   Future<Response> addFriend(String requesterId, String receiverId) async {
     try {
@@ -15,6 +18,7 @@ class FriendService {
           'receiverId': receiverId,
         },
       );
+      print(response);
       return response;
     } catch (e) {
       print('Error adding friend: $e');
@@ -40,28 +44,30 @@ class FriendService {
     }
   }
 
-  Future<List<User>> getFriends(String userId, {int page = 1, int size = 10}) async {
-
+  Future<List<User>> getFriends(String userId,
+      {int page = 1, int size = 10}) async {
     try {
-      final response = await _dio.get(
-        '/users/$userId/get-friends',
-        queryParameters: {
-          'page': page,
-          'size': size,
-        },
-          data: {"page": page, "size": size});
-      final List<dynamic> userListJson = response.data['data']['data'];
+      final response =
+          await _dio.get('/users/$userId/get-friends', queryParameters: {
+        'page': page,
+        'size': size,
+      }, data: {
+        "page": page,
+        "size": size
+      });
+      final List<dynamic> friendListJson = response.data['data']['data'];
 
-      return userListJson.map((json) => User.fromJson(json)).toList();
+      return friendListJson.map((json) => User.fromJson(json)).toList();
     } catch (e) {
       print('Error get friend: $e');
       throw Exception('Failed to get friends: $e');
     }
   }
 
-  Future<List<FriendRequest>> getFriendRequests(String userId, {int page = 1, int size = 10}) async {
+  Future<List<FriendRequest>> getFriendRequests(String userId,
+      {int page = 1, int size = 10}) async {
     try {
-      final response =  await _dio.get(
+      final response = await _dio.get(
         '/users/$userId/get-friends-request',
         queryParameters: {
           'page': page,
@@ -69,11 +75,12 @@ class FriendService {
         },
       );
       final List<dynamic> friendListJson = response.data['data']['data'];
-      return friendListJson.map((json) => FriendRequest.fromJson(json)).toList();
+      return friendListJson
+          .map((json) => FriendRequest.fromJson(json))
+          .toList();
     } catch (e) {
       print('Error getting friend requests: $e');
       throw Exception('Failed to get friend requests: $e');
     }
   }
 }
-

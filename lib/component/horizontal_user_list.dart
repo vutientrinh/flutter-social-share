@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/user.dart';
 
 import '../screens/messages_screen/chat_detail.dart';
 
-class HorizontalUserList extends StatefulWidget {
+class HorizontalUserList extends ConsumerStatefulWidget {
   final List<User> users;
 
 
   const HorizontalUserList({super.key, required this.users});
 
   @override
-  State<HorizontalUserList> createState() => _HorizontalUserListState();
+  ConsumerState<HorizontalUserList> createState() => _HorizontalUserListState();
 }
 
-class _HorizontalUserListState extends State<HorizontalUserList> {
+class _HorizontalUserListState extends ConsumerState<HorizontalUserList> {
   @override
   void initState() {
     super.initState();

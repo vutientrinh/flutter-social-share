@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
-import 'api_client.dart';
 
 class TopicService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
+
+  TopicService(this._dio);
 
   Future<Response> createTopic(String name, String color) async {
     try {
@@ -19,7 +20,7 @@ class TopicService {
     }
   }
 
-  Future<Response> getAllTopics({int page = 1,int size = 10}) async {
+  Future<Response> getAllTopics({int page = 1, int size = 10}) async {
     try {
       final response = await _dio.get(
         '/topic/all',
@@ -34,4 +35,3 @@ class TopicService {
     }
   }
 }
-

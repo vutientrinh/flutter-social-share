@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class UIData {
   static const String imageDir = "assets/images";
 
@@ -9,6 +10,7 @@ class UIData {
   static const String sadGif = '$imageDir/sad.gif';
   static const String wowGif = '$imageDir/wow.gif';
 }
+
 class LINK_IMAGE {
   static final String PUBLIC_URL_IMAGE = dotenv.env['PUBLIC_URL_IMAGE'] ?? '';
 

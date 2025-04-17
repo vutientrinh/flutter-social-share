@@ -1,14 +1,13 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import '../model/post.dart';
 import '../model/post_request.dart';
-import 'api_client.dart';
 
 class PostService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
 
-  /// Get all posts (default first page)
+  PostService(this._dio);
+
   Future<List<Post>> getAllPosts({
     int page = 1,
     int size = 10,

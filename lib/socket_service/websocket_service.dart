@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_social_share/model/conversation.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
-
 import '../services/auth_service.dart';
 
 class WebSocketService {
@@ -9,11 +8,15 @@ class WebSocketService {
   final String userId;
   final Function(Conversation) onMessageReceived;
   String? token;
+  AuthService authService;
 
-  WebSocketService({required this.userId, required this.onMessageReceived});
+  WebSocketService(
+      {required this.userId,
+      required this.authService,
+      required this.onMessageReceived});
 
   void connect() async {
-    final data = await AuthService.getSavedData();
+    final data = await authService.getSavedData();
     token = data['token'];
 
     _stompClient = StompClient(
@@ -32,7 +35,6 @@ class WebSocketService {
 
     _stompClient.activate();
   }
-
 
   void _onConnect(StompFrame frame) {
     print("Connected to WebSocket");
@@ -106,7 +108,8 @@ class WebSocketService {
     }
   }
 
-  void sendMessage(String message, String convId, String connectionId,String connectionUsername) {
+  void sendMessage(String message, String convId, String connectionId,
+      String connectionUsername) {
     final body = json.encode({
       "messageType": "CHAT",
       "content": message,

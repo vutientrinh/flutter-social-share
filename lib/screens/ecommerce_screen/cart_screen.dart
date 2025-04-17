@@ -35,7 +35,8 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   double getTotalPrice() {
-    return cartItems.fold(0, (sum, item) => sum + (item["price"] * item["quantity"]));
+    return cartItems.fold(
+        0, (sum, item) => sum + (item["price"] * item["quantity"]));
   }
 
   @override
@@ -52,7 +53,8 @@ class _CartScreenState extends State<CartScreen> {
               itemBuilder: (context, index) {
                 var item = cartItems[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ListTile(
                     title: Text(item["name"]),
                     subtitle: Text("Price: \$${item["price"]}"),
@@ -83,7 +85,9 @@ class _CartScreenState extends State<CartScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Text("Total: \$${getTotalPrice().toStringAsFixed(2)}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text("Total: \$${getTotalPrice().toStringAsFixed(2)}",
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
@@ -99,4 +103,3 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 }
-

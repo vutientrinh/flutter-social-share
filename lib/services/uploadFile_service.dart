@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'api_client.dart';
+import 'package:flutter_social_share/model/file_response.dart';
 
 class UploadFileService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
 
-  Future<Response> uploadFile(File file, String bucketName) async {
+  UploadFileService(this._dio);
+
+  Future<FileResponse> uploadFile(File file, {String bucketName = "satchat"}) async {
     try {
       String fileName = file.path.split('/').last;
 
@@ -24,8 +26,8 @@ class UploadFileService {
           contentType: 'multipart/form-data',
         ),
       );
-
-      return response;
+      final fileResponse = response.data['data'];
+      return FileResponse.fromJson(fileResponse);
     } catch (e) {
       throw Exception('Failed to upload file: $e');
     }

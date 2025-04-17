@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/conversation.dart';
 
-import 'api_client.dart';
-
 class ChatService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
+
+  ChatService(this._dio);
 
   Future<Response> getFriends() async {
     final response = await _dio.get('/users/all');

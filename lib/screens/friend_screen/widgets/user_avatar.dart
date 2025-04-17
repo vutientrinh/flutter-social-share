@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_social_share/utils/uidata.dart';
 
 class UserAvatar extends StatefulWidget {
   final String userName;
@@ -19,7 +20,7 @@ class _UserAvatarState extends State<UserAvatar> {
         CircleAvatar(
           radius: 24,
           backgroundImage:
-               NetworkImage(widget.avatarUrl)
+               NetworkImage(LINK_IMAGE.publicImage(widget.avatarUrl))
         ),
 
         const SizedBox(width: 12),

@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
-import 'api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
+
+  AuthService(this._dio);
 
   Future<void> saveLoginData(Map<String, dynamic> data) async {
     final prefs = await SharedPreferences.getInstance();
@@ -13,7 +14,8 @@ class AuthService {
     await prefs.setString('username', data['username']);
     await prefs.setString('tokenType', data['type']); // Usually "Bearer"
   }
-  static Future<Map<String, dynamic>> getSavedData() async {
+
+  Future<Map<String, dynamic>> getSavedData() async {
     final prefs = await SharedPreferences.getInstance();
     return {
       'token': prefs.getString('token'),
@@ -32,6 +34,7 @@ class AuthService {
     await prefs.remove('username');
     await prefs.remove('tokenType');
   }
+
   Future<bool> introspect() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -53,7 +56,6 @@ class AuthService {
       return false;
     }
   }
-
 
   Future<Response?> login(String username, String password) async {
     try {

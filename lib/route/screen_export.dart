@@ -10,3 +10,5 @@ export 'package:flutter_social_share/screens/messages_screen/messages_screen.dar
 export 'package:flutter_social_share/screens/messages_screen/chat_detail.dart';
 export 'package:flutter_social_share/screens/notification_screen/notification_screen.dart';
 export 'package:flutter_social_share/screens/profile_screen/profile_screen.dart';
+export 'package:flutter_social_share/screens/friend_screen/suggestion_user.dart';
+export 'package:flutter_social_share/screens/friend_screen/friend_list.dart';

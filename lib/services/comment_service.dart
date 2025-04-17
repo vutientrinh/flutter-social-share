@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-
 import '../model/comment.dart';
-import 'api_client.dart';
 
 class CommentService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
+
+  CommentService(this._dio);
 
   Future<List<Comment>> getCommentsAPI(String postId) async {
     try {

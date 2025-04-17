@@ -1,69 +1,156 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/screens/friend_screen/list_user.dart';
-import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/friend_request_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/friend_provider.dart';
+import 'package:flutter_social_share/route/screen_export.dart';
+import 'package:flutter_social_share/screens/friend_screen/widgets/user_avatar.dart';
 import '../../model/user.dart';
-import '../../services/auth_service.dart';
-import '../../services/follow_service.dart';
-import '../../services/friend_service.dart';
+import '../../providers/async_provider/friend_async_provider.dart';
+import '../../providers/state_provider/auth_provider.dart';
+import '../../route/route_constants.dart';
+import 'widgets/list_user.dart';
 
-class FriendsTab extends StatefulWidget {
+class FriendsTab extends ConsumerStatefulWidget {
   const FriendsTab({super.key});
 
   @override
-  State<FriendsTab> createState() => _FriendsTabState();
+  ConsumerState<FriendsTab> createState() => _FriendsTabState();
 }
 
-class _FriendsTabState extends State<FriendsTab> {
-  late Future<List<User>> getFollowers;
+class _FriendsTabState extends ConsumerState<FriendsTab> {
+  String? userId;
 
   @override
   void initState() {
     super.initState();
-    getFollowers = loadData();
+    getFriendRequest();
   }
 
-  Future<List<User>> loadData() async {
-    final data = await AuthService.getSavedData();
-
-    final userId = data['userId'];
-    return FriendService().getFriends(userId);
-
-    // return FollowService().getFollowers(userId);
+  Future<void> getFriendRequest() async {
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
+    userId = data['userId'];
+    print(userId);
+    if (userId != null) {
+      await ref
+          .read(friendRequestAsyncProvider.notifier)
+          .getFriendRequests(userId!);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<User>>(
-      future: getFollowers,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child: CircularProgressIndicator()); // Show loading indicator
-        } else if (snapshot.hasError) {
-          return Center(
-              child: Text('Error: ${snapshot.error}')); // Handle error
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No users found.')); // Handle no data
-        } else {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final follower = snapshot.data![index];
-              return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-                  // Optional padding between items
-                  child:
-                      UserAvatar(
-                        userName: follower.username,
-                        avatarUrl: follower.avatar ?? "",
-                      ),
-                      // const Icon(Icons.more_vert),
+    final friendState = ref.watch(friendAsyncNotifierProvider);
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SuggestionUser()),
+                      )
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade400,
+                    ),
+                    child: const Text(
+                      "Suggestions",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(width: 16), // 🔧 changed from height to width
+                  ElevatedButton(
+                    onPressed: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const FriendList()),
+                      )
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade400,
+                    ),
+                    child: const Text(
+                      "Your friends",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+              // vertical space between button and row
+              const Row(
+                children: [
+                  Icon(Icons.people_alt),
+                  SizedBox(width: 10), // horizontal space between icon and text
+                  Text(
+                    "Friend Requests",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: friendState.when(
+            data: (friendRequests) {
+              if (friendRequests.isEmpty) {
+                return const Center(child: Text('No users found.'));
+              }
+              return ListView.builder(
+                itemCount: friendRequests.length,
+                itemBuilder: (context, index) {
+                  final friendRequest = friendRequests[index];
+                  return ListUser(
+                    username: friendRequest.username ?? "Unknown",
+                    avatar: friendRequest.avatar ?? "",
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => {ref
+                              .read(friendAsyncNotifierProvider.notifier)
+                              .acceptFriend(friendRequest.id),
+                            getFriendRequest()
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue),
+                          child: const Text(
+                            "Accept",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        OutlinedButton(
+                          onPressed: () => ref
+                              .read(friendAsyncNotifierProvider.notifier)
+                              .removeFriend(friendRequest.id),
+                          child: const Text(
+                            "Deny",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
+                },
+              );
             },
-          );
-        }
-      },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => Center(child: Text('Error: $error')),
+          ),
+        )
+      ],
     );
   }
 }

@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/services/comment_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
 
-class CommentInput extends StatefulWidget {
-  final String? postId;
+
+class CommentInput extends ConsumerStatefulWidget {
+  final String postId;
   const CommentInput({super.key, required this.postId});
 
   @override
-  State<CommentInput> createState() => _CommentInputState();
+  ConsumerState<CommentInput> createState() => _CommentInputState();
 }
 
-class _CommentInputState extends State<CommentInput> {
+class _CommentInputState extends ConsumerState<CommentInput> {
   final TextEditingController _commentController = TextEditingController();
   void _sendComment() async {
     final content = _commentController.text.trim();
     if (content.isNotEmpty) {
-      final comment = await CommentService().createComment(widget.postId!, content);
-      print("Send comment: $comment to postId: $widget.postId");
+      print("Send comment: to postId: $widget.postId");
+      final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
+      await commentNotifier.createComment(widget.postId, content);
+      await commentNotifier.getCommentAPI(widget.postId);
       _commentController.clear();
+      FocusScope.of(context).unfocus(); // hide keyboard
+    }
+    else{
       FocusScope.of(context).unfocus(); // hide keyboard
     }
   }

@@ -10,8 +10,7 @@ class GridProductList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: 6,
-        gridDelegate:
-        const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
@@ -22,7 +21,9 @@ class GridProductList extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const ProductDetailScreen(productName: "Iphone 11 Promax",)),
+                    builder: (context) => const ProductDetailScreen(
+                          productName: "Iphone 11 Promax",
+                        )),
               );
             },
             child: Container(
@@ -67,14 +68,8 @@ class GridProductList extends StatelessWidget {
                   ),
                 ],
               ),
-
             ),
           );
-
-
-        }
-
-    );
+        });
   }
-
 }

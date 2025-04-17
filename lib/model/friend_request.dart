@@ -5,7 +5,7 @@ class FriendRequest {
   final String? firstName;
   final String? lastName;
   final String? avatar;
-  final DateTime? createdAt;
+  final String? createdAt;
 
   FriendRequest({
     required this.id,
@@ -25,7 +25,7 @@ class FriendRequest {
       firstName: json['firstName'],
       lastName: json['lastName'],
       avatar: json['avatar'],
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      createdAt: json['createdAt'],
     );
   }
 }

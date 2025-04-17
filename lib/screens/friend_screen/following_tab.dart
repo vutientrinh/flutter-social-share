@@ -1,61 +1,75 @@
-import 'package:dio/src/response.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/services/follow_service.dart';
-import '../../model/user.dart';
-import '../../services/auth_service.dart';
-import '../../services/user_service.dart';
-import 'list_user.dart';
-import 'user_avatar.dart'; // Your custom widget
-import '../profile_screen/profile_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/screens/friend_screen/widgets/more_option_bottomsheet.dart';
+import 'package:flutter_social_share/model/follow_response.dart';
+import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'widgets/list_user.dart';
 
-class FollowingTab extends StatefulWidget {
+class FollowingTab extends ConsumerStatefulWidget {
   const FollowingTab({super.key});
 
   @override
-  State<FollowingTab> createState() => _FollowingTabState();
+  ConsumerState<FollowingTab> createState() => _FollowingTabState();
 }
 
-class _FollowingTabState extends State<FollowingTab> {
-  late Future<List<User>> getFollowing;
+class _FollowingTabState extends ConsumerState<FollowingTab> {
   String? userId;
 
   @override
   void initState() {
     super.initState();
-    getFollowing = loadData();
+    fetchUserAndLoadFollowings();
   }
 
-  Future<List<User>> loadData() async {
-    final data = await AuthService.getSavedData();
+  Future<void> fetchUserAndLoadFollowings() async {
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
+    userId = data['userId'];
 
-    final userId = data['userId'];
-    return FollowService().getFollowings(userId);
+    if (userId != null) {
+      await ref
+          .read(followAsyncNotifierProvider.notifier)
+          .getFollowings(userId!);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<User>>(
-      future: getFollowing,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child: CircularProgressIndicator()); // Show loading indicator
-        } else if (snapshot.hasError) {
-          return Center(
-              child: Text('Error: ${snapshot.error}')); // Handle error
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No users found.')); // Handle no data
-        } else {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final following = snapshot.data![index];
-              return ListUser(
-                  username: following.username, avatar: following.avatar);
-            },
-          );
+    final followingState = ref.watch(followAsyncNotifierProvider);
+
+    return followingState.when(
+      data: (followings) {
+        if (followings.isEmpty) {
+          return const Center(child: Text('No users found.'));
         }
+        return ListView.builder(
+          itemCount: followings.length,
+          itemBuilder: (context, index) {
+            final following = followings[index];
+            return ListUser(
+              username: following.username ?? "Unknown",
+              avatar: following.avatar ?? "",
+              trailing: IconButton(
+                icon: const Icon(Icons.more_horiz),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => MoreOptionBottomsheet(
+                      username: following.username,
+                      avatar: following.avatar,
+                      followAt: following.followAt,
+                      option: "Following",
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        );
       },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text('Error: $error')),
     );
   }
 }

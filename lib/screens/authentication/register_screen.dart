@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
-import 'package:flutter_social_share/services/auth_service.dart'; // Adjust the path to match your project
 
-class RegisterScreen extends StatefulWidget {
+import '../../providers/state_provider/auth_provider.dart';
+
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -17,8 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
   bool _isLoading = false;
-
-  final AuthService _authService = AuthService(); // Replace with your service class name
+  // Replace with your service class name
 
   void _registerWithGoogle() async {
     // Placeholder: Add Google Sign-In logic using `google_sign_in` or Firebase Auth
@@ -28,6 +29,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _handleRegister() async {
+    final  _authService = ref.read(authServiceProvider); // Create instance of AuthService
+
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 

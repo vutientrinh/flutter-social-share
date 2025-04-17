@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 
-import 'api_client.dart';
-
 class CommentLikeService {
-  final Dio _dio = ApiClient.dio;
+  final Dio _dio;
+
+  CommentLikeService(this._dio);
 
   Future<Response> likeAPI(String commentId) async {
     try {

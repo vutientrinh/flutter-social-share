@@ -9,3 +9,5 @@ const String productDetailsScreenRoute = "product_details";
 const String cartScreenRoute = "cart";
 const String createPostScreenRoute = "create_post";
 const String chatDetailScreenRoute = "chat_detail";
+const String suggestionScreenRoute = "suggestion_user";
+const String friendScreenRoute = "friend_list";

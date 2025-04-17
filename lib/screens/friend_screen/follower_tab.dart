@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/more_option_bottomsheet.dart';
-import 'package:flutter_social_share/model/follow_response.dart';
 
 import '../../providers/async_provider/follow_async_provider.dart';
 import '../../providers/state_provider/auth_provider.dart';

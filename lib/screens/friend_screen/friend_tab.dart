@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_request_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/friend_provider.dart';
+import 'package:flutter_social_share/route/screen_export.dart';
 import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
 import '../../model/user.dart';
 import '../../providers/async_provider/friend_async_provider.dart';
 import '../../providers/state_provider/auth_provider.dart';
+import '../../route/route_constants.dart';
 import 'list_user.dart';
 
 class FriendsTab extends ConsumerStatefulWidget {
@@ -40,18 +42,55 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
   Widget build(BuildContext context) {
     final friendState = ref.watch(friendRequestAsyncProvider);
     return Column(
-
       children: [
-        // Top title button
-        const Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.people_alt),
-              SizedBox(width: 8),
-              Text(
-                "Friend Requests",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SuggestionUser()),
+                      )
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade400,
+                    ),
+                    child: const Text(
+                      "Suggestions",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(width: 16), // 🔧 changed from height to width
+                  ElevatedButton(
+                    onPressed: () => {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade400,
+                    ),
+                    child: const Text(
+                      "Your friends",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+              // vertical space between button and row
+              const Row(
+                children: [
+                  Icon(Icons.people_alt),
+                  SizedBox(width: 10), // horizontal space between icon and text
+                  Text(
+                    "Friend Requests",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ],
           ),
@@ -78,14 +117,20 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                               .acceptFriend(friendRequest.id),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue),
-                          child: const Text("Accept"),
+                          child: const Text(
+                            "Accept",
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                         const SizedBox(width: 10),
                         OutlinedButton(
                           onPressed: () => ref
                               .read(friendAsyncNotifierProvider.notifier)
                               .removeFriend(friendRequest.id),
-                          child: const Text("Deny"),
+                          child: const Text(
+                            "Deny",
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ],
                     ),

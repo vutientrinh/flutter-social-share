@@ -65,22 +65,4 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
       error: (error, _) => Center(child: Text('Error: $error')),
     );
   }
-  Widget _buildBottomSheet(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      height: 200,
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("More options", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 16),
-          Text("Block"),
-          SizedBox(height: 8),
-          Text("Report"),
-          SizedBox(height: 8),
-          Text("Mute"),
-        ],
-      ),
-    );
-  }
 }

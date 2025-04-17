@@ -40,7 +40,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final friendState = ref.watch(friendRequestAsyncProvider);
+    final friendState = ref.watch(friendAsyncNotifierProvider);
     return Column(
       children: [
         Padding(
@@ -118,9 +118,11 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton(
-                          onPressed: () => ref
+                          onPressed: () => {ref
                               .read(friendAsyncNotifierProvider.notifier)
                               .acceptFriend(friendRequest.id),
+                            getFriendRequest()
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue),
                           child: const Text(

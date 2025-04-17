@@ -3,23 +3,18 @@ import 'package:flutter_social_share/model/comment.dart';
 import '../state_provider/comment_provider.dart';
 
 final commentAsyncNotifierProvider =
-AsyncNotifierProvider<CommentNotifier, List<Comment>>(CommentNotifier.new);
+    AsyncNotifierProvider<CommentNotifier, List<Comment>>(CommentNotifier.new);
 
 class CommentNotifier extends AsyncNotifier<List<Comment>> {
-  String? _currentPostId;
   @override
   Future<List<Comment>> build() async {
     return []; // Nothing is fetched automatically
   }
 
   Future<void> getCommentAPI(String postId) async {
-    _currentPostId = postId;
-    state = const AsyncLoading();
     final commentService = ref.watch(commentServiceProvider);
     final comments = await commentService.getCommentsAPI(postId);
-    if (_currentPostId == postId) {
-      state = AsyncData(comments);
-    }// ✅ update UI
+    state = AsyncData(comments);
   }
 
   Future<void> createComment(String postId, String content) async {

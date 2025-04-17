@@ -7,6 +7,7 @@ import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
 
 import '../../../../model/post.dart';
+import '../../../../providers/async_provider/comment_async_provider.dart';
 import '../../../../utils/uidata.dart';
 
 class PostDetailScreen extends ConsumerStatefulWidget {
@@ -23,6 +24,15 @@ class PostDetailScreen extends ConsumerStatefulWidget {
 
 class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   Post get post => widget.post;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref
+          .read(commentAsyncNotifierProvider.notifier)
+          .getCommentAPI(post.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

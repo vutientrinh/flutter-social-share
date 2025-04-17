@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_social_share/component/create_post.dart';
+import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
 
 import '../../../../model/user.dart';

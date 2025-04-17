@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
 
 
 class CommentInput extends ConsumerStatefulWidget {
-  final String? postId;
+  final String postId;
   const CommentInput({super.key, required this.postId});
 
   @override
@@ -15,9 +16,14 @@ class _CommentInputState extends ConsumerState<CommentInput> {
   void _sendComment() async {
     final content = _commentController.text.trim();
     if (content.isNotEmpty) {
-      // final comment = await CommentService().createComment(widget.postId!, content);
       print("Send comment: to postId: $widget.postId");
+      final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
+      await commentNotifier.createComment(widget.postId, content);
+      await commentNotifier.getCommentAPI(widget.postId);
       _commentController.clear();
+      FocusScope.of(context).unfocus(); // hide keyboard
+    }
+    else{
       FocusScope.of(context).unfocus(); // hide keyboard
     }
   }

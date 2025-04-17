@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_request_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/friend_provider.dart';
 import 'package:flutter_social_share/route/screen_export.dart';
-import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
+import 'package:flutter_social_share/screens/friend_screen/widgets/user_avatar.dart';
 import '../../model/user.dart';
 import '../../providers/async_provider/friend_async_provider.dart';
 import '../../providers/state_provider/auth_provider.dart';
 import '../../route/route_constants.dart';
-import 'list_user.dart';
+import 'widgets/list_user.dart';
 
 class FriendsTab extends ConsumerStatefulWidget {
   const FriendsTab({super.key});
@@ -68,7 +68,13 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                   ),
                   const SizedBox(width: 16), // 🔧 changed from height to width
                   ElevatedButton(
-                    onPressed: () => {},
+                    onPressed: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const FriendList()),
+                      )
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey.shade400,
                     ),

@@ -26,6 +26,25 @@ class UserService {
       return [];
     }
   }
+  Future<List<User>> getSuggestedUsers() async {
+    try {
+      final response = await _dio
+          .get('/users/suggested'); // Adjust according to your backend endpoint
+      if (response.statusCode == 200) {
+        // Access 'data' field and cast it as a List of user objects
+        List<User> users = (response.data['data']
+        as List) // Ensure 'data' is treated as a List
+            .map((userJson) => User.fromJson(userJson))
+            .toList();
+        return users;
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      print('Error fetching users: $e');
+      return [];
+    }
+  }
   Future<User> getProfileById(String userId) async {
     try {
       final response = await _dio.get(

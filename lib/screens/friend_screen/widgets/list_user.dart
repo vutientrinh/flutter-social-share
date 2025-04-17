@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_social_share/screens/friend_screen/user_avatar.dart';
+import 'package:flutter_social_share/screens/friend_screen/widgets/user_avatar.dart';
 
 class ListUser extends StatefulWidget {
   final String? username;

@@ -4,10 +4,17 @@ import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MoreOptionBottomsheet extends StatefulWidget {
-  final FollowUserResponse? user;
+  final String? username;
+  final String? avatar;
+  final String followAt;
   final String? option;
 
-  const MoreOptionBottomsheet({super.key, required this.user, required this.option});
+  const MoreOptionBottomsheet(
+      {super.key,
+      required this.username,
+      required this.avatar,
+      required this.followAt,
+      required this.option});
 
   @override
   State<MoreOptionBottomsheet> createState() => _MoreOptionBottomsheetState();
@@ -27,32 +34,31 @@ class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
             children: [
               CircleAvatar(
                 radius: 24,
-                backgroundImage: widget.user?.avatar != null
-                    ? NetworkImage(LINK_IMAGE.publicImage(widget.user!.avatar ?? ""))
+                backgroundImage: widget.avatar != null
+                    ? NetworkImage(LINK_IMAGE.publicImage(widget.avatar ?? ""))
                     : null,
-                child: widget.user?.avatar == null
-                    ? const Icon(Icons.person)
-                    : null,
+                child: widget.avatar == null ? const Icon(Icons.person) : null,
               ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.user?.username ?? "Unknown",
+                    widget.username ?? "Unknown",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    "${widget.option} since ${timeago.format(DateTime.parse(widget.user!.followAt), locale: 'en_short')}",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
+                  if (widget.followAt.isNotEmpty)
+                    Text(
+                      "${widget.option} since ${timeago.format(DateTime.parse(widget.followAt), locale: 'en_short')}",
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey[600],
+                      ),
                     ),
-                  ),
                 ],
               ),
             ],
@@ -60,27 +66,28 @@ class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
           const SizedBox(height: 20),
 
           /// Message
+
           _buildListTile(
             icon: Icons.message,
-            title: "Message ${widget.user?.username ?? ''}",
+            title: "Message ${widget.username ?? ''}",
             onTap: () => Navigator.pop(context),
           ),
 
           /// Unfollow
           _buildListTile(
             icon: Icons.person_remove_alt_1,
-            title: "Unfollow ${widget.user?.username ?? ''}",
+            title: "Unfollow ${widget.username ?? ''}",
             subtitle: "Stop seeing posts but stay friends",
             onTap: () => Navigator.pop(context),
           ),
 
-          /// Unfriend
-          _buildListTile(
-            icon: Icons.person_off,
-            title: "Unfriend ${widget.user?.username ?? ''}",
-            subtitle: "Remove ${widget.user?.username ?? 'this user'} as a friend",
-            onTap: () => Navigator.pop(context),
-          ),
+          if (widget.option == "Friend")
+            _buildListTile(
+              icon: Icons.person_off,
+              title: "Unfriend ${widget.username ?? ''}",
+              subtitle: "Remove ${widget.username ?? 'this user'} as a friend",
+              onTap: () => Navigator.pop(context),
+            ),
         ],
       ),
     );
@@ -107,9 +114,9 @@ class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
       ),
       subtitle: subtitle != null
           ? Text(
-        subtitle,
-        style: const TextStyle(fontSize: 12, color: Colors.grey),
-      )
+              subtitle,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            )
           : null,
       onTap: onTap,
     );

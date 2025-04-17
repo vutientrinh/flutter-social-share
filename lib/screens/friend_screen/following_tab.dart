@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/component/more_option_bottomsheet.dart';
+import 'package:flutter_social_share/screens/friend_screen/widgets/more_option_bottomsheet.dart';
 import 'package:flutter_social_share/model/follow_response.dart';
 import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
-import 'list_user.dart';
+import 'widgets/list_user.dart';
 
 class FollowingTab extends ConsumerStatefulWidget {
   const FollowingTab({super.key});
@@ -28,7 +28,9 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
     userId = data['userId'];
 
     if (userId != null) {
-      await ref.read(followAsyncNotifierProvider.notifier).getFollowings(userId!);
+      await ref
+          .read(followAsyncNotifierProvider.notifier)
+          .getFollowings(userId!);
     }
   }
 
@@ -53,7 +55,12 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
-                    builder: (context) => MoreOptionBottomsheet(user: following, option: "Following",),
+                    builder: (context) => MoreOptionBottomsheet(
+                      username: following.username,
+                      avatar: following.avatar,
+                      followAt: following.followAt,
+                      option: "Following",
+                    ),
                   );
                 },
               ),

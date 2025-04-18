@@ -111,12 +111,29 @@ class PostService {
     }
   }
 
-  /// Optional: Get comments for a post
-  Future<Response> getCommentsByPostId(String postId) async {
+
+  Future<Response> savePost(String authorId, String postId) async {
     try {
-      return await _dio.get('/comments/$postId');
+      return await _dio.post('/posts/save');
     } catch (e) {
-      throw Exception('Failed to fetch comments for post $postId: $e');
+      throw Exception('Failed to save post : $e');
     }
   }
+  Future<Response> unSavePost(String authorId, String postId) async {
+    try {
+      return await _dio.post('/posts/unsaved');
+    } catch (e) {
+      throw Exception('Failed to unSave post : $e');
+    }
+  }
+  Future<Response> getSavedPosts() async {
+    try {
+      return await _dio.get('/posts/saved');
+    } catch (e) {
+      throw Exception('Failed to unSave post : $e');
+    }
+  }
+
+
+
 }

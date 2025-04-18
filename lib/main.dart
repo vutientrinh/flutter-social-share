@@ -9,9 +9,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-
-  print("🌍 API Base URL: ${dotenv.env['API_BASE_URL']}");
-
   runApp(
     const ProviderScope(
       // <-- THIS IS REQUIRED

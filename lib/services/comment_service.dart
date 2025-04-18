@@ -25,7 +25,7 @@ class CommentService {
           data: {'postId': postId, 'content': content});
       return response.data;
     } catch (e) {
-      print('Error like comment by postId: $e');
+      print('Error comment by postId: $e');
       throw Exception('Failed to get comment by postId: $e');
     }
   }

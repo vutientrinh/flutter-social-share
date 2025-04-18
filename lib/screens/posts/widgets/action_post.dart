@@ -29,7 +29,7 @@ class _ActionPostState extends ConsumerState<ActionPost> {
   void initState() {
     super.initState();
     print(post);
-    likeCount = post.commentCount ?? 0;
+    likeCount = post.likedCount ?? 0;
     isLiked = post.hasLiked;
   }
 
@@ -111,7 +111,7 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                 subText: 'lượt thích',
               ),
               TextCountNumber(
-                number: post.commentCount!,
+                number: post.commentCount,
                 subText: 'bình luận',
               ),
             ],

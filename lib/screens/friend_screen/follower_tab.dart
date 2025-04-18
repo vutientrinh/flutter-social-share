@@ -15,6 +15,7 @@ class FollowerTab extends ConsumerStatefulWidget {
 
 class _FollowerTabState extends ConsumerState<FollowerTab> {
   String? userId;
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +28,9 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
     userId = data['userId'];
 
     if (userId != null) {
-      await ref.read(followAsyncNotifierProvider.notifier).getFollowers(userId!);
+      await ref
+          .read(followAsyncNotifierProvider.notifier)
+          .getFollowers(userId!);
     }
   }
 
@@ -45,6 +48,7 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
           itemBuilder: (context, index) {
             final follower = followers[index];
             return ListUser(
+              userId: follower.id,
               username: follower.username ?? "Unknown",
               avatar: follower.avatar,
               trailing: Row(
@@ -62,7 +66,13 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
-                        builder: (context) => MoreOptionBottomsheet(username: follower.username, avatar: follower.avatar,followAt: follower.followAt, option: "Follower"),
+                        builder: (context) => MoreOptionBottomsheet(
+                          username: follower.username,
+                          avatar: follower.avatar,
+                          followAt: follower.followAt,
+                          option: "Follower",
+                          id: follower.id,
+                        ),
                       );
                     },
                   )
@@ -76,5 +86,4 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
       error: (error, _) => Center(child: Text('Error: $error')),
     );
   }
-
 }

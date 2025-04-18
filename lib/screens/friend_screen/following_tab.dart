@@ -48,6 +48,7 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
           itemBuilder: (context, index) {
             final following = followings[index];
             return ListUser(
+              userId: following.id,
               username: following.username ?? "Unknown",
               avatar: following.avatar ?? "",
               trailing: IconButton(
@@ -60,6 +61,7 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
                       avatar: following.avatar,
                       followAt: following.followAt,
                       option: "Following",
+                      id: following.id,
                     ),
                   );
                 },

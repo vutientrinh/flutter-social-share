@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import '../../model/user.dart';
+import 'chat_detail.dart';
 
 class MessagesScreen extends ConsumerStatefulWidget {
   const MessagesScreen({super.key});
@@ -87,12 +88,12 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     // Add navigation to detailed chat screen if needed
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => ChatDetail(userId: userId!, receiverName: "Vutientrinh",)
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChatDetail(receiverId: userId!, receiverUsername: "VuTienTrin"),
+                      ),
+                    );
                   },
                 );
               },

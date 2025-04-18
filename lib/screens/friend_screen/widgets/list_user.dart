@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_social_share/route/screen_export.dart';
 import 'package:flutter_social_share/screens/friend_screen/widgets/user_avatar.dart';
 
 class ListUser extends StatefulWidget {
+  final String? userId;
   final String? username;
   final String? avatar;
   final Widget? trailing;
 
   const ListUser({
     super.key,
+    required this.userId,
     required this.username,
     required this.avatar,
     this.trailing,
@@ -20,19 +24,30 @@ class ListUser extends StatefulWidget {
 class _ListUserState extends State<ListUser> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return GestureDetector(
+      onTap: () => {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(userName: widget.username!, userId: widget.userId!,),
+          ),
+        )
+      },
+      child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-        // Optional padding between items
         child: Row(
           children: [
             Expanded(
-                child: UserAvatar(
-              userName: widget.username ?? "",
-              avatarUrl: widget.avatar ??
-                  "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
-            )),
+              child: UserAvatar(
+                userName: widget.username ?? "",
+                avatarUrl: widget.avatar ??
+                    "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
+              ),
+            ),
             if (widget.trailing != null) widget.trailing!,
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

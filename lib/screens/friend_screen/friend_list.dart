@@ -69,6 +69,7 @@ class _FriendListState extends ConsumerState<FriendList> {
                     itemBuilder: (context, index) {
                       final friend = friends[index];
                       return ListUser(
+                        userId: friend.id,
                         username: friend.username ?? "Unknown",
                         avatar: friend.avatar,
                         trailing: Row(
@@ -79,7 +80,13 @@ class _FriendListState extends ConsumerState<FriendList> {
                               onPressed: () {
                                 showModalBottomSheet(
                                   context: context,
-                                  builder: (context) => MoreOptionBottomsheet(username: friend.username, avatar: friend.avatar, followAt: "", option: "Friend"),
+                                  builder: (context) => MoreOptionBottomsheet(
+                                    username: friend.username,
+                                    avatar: friend.avatar,
+                                    followAt: "",
+                                    option: "Friend",
+                                    id: friend.id,
+                                  ),
                                 );
                               },
                             )

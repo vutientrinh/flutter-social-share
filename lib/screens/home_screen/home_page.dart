@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/ecommerce_home_screen.dart';
 import 'package:flutter_social_share/screens/friend_screen/friend_screen.dart';
 import 'package:flutter_social_share/screens/notification_screen/notification_screen.dart';
 import 'package:flutter_social_share/screens/profile_screen/profile_screen.dart';
 
+import '../../providers/state_provider/auth_provider.dart';
 import '../posts/views/post_screen/post_screen.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   int _selectedIndex = 0;
+  String? authorId;
   var navbarItems = [
     const BottomNavigationBarItem(
         icon: Icon(Icons.home, size: 26), label: "Home"),
@@ -35,17 +38,32 @@ class _HomePageState extends State<HomePage> {
       _selectedIndex = index;
     });
   }
+  Future<void> loadData() async {
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
+    setState(() {
+      authorId = data['userId']; // Assign userId once data is fetched
+    });
 
-  static const List<Widget> _pages = [
-    ListPostsScreen(),
-    EcommerceHomeScreen(),
-    FriendScreen(),
-    NotificationScreen(),
-    ProfileScreen(followerName: "Vu tien trinh"),
-  ];
+    if (authorId != null) {
+
+      // _postsBloc.getPostAuthor(authorId!);
+    } else {
+      print("Author ID is null. Skipping getPostAuthor call.");
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      const ListPostsScreen(),
+      const EcommerceHomeScreen(),
+      const FriendScreen(),
+      const NotificationScreen(),
+      ProfileScreen(userName: "Vu tien trinh", userId: authorId??"",),
+    ];
     return Scaffold(
         body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(

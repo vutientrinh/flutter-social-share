@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
+import 'package:flutter_social_share/utils/uidata.dart';
 
 import '../../model/post.dart';
 import '../posts/widgets/post_item_remake.dart';
 import 'package:riverpod/riverpod.dart';
 class ProfileScreen extends ConsumerStatefulWidget {
-  final String followerName;
-  const ProfileScreen({super.key, required this.followerName});
+  final String userName;
+  final String userId;
+  const ProfileScreen({super.key, required this.userName, required this.userId});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -56,8 +58,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 alignment: Alignment.topCenter,
                 children: [
                   Ink.image(
-                    image: const NetworkImage(
-                        'https://wallup.net/wp-content/uploads/2016/02/18/286966-nature-photography.jpg'),
+                    image:  NetworkImage(
+                        LINK_IMAGE.publicImage("")),
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -72,7 +74,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                             foregroundImage: NetworkImage(
                                 "https://th.bing.com/th/id/OIP.G-H-NFz2OoXJ2GkK74dX4wHaH_?rs=1&pid=ImgDetMain")),
                         Text(
-                          widget.followerName,
+                          widget.userName,
                           style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),

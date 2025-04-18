@@ -3,18 +3,24 @@ import 'package:flutter_social_share/model/follow_response.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../messages_screen/chat_detail.dart';
+import '../../messages_screen/messages_screen.dart';
+
 class MoreOptionBottomsheet extends StatefulWidget {
   final String? username;
   final String? avatar;
   final String followAt;
   final String? option;
+  final String? id;
 
   const MoreOptionBottomsheet(
       {super.key,
       required this.username,
       required this.avatar,
       required this.followAt,
-      required this.option});
+      required this.option,
+        required this.id
+      });
 
   @override
   State<MoreOptionBottomsheet> createState() => _MoreOptionBottomsheetState();
@@ -70,7 +76,16 @@ class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
           _buildListTile(
             icon: Icons.message,
             title: "Message ${widget.username ?? ''}",
-            onTap: () => Navigator.pop(context),
+            subtitle: "Send message",
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatDetail(
+                      receiverId: widget.id??"", receiverUsername: "VuTienTrin"),
+                ),
+              )
+            },
           ),
 
           /// Unfollow

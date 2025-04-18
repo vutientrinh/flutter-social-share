@@ -62,6 +62,7 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
                 final user = users[index];
 
                 return ListUser(
+                  userId: user.id,
                   username: user.username,
                   avatar: user.avatar,
                   trailing: ElevatedButton(

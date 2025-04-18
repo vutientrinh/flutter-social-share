@@ -112,6 +112,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                 itemBuilder: (context, index) {
                   final friendRequest = friendRequests[index];
                   return ListUser(
+                    userId: friendRequest.id,
                     username: friendRequest.username ?? "Unknown",
                     avatar: friendRequest.avatar ?? "",
                     trailing: Row(

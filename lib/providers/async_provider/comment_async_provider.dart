@@ -25,6 +25,6 @@ class CommentNotifier extends AsyncNotifier<List<Comment>> {
 
     // Fetch updated list of comments
     final comments = await commentService.getCommentsAPI(postId);
-    state = AsyncData(comments); // ✅ update UI
+    state = AsyncData(comments);
   }
 }

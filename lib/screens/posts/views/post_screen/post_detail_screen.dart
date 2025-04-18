@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/state_provider/comment_provider.dart';
 import 'package:flutter_social_share/screens/comment/widgets/list_comment.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
 import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
@@ -32,6 +33,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           .read(commentAsyncNotifierProvider.notifier)
           .getCommentAPI(post.id);
     });
+    print(ref.read(commentServiceProvider).getCommentsAPI(post.id));
   }
 
   @override

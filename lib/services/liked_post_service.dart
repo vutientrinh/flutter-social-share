@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/follow_response.dart';
 import 'package:flutter_social_share/model/user.dart';
 
-class PostLikedService {
+class LikedPostService {
   final Dio _dio;
 
-  PostLikedService(this._dio);
+  LikedPostService(this._dio);
 
   Future<Response> like(String postId) async {
     try {

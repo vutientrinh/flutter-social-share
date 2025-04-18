@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/liked_post_provider.dart';
 import 'package:flutter_social_share/screens/posts/widgets/icon_post_comment.dart';
 import 'package:flutter_social_share/screens/posts/widgets/text_count_number.dart';
 
@@ -17,6 +19,7 @@ class ActionPost extends ConsumerStatefulWidget {
 
 class _ActionPostState extends ConsumerState<ActionPost> {
   Post get post => widget.post;
+
   int likeCount = 0;
   bool isLiked = false;
 
@@ -25,7 +28,7 @@ class _ActionPostState extends ConsumerState<ActionPost> {
   @override
   void initState() {
     super.initState();
-
+    print(post);
     likeCount = post.commentCount ?? 0;
     isLiked = post.hasLiked;
   }
@@ -35,7 +38,7 @@ class _ActionPostState extends ConsumerState<ActionPost> {
     super.didUpdateWidget(oldWidget);
 
     likeCount = widget.post.likedCount ?? 0;
-    isLiked = widget.post.hasLiked ;
+    isLiked = widget.post.hasLiked;
   }
 
   @override
@@ -43,11 +46,11 @@ class _ActionPostState extends ConsumerState<ActionPost> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (post.content != null && post.content!.trim().isNotEmpty)
+        if (post.content.trim().isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(left: 12, top: 8),
             child: Text(
-              post.content!,
+              post.content,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -62,35 +65,20 @@ class _ActionPostState extends ConsumerState<ActionPost> {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(right: 0, left: 4),
-                  // child: Toggle(
-                  //   isActivated: isLiked,
-                  //   deActivatedChild: Container(
-                  //     color: Colors.transparent,
-                  //     padding: const EdgeInsets.all(8),
-                  //     child: const Icon(CupertinoIcons.heart),
-                  //   ),
-                  //   activatedChild: Container(
-                  //     color: Colors.transparent,
-                  //     padding: const EdgeInsets.all(8),
-                  //     child: const Icon(
-                  //       CupertinoIcons.heart_solid,
-                  //       color: Colors.red,
-                  //     ),
-                  //   ),
-                  //   onTrigger: _handleLikePost,
-                  //   onTap: (isOn) {
-                  //     setState(() {
-                  //       likeCount = isOn ? likeCount + 1 : likeCount - 1;
-                  //       isLiked = isOn;
-                  //     });
-                  //   },
-                  // ),
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      final likedService = ref.read(likedPostServiceProvider);
                       setState(() {
                         isLiked = !isLiked;
                         likeCount = isLiked ? likeCount + 1 : likeCount - 1;
+                        if (isLiked) {
+                          likedService.like(post.id);
+
+                        } else {
+                          likedService.unlike(post.id);
+                        }
                       });
+                      ref.watch(postAsyncNotifierProvider);
                     },
                     child: isLiked
                         ? Container(

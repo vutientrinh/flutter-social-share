@@ -21,11 +21,12 @@ class _ListCommentState extends ConsumerState<ListComment> {
           .read(commentAsyncNotifierProvider.notifier)
           .getCommentAPI(widget.postId);
     });
+
   }
 
   @override
   Widget build(BuildContext context) {
-    final commentState = ref.read(commentAsyncNotifierProvider);
+    final commentState = ref.watch(commentAsyncNotifierProvider);
 
     return commentState.when(
       loading: () => const Center(child: CircularProgressIndicator()),

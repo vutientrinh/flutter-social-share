@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
+import 'package:flutter_social_share/screens/authentication/update_profile.dart';
 
 import '../../providers/state_provider/auth_provider.dart';
+import '../home_screen/home_page.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -19,6 +21,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
   bool _isLoading = false;
+
   // Replace with your service class name
 
   void _registerWithGoogle() async {
@@ -29,7 +32,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _handleRegister() async {
-    final  _authService = ref.read(authServiceProvider); // Create instance of AuthService
+    final _authService =
+        ref.read(authServiceProvider); // Create instance of AuthService
 
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
@@ -46,10 +50,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Registration successful!")),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
+        final response = await _authService.login(name, password);
+        print('Login response value : $response');
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (response != null && response.statusCode == 200) {
+          await _authService.saveLoginData(response.data);
+          // Navigate to HomePage on successful login
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const UpdateProfile()),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Registration failed")),
@@ -83,14 +97,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   controller: _emailController,
                   label: 'Email',
                   icon: Icons.email_outlined,
-                  validator: (value) => value!.contains('@') ? null : 'Enter a valid email',
+                  validator: (value) =>
+                      value!.contains('@') ? null : 'Enter a valid email',
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
                   controller: _usernameController,
                   label: 'Username',
                   icon: Icons.person_outline,
-                  validator: (value) => value!.isNotEmpty ? null : 'Username is required',
+                  validator: (value) =>
+                      value!.isNotEmpty ? null : 'Username is required',
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
@@ -102,26 +118,28 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   toggleObscure: () {
                     setState(() => _isObscure = !_isObscure);
                   },
-                  validator: (value) =>
-                  value!.length >= 6 ? null : 'Password must be at least 6 characters',
+                  validator: (value) => value!.length >= 6
+                      ? null
+                      : 'Password must be at least 6 characters',
                 ),
                 const SizedBox(height: 30),
                 _isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 80),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: _handleRegister,
-                  child: const Text(
-                    'Create',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 14, horizontal: 80),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: _handleRegister,
+                        child: const Text(
+                          'Create',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
                   icon: const Icon(Icons.login, color: Colors.white),
@@ -131,7 +149,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   style: OutlinedButton.styleFrom(
                     backgroundColor: Colors.redAccent,
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 14, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -164,9 +183,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         prefixIcon: Icon(icon),
         suffixIcon: isPassword
             ? IconButton(
-          icon: Icon(isObscure ? Icons.visibility_off : Icons.visibility),
-          onPressed: toggleObscure,
-        )
+                icon: Icon(isObscure ? Icons.visibility_off : Icons.visibility),
+                onPressed: toggleObscure,
+              )
             : null,
         filled: true,
         fillColor: Colors.white,

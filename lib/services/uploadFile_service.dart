@@ -7,7 +7,7 @@ class UploadFileService {
 
   UploadFileService(this._dio);
 
-  Future<FileResponse> uploadFile(File file, {String bucketName = "satchat"}) async {
+  Future<FileResponse> uploadFile(File file, {String bucketName = "commons"}) async {
     try {
       String fileName = file.path.split('/').last;
 
@@ -20,7 +20,7 @@ class UploadFileService {
       });
 
       final response = await _dio.post(
-        '/upload',
+        '/minio/upload',
         data: formData,
         options: Options(
           contentType: 'multipart/form-data',

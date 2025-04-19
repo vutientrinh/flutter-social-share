@@ -9,7 +9,7 @@ class FollowService {
 
   Future<Response> follow(String userId) async {
     try {
-      final response = await _dio.post('/users/$userId/follow');
+      final response = await _dio.post('/api/users/$userId/follow');
       return response;
     } catch (e) {
       print('Error adding follow: $e');
@@ -19,7 +19,7 @@ class FollowService {
 
   Future<Response> unfollow(String userId) async {
     try {
-      final response = await _dio.delete('/users/$userId/unfollow');
+      final response = await _dio.delete('/api/users/$userId/unfollow');
       return response;
     } catch (e) {
       print('Error delete follow: $e');
@@ -31,7 +31,7 @@ class FollowService {
       {int page = 1, int size = 10}) async {
     try {
       final response = await _dio
-          .get('/users/$userId/followers', data: {"page": page, "size": size});
+          .get('/api/users/$userId/followers', data: {"page": page, "size": size});
       final List<dynamic> followersListJson = response.data['data']['data'];
 
       return followersListJson.map((json) => FollowUserResponse.fromJson(json)).toList();
@@ -45,7 +45,7 @@ class FollowService {
       {int page = 1, int size = 10}) async {
     try {
       final response = await _dio
-          .get('/users/$userId/followings', data: {"page": page, "size": size});
+          .get('/api/users/$userId/followings', data: {"page": page, "size": size});
 
       final List<dynamic> followingsListJson = response.data['data']['data'];
 

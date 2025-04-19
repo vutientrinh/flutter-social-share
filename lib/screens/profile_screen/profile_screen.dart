@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/screens/profile_screen/widget/show_setting_bottom_sheet.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 
@@ -21,7 +22,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen>
     with TickerProviderStateMixin {
-  // final _postsBloc = ListPostsRxDartBloc();
   late TabController _tabController;
   String? authorId;
 
@@ -29,10 +29,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     setState(() {
-      authorId = data['userId']; // Assign userId once data is fetched
+      authorId = data['userId'];
     });
 
     if (authorId != null) {
+
       // _postsBloc.getPostAuthor(authorId!);
     } else {
       print("Author ID is null. Skipping getPostAuthor call.");
@@ -51,6 +52,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (context) => const ShowSettingBottomSheet(),
+              );
+            },
+          ),
+        ],
+      ),
+
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(

@@ -9,7 +9,7 @@ class CommentService {
   Future<List<Comment>> getCommentsAPI(String postId) async {
     try {
       final response = await _dio.get(
-        '/comments/$postId',
+        '/api/comments/$postId',
       );
       final List<dynamic> listCommentJson = response.data['data']['data'];
       return listCommentJson.map((json) => Comment.fromJson(json)).toList();
@@ -21,7 +21,7 @@ class CommentService {
 
   Future<Response> createComment(String postId, String content) async {
     try {
-      final response = await _dio.post('/comments/create',
+      final response = await _dio.post('/api/comments/create',
           data: {'postId': postId, 'content': content});
       return response.data;
     } catch (e) {

@@ -1,13 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/upload_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
+import 'package:flutter_social_share/screens/authentication/login_screen.dart';
+import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'package:mime/mime.dart';
 
 class UpdateProfile extends ConsumerStatefulWidget {
   const UpdateProfile({super.key});
@@ -47,15 +45,19 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
     String avatar = '';
     String cover = '';
     if (!_formKey.currentState!.validate()) return;
+
     if (_avatarImage != null) {
       final response = await fileService.uploadFile(_avatarImage!);
       avatar = response.filename;
+      print(avatar);
     }
 
     if (_coverImage != null) {
       final response = await fileService.uploadFile(_coverImage!);
       cover = response.filename;
+      print(cover);
     }
+
     final response = userService.updateProfile(
       avatar,
       cover,
@@ -65,65 +67,141 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
       _websiteUrl.text.trim(),
     );
 
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Update Profile')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
             children: [
-              GestureDetector(
-                onTap: () => _pickImage(true),
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage:
-                      _avatarImage != null ? FileImage(_avatarImage!) : null,
-                  child: _avatarImage == null ? const Icon(Icons.person) : null,
-                ),
-              ),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: () => _pickImage(false),
-                child: Container(
-                  height: 120,
-                  color: Colors.grey[300],
-                  child: _coverImage == null
-                      ? const Center(child: Text("Tap to pick cover image"))
-                      : Image.file(_coverImage!, fit: BoxFit.cover),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _firstName,
-                decoration: const InputDecoration(labelText: 'First Name'),
-                validator: (val) => val!.isEmpty ? 'Required' : null,
-              ),
-              TextFormField(
-                controller: _lastName,
-                decoration: const InputDecoration(labelText: 'Last Name'),
-                validator: (val) => val!.isEmpty ? 'Required' : null,
-              ),
-              TextFormField(
-                controller: _bio,
-                decoration: const InputDecoration(labelText: 'Bio'),
-              ),
-              TextFormField(
-                controller: _websiteUrl,
-                decoration: const InputDecoration(labelText: 'Website URL'),
+              // Cover Image with button
+              Stack(
+                children: [
+                  Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: _coverImage != null
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        _coverImage!,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                        : const Center(child: Text("Tap to pick cover image")),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.black45,
+                      child: IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.white),
+                        onPressed: () => _pickImage(false),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submit,
-                child: const Text('Update Profile'),
-              )
+
+              // Avatar Image with button
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage:
+                    _avatarImage != null ? FileImage(_avatarImage!) : null,
+                    child: _avatarImage == null
+                        ? const Icon(Icons.person, size: 50)
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: CircleAvatar(
+                      radius: 16,
+                      backgroundColor: Colors.blue,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.edit, size: 16, color: Colors.white),
+                        onPressed: () => _pickImage(true),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Input fields inside Card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      _buildTextField(_firstName, 'First Name', true),
+                      const SizedBox(height: 12),
+                      _buildTextField(_lastName, 'Last Name', true),
+                      const SizedBox(height: 12),
+                      _buildTextField(_bio, 'Bio', false),
+                      const SizedBox(height: 12),
+                      _buildTextField(_websiteUrl, 'Website URL', false),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.save),
+                  label: const Text('Update Profile'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: _submit,
+                ),
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      TextEditingController controller,
+      String label,
+      bool isRequired,
+      ) {
+    return TextFormField(
+      controller: controller,
+      validator: isRequired ? (val) => val!.isEmpty ? 'Required' : null : null,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
       ),
     );
   }

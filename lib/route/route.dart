@@ -15,6 +15,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const LoginScreen());
     case registerScreenRoute:
       return MaterialPageRoute(builder: (context) => const RegisterScreen());
+    case updateProfileScreenRoute:
+      return MaterialPageRoute(builder: (context) => const UpdateProfile());
     case suggestionScreenRoute:
       return MaterialPageRoute(builder: (context) => const SuggestionUser());
     case friendScreenRoute:

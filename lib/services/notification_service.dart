@@ -8,7 +8,7 @@ class NotificationService {
   Future<Response> getAllNotification({int page = 1, int size = 10}) async {
     try {
       return await _dio
-          .get('/notifications', data: {'page': page, 'size': size});
+          .get('/api/notifications', data: {'page': page, 'size': size});
     } catch (e) {
       throw Exception('Failed to fetch posts: $e');
     }

@@ -9,7 +9,7 @@ class LikedPostService {
 
   Future<Response> like(String postId) async {
     try {
-      final response = await _dio.post('/posts/$postId/like');
+      final response = await _dio.post('/api/posts/$postId/like');
       return response;
     } catch (e) {
       print('Error like: $e');
@@ -18,7 +18,7 @@ class LikedPostService {
   }
   Future<Response> unlike(String postId) async {
     try {
-      final response = await _dio.delete('/posts/$postId/unlike');
+      final response = await _dio.delete('/api/posts/$postId/unlike');
       return response;
     } catch (e) {
       print('Error unlike: $e');
@@ -27,7 +27,7 @@ class LikedPostService {
   }
   Future<Response> getLikedUsers(String postId) async {
     try {
-      final response = await _dio.get('/posts/$postId/liked-users');
+      final response = await _dio.get('/api/posts/$postId/liked-users');
       return response;
     } catch (e) {
       print('Error get liked users: $e');

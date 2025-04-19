@@ -7,14 +7,14 @@ class ChatService {
   ChatService(this._dio);
 
   Future<Response> getFriends() async {
-    final response = await _dio.get('/users/all');
+    final response = await _dio.get('/api/users/all');
     print(response.data);
     return response;
   }
 
   Future<List<Conversation>> getUnSeenMessage(String fromUserId) async {
     try {
-      String url = '/conversation/unseenMessages';
+      String url = '/api/conversation/unseenMessages';
       if (fromUserId.isNotEmpty) {
         url = '$url/$fromUserId';
       }
@@ -35,7 +35,7 @@ class ChatService {
       List<Conversation> chatMessages) async {
     try {
       print("Before get information");
-      final response = await _dio.put('/conversation/setReadMessages');
+      final response = await _dio.put('/api/conversation/setReadMessages');
       print("Response in service ${response.data}");
       return response.data;
     } catch (e) {

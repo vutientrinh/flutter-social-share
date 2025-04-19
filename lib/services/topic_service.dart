@@ -8,7 +8,7 @@ class TopicService {
   Future<Response> createTopic(String name, String color) async {
     try {
       final response = await _dio.post(
-        '/topic',
+        '/api/topic',
         data: {
           'name': name,
           'color': color,
@@ -23,7 +23,7 @@ class TopicService {
   Future<Response> getAllTopics({int page = 1, int size = 10}) async {
     try {
       final response = await _dio.get(
-        '/topic/all',
+        '/api/topic/all',
         data: {
           'page': page,
           'size': size,

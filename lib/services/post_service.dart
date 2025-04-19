@@ -29,7 +29,7 @@ class PostService {
         if (authorId != null && authorId.isNotEmpty) 'authorId': authorId,
       };
 
-      final response = await _dio.get('/posts', queryParameters: queryParams);
+      final response = await _dio.get('/api/posts', queryParameters: queryParams);
 
       // ✅ Extract the nested list
       final postListJson = response.data['data']['data'] as List;
@@ -47,7 +47,7 @@ class PostService {
   /// Get paginated posts
   Future<Response> listPost(int page, {int size = 10}) async {
     try {
-      return await _dio.get('/posts?page=$page&size=$size');
+      return await _dio.get('/api/posts?page=$page&size=$size');
     } catch (e) {
       throw Exception('Failed to fetch posts on page $page: $e');
     }
@@ -56,7 +56,7 @@ class PostService {
   /// Get a single post by UUID
   Future<Response> getPostById(String uuid) async {
     try {
-      return await _dio.get('/posts/$uuid');
+      return await _dio.get('/api/posts/$uuid');
     } catch (e) {
       throw Exception('Failed to fetch post $uuid: $e');
     }
@@ -82,7 +82,7 @@ class PostService {
         'images': imageFiles, // important: must match backend param name
       });
 
-      return await _dio.post('/posts',
+      return await _dio.post('/api/posts',
           data: formData,
           options: Options(
             contentType: 'multipart/form-data',
@@ -96,7 +96,7 @@ class PostService {
   Future<Response> updatePost(
       String uuid, Map<String, dynamic> postUpdateRequest) async {
     try {
-      return await _dio.put('/posts/$uuid', data: postUpdateRequest);
+      return await _dio.put('/api/posts/$uuid', data: postUpdateRequest);
     } catch (e) {
       throw Exception('Failed to update post $uuid: $e');
     }
@@ -105,7 +105,7 @@ class PostService {
   /// Delete a post by UUID
   Future<Response> deletePost(String uuid) async {
     try {
-      return await _dio.delete('/posts/$uuid');
+      return await _dio.delete('/api/posts/$uuid');
     } catch (e) {
       throw Exception('Failed to delete post $uuid: $e');
     }
@@ -114,21 +114,21 @@ class PostService {
 
   Future<Response> savePost(String authorId, String postId) async {
     try {
-      return await _dio.post('/posts/save');
+      return await _dio.post('/api/posts/save');
     } catch (e) {
       throw Exception('Failed to save post : $e');
     }
   }
   Future<Response> unSavePost(String authorId, String postId) async {
     try {
-      return await _dio.post('/posts/unsaved');
+      return await _dio.post('/api/posts/unsaved');
     } catch (e) {
       throw Exception('Failed to unSave post : $e');
     }
   }
   Future<Response> getSavedPosts() async {
     try {
-      return await _dio.get('/posts/saved');
+      return await _dio.get('/api/posts/saved');
     } catch (e) {
       throw Exception('Failed to unSave post : $e');
     }

@@ -45,7 +45,7 @@ class AuthService {
       }
 
       // Call the introspect endpoint to verify the token validity
-      final response = await _dio.post('/auth/introspect', data: {
+      final response = await _dio.post('/api/auth/introspect', data: {
         'token': token,
       });
 
@@ -59,7 +59,7 @@ class AuthService {
 
   Future<Response?> login(String username, String password) async {
     try {
-      final response = await _dio.post('/auth/login', data: {
+      final response = await _dio.post('/api/auth/login', data: {
         'username': username,
         'password': password,
       });
@@ -74,12 +74,21 @@ class AuthService {
 
   Future<Response?> register(String name, String email, String password) async {
     try {
-      final response = await _dio.post('/auth/register', data: {
+      final response = await _dio.post('/api/auth/register', data: {
         'username': name,
         'email': email,
-        'password': password,
-        'role': ['ROLE_USER']
+        'role': ["ROLE_USER"],
+        'password': password
       });
+      return response;
+    } catch (e) {
+      print('Register Error: $e');
+      return null;
+    }
+  }
+  Future<Response?> logout() async {
+    try {
+      final response = await _dio.post('/api/auth/signout');
       return response;
     } catch (e) {
       print('Register Error: $e');

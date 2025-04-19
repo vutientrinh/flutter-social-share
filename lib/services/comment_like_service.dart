@@ -8,7 +8,7 @@ class CommentLikeService {
   Future<Response> likeAPI(String commentId) async {
     try {
       final response = await _dio.post(
-        '/comments/$commentId/like',
+        '/api/comments/$commentId/like',
       );
       return response;
     } catch (e) {
@@ -20,7 +20,7 @@ class CommentLikeService {
   Future<Response> unlikeAPI(String commentId) async {
     try {
       final response = await _dio.post(
-        '/comments/$commentId/unlike',
+        '/api/comments/$commentId/unlike',
       );
       return response;
     } catch (e) {
@@ -32,7 +32,7 @@ class CommentLikeService {
   Future<Response> getLikedUsersAPI(String commentId,
       {int page = 1, int size = 10}) async {
     try {
-      final response = await _dio.get('/comments/$commentId/liked-users',
+      final response = await _dio.get('/api/comments/$commentId/liked-users',
           data: {"page": page, "size": size});
       return response;
     } catch (e) {

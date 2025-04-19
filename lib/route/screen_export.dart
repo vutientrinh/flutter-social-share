@@ -1,5 +1,7 @@
 export 'package:flutter_social_share/screens/authentication/login_screen.dart';
 export 'package:flutter_social_share/screens/authentication/register_screen.dart';
+export 'package:flutter_social_share/screens/authentication/update_profile.dart';
+
 
 export 'package:flutter_social_share/screens/posts/views/post_screen/create_post_screen.dart';
 

@@ -22,8 +22,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case friendScreenRoute:
       return MaterialPageRoute(builder: (context) => const FriendList());
     case profileScreenRoute:
+      final args = settings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(
-          builder: (context) => const ProfileScreen(userName: "followerName"));
+        builder: (context) => ProfileScreen(
+          userId: args['userId'],
+        ),
+      );
     case userProfileScreenRoute:
       return MaterialPageRoute(builder: (context) => const UserProfileScreen());
     case chatScreenRoute:

@@ -1,7 +1,8 @@
 class User {
   final String id;
-  final String username;
+  final String cover;
   final String avatar;
+  final String username;
   final String firstName;
   final String lastName;
   final List<dynamic>? roles;
@@ -17,8 +18,9 @@ class User {
 
   User({
     required this.id,
-    required this.username,
+    required this.cover,
     required this.avatar,
+    required this.username,
     required this.firstName,
     required this.lastName,
     this.roles,
@@ -35,19 +37,22 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
-      username: json['username'],
+      cover: json['cover'],
       avatar: json['avatar'],
+      username: json['username'],
       firstName: json['firstName'],
       lastName: json['lastName'],
-      roles: json['roles']??[],
+      roles: json['roles'] ?? [],
       bio: json['bio'],
       websiteUrl: json['websiteUrl'],
       followerCount: json['followerCount'],
       friendsCount: json['friendsCount'],
       postCount: json['postCount'],
       status: json['status'],
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 }

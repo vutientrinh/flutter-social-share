@@ -23,6 +23,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
   @override
   void initState() {
     super.initState();
+    print(getFriendRequest());
     getFriendRequest();
   }
 
@@ -30,7 +31,6 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     userId = data['userId'];
-    print(userId);
     if (userId != null) {
       await ref
           .read(friendRequestAsyncProvider.notifier)
@@ -40,7 +40,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final friendState = ref.watch(friendAsyncNotifierProvider);
+    final friendState = ref.watch(friendRequestAsyncProvider);
     return Column(
       children: [
         Padding(
@@ -121,8 +121,9 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                         ElevatedButton(
                           onPressed: () => {ref
                               .read(friendAsyncNotifierProvider.notifier)
-                              .acceptFriend(friendRequest.id),
-                            getFriendRequest()
+                              .acceptFriend(friendRequest.requestId),
+                            getFriendRequest(),
+                            print(friendRequest.requestId)
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue),

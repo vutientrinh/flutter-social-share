@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/profile_screen/widget/show_setting_bottom_sheet.dart';
 import 'package:flutter_social_share/services/auth_service.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 
 import '../../model/post.dart';
+import '../../model/user.dart';
 import '../posts/widgets/post_item_remake.dart';
 import 'package:riverpod/riverpod.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  final String userName;
+  final String userId;
 
   // final String userId;
   const ProfileScreen(
-      {super.key, required this.userName});
+      {super.key, required this.userId});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -23,27 +25,18 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  String? authorId;
-
+  User? user;
   Future<void> loadData() async {
-    final authService = ref.read(authServiceProvider);
-    final data = await authService.getSavedData();
+    final response = await ref.read(userServiceProvider).getProfileById(widget.userId);
     setState(() {
-      authorId = data['userId'];
+      user = response;
     });
-    if (authorId != null) {
-      // _postsBloc.getPostAuthor(authorId!);
-    } else {
-      print("Author ID is null. Skipping getPostAuthor call.");
-    }
   }
-
 
   @override
   void initState() {
     super.initState();
     loadData();
-    print(authorId);
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -78,43 +71,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 children: [
                   Ink.image(
                     image: NetworkImage(
-                        LINK_IMAGE.publicImage("")),
+                        LINK_IMAGE.publicImage(user!.cover)),
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  Padding(
+                   Padding(
                     padding: const EdgeInsets.only(top: 150),
                     // Moves the column down
                     child: Column(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                             radius: 50,
                             foregroundImage: NetworkImage(
-                                "https://th.bing.com/th/id/OIP.G-H-NFz2OoXJ2GkK74dX4wHaH_?rs=1&pid=ImgDetMain")),
+                                LINK_IMAGE.publicImage(user!.avatar))),
                         Text(
-                          widget.userName,
+                          user!.username,
                           style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 5),
-                        const Text(
-                          '@vutientrinh',
-                          style: TextStyle(color: Colors.grey),
-                        ),
                         const SizedBox(height: 20),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Bio:',
+                              const Text('Bio: ',
                                   style:
                                   TextStyle(fontWeight: FontWeight.bold)),
-                              Text(
-                                  'Passionate about coding, design, and technology.'),
-                              SizedBox(height: 10),
-                              Text('Followers: 1.2K   Following: 200'),
+                              Text(user!.bio??""),
+                              const SizedBox(height: 10),
+                              Text('Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}'),
                             ],
                           ),
                         ),

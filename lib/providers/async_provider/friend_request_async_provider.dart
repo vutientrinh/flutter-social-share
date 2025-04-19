@@ -13,12 +13,12 @@ class FriendRequestNotifier extends AsyncNotifier<List<FriendRequest>> {
     final data = await authService.getSavedData();
     final userId = data['userId'];
     if (userId == null) throw Exception("User ID is null");
-    return getFriendRequests(userId);
+    final requestFriend = await getFriendRequests(userId);
+    return requestFriend;
   }
 
   Future<List<FriendRequest>> getFriendRequests(String userId) async {
     final friendService = ref.watch(friendServiceProvider);
     return await friendService.getFriendRequests(userId);
   }
-
 }

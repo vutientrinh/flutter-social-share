@@ -58,7 +58,7 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
                     context: context,
                     builder: (context) => MoreOptionBottomsheet(
                       username: following.username,
-                      avatar: following.avatar,
+                      avatar: following.avatar??"",
                       followAt: following.followAt,
                       option: "Following",
                       id: following.id,

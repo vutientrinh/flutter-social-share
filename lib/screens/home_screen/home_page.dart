@@ -17,7 +17,8 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   int _selectedIndex = 0;
-  String? authorId;
+  late String authorId;
+  bool isLoading = true;
   var navbarItems = [
     const BottomNavigationBarItem(
         icon: Icon(Icons.home, size: 26), label: "Home"),
@@ -38,31 +39,38 @@ class _HomePageState extends ConsumerState<HomePage> {
       _selectedIndex = index;
     });
   }
+
   Future<void> loadData() async {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     setState(() {
-      authorId = data['userId']; // Assign userId once data is fetched
+      authorId = data['userId'];
+      isLoading = false;
     });
-
-    if (authorId != null) {
-
-      // _postsBloc.getPostAuthor(authorId!);
-    } else {
-      print("Author ID is null. Skipping getPostAuthor call.");
-    }
   }
 
-
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final List<Widget> _pages = [
       const ListPostsScreen(),
       const EcommerceHomeScreen(),
       const FriendScreen(),
       const NotificationScreen(),
-      ProfileScreen(userName: "Vu tien trinh"),
+      ProfileScreen(
+        userId: authorId,
+      ),
     ];
     return Scaffold(
         body: _pages[_selectedIndex],

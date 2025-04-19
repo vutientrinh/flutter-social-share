@@ -33,7 +33,6 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           .read(commentAsyncNotifierProvider.notifier)
           .getCommentAPI(post.id);
     });
-    print(ref.read(commentServiceProvider).getCommentsAPI(post.id));
   }
 
   @override

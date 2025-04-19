@@ -53,7 +53,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
         content: _controller.text,
         images: _images,
         authorId: userId!,
-        topicId: "57ffa366-c9e9-4658-b58b-a1c14ad0934b", // Change if needed
+        topicId: "57ffa366-c9e9-4658-b58b-a1c14ad0934b",
       );
 
       await notifier.addPost(newPost);

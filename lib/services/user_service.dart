@@ -53,6 +53,7 @@ class UserService {
         '/api/users/profile/$userId',
       );
       final userResponse = response.data['data'];
+
       return User.fromJson(userResponse);
     } catch (e) {
       print('Error fetching profile: $e');

@@ -1,32 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/follow_response.dart';
+import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/follow_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/friend_provider.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../messages_screen/chat_detail.dart';
 import '../../messages_screen/messages_screen.dart';
 
-class MoreOptionBottomsheet extends StatefulWidget {
-  final String? username;
-  final String? avatar;
+class MoreOptionBottomsheet extends ConsumerStatefulWidget {
+  final String username;
+  final String avatar;
   final String followAt;
-  final String? option;
-  final String? id;
+  final String option;
+  final String id;
 
-  const MoreOptionBottomsheet(
-      {super.key,
-      required this.username,
-      required this.avatar,
-      required this.followAt,
-      required this.option,
-        required this.id
-      });
+  const MoreOptionBottomsheet({super.key,
+    required this.username,
+    required this.avatar,
+    required this.followAt,
+    required this.option,
+    required this.id,
+  });
 
   @override
-  State<MoreOptionBottomsheet> createState() => _MoreOptionBottomsheetState();
+  ConsumerState<MoreOptionBottomsheet> createState() =>
+      _MoreOptionBottomsheetState();
 }
 
-class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
+class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,7 +45,7 @@ class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
               CircleAvatar(
                 radius: 24,
                 backgroundImage: widget.avatar != null
-                    ? NetworkImage(LINK_IMAGE.publicImage(widget.avatar ?? ""))
+                    ? NetworkImage(LINK_IMAGE.publicImage(widget.avatar))
                     : null,
                 child: widget.avatar == null ? const Icon(Icons.person) : null,
               ),
@@ -59,7 +63,9 @@ class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
                   const SizedBox(height: 4),
                   if (widget.followAt.isNotEmpty)
                     Text(
-                      "${widget.option} since ${timeago.format(DateTime.parse(widget.followAt), locale: 'en_short')}",
+                      "${widget.option} since ${timeago.format(
+                          DateTime.parse(widget.followAt),
+                          locale: 'en_short')}",
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey[600],
@@ -75,33 +81,40 @@ class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
 
           _buildListTile(
             icon: Icons.message,
-            title: "Message ${widget.username ?? ''}",
+            title: "Message ${widget.username }",
             subtitle: "Send message",
-            onTap: () => {
+            onTap: () =>
+            {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatDetail(
-                      receiverId: widget.id??"", receiverUsername: "VuTienTrin"),
+                  builder: (context) =>
+                      ChatDetail(
+                          receiverId: widget.id ,
+                          receiverUsername: widget.username),
                 ),
               )
             },
           ),
 
-          /// Unfollow
-          _buildListTile(
-            icon: Icons.person_remove_alt_1,
-            title: "Unfollow ${widget.username ?? ''}",
-            subtitle: "Stop seeing posts but stay friends",
-            onTap: () => Navigator.pop(context),
-          ),
+          if (widget.option == "Follow")
+            _buildListTile(
+              icon: Icons.person_remove_alt_1,
+              title: "Unfollow ${widget.username }",
+              subtitle: "Stop seeing posts but stay friends",
+              onTap: () async {
+                await ref.read(followServiceProvider).unfollow(widget.id);
+              },
+            ),
 
           if (widget.option == "Friend")
             _buildListTile(
               icon: Icons.person_off,
-              title: "Unfriend ${widget.username ?? ''}",
-              subtitle: "Remove ${widget.username ?? 'this user'} as a friend",
-              onTap: () => Navigator.pop(context),
+              title: "Unfriend ${widget.username }",
+              subtitle: "Remove ${widget.username } as a friend",
+              onTap: () async {
+                await ref.read(friendServiceProvider).deleteFriend(widget.id);
+              },
             ),
         ],
       ),
@@ -129,9 +142,9 @@ class _MoreOptionBottomsheetState extends State<MoreOptionBottomsheet> {
       ),
       subtitle: subtitle != null
           ? Text(
-              subtitle,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            )
+        subtitle,
+        style: const TextStyle(fontSize: 12, color: Colors.grey),
+      )
           : null,
       onTap: onTap,
     );

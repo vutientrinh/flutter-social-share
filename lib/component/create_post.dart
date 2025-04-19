@@ -5,6 +5,7 @@ import '../utils/uidata.dart';
 
 class CreatePost extends StatefulWidget {
   final String avatar;
+
   const CreatePost({super.key, required this.avatar});
 
   @override
@@ -19,11 +20,10 @@ class _CreatePostState extends State<CreatePost> {
       color: Colors.white,
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 22,
-            backgroundImage:  NetworkImage(
-              // LINK_IMAGE.publicImage(widget.avatar)
-                "https://wallup.net/wp-content/uploads/2016/02/18/286966-nature-photography.jpg"), // replace with your asset or NetworkImage
+            backgroundImage: NetworkImage(LINK_IMAGE.publicImage(
+                widget.avatar)), // replace with your asset or NetworkImage
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -31,11 +31,13 @@ class _CreatePostState extends State<CreatePost> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CreatePostScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const CreatePostScreen()),
                 );
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(25),

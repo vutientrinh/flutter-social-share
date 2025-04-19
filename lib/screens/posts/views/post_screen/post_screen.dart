@@ -9,6 +9,7 @@ import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart
 
 import '../../../../model/user.dart';
 import '../../../../providers/async_provider/post_async_provider.dart';
+import '../../../../providers/async_provider/user_async_provider.dart';
 import '../../../messages_screen/messages_screen.dart';
 
 class ListPostsScreen extends ConsumerStatefulWidget {
@@ -29,12 +30,11 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
 
   Future<void> fetchUser() async {
     final userId = await ref.read(authServiceProvider).getSavedData();
-    final userService =
-        await ref.read(userServiceProvider).getProfileById(userId['userId']);
+    print('User id ne :${userId['userId']}');
+    final user = await ref.read(userServiceProvider).getProfileById(userId['userId']);
     setState(() {
-      author = userService;
-      print("user nè $author");
-
+      author = user;
+      print("user nè ${author}");
     });
   }
 
@@ -70,12 +70,11 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
               ),
             ],
           ),
-          // const SliverToBoxAdapter(
-          //   child: CreatePost(
-          //     avatar:
-          //     author.avt  ,
-          //   ),
-          // ),
+          SliverToBoxAdapter(
+            child: CreatePost(
+              avatar: author!.avatar,
+            ),
+          ),
           postsAsync.when(
             loading: () => const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),

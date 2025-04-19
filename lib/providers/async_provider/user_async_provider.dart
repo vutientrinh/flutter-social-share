@@ -21,11 +21,4 @@ class UserNotifier extends AsyncNotifier<List<User>> {
     final users = await userService.getSuggestedUsers();
     state = AsyncData(users); // this will update the UI
   }
-
-
-  Future<User> getProfileById(String userId) async {
-    final userService = ref.watch(userServiceProvider);
-    final profile = await userService.getProfileById(userId);
-    return profile;
-  }
 }

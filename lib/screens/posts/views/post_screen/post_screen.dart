@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
 
 import '../../../../model/user.dart';
 import '../../../../providers/async_provider/post_async_provider.dart';
 import '../../../messages_screen/messages_screen.dart';
-
 
 class ListPostsScreen extends ConsumerStatefulWidget {
   const ListPostsScreen({Key? key}) : super(key: key);
@@ -18,10 +19,23 @@ class ListPostsScreen extends ConsumerStatefulWidget {
 }
 
 class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
-  List<User> users = [];
+  User? author;
+
   @override
   void initState() {
     super.initState();
+    fetchUser();
+  }
+
+  Future<void> fetchUser() async {
+    final userId = await ref.read(authServiceProvider).getSavedData();
+    final userService =
+        await ref.read(userServiceProvider).getProfileById(userId['userId']);
+    setState(() {
+      author = userService;
+      print("user nè $author");
+
+    });
   }
 
   @override
@@ -56,17 +70,11 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
               ),
             ],
           ),
-
-          // SliverToBoxAdapter(
-          //   child: users.isEmpty
-          //       ? const Center(child: CircularProgressIndicator())
-          //       : HorizontalUserList(users: users),
-          // ),
-          const SliverToBoxAdapter(
-            child: CreatePost(avatar: "https://wallup.net/wp-content/uploads/2016/02/18/286966-nature-photography.jpg",),
-          ),
-          // CupertinoSliverRefreshControl(
-          //   onRefresh: _postsBloc.getPosts,
+          // const SliverToBoxAdapter(
+          //   child: CreatePost(
+          //     avatar:
+          //     author.avt  ,
+          //   ),
           // ),
           postsAsync.when(
             loading: () => const SliverFillRemaining(
@@ -84,7 +92,7 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
 
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
-                      (context, index) {
+                  (context, index) {
                     final post = posts[index];
                     return PostItem(post: post); // PostItemRemake if you prefer
                   },

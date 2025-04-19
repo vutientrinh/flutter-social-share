@@ -23,7 +23,7 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
   }
 
   Future<void> fetchAllUser() async {
-    await ref.read(userAsyncNotifierProvider.notifier).getAllUsers();
+    await ref.read(userAsyncNotifierProvider.notifier).getSuggestedUsers();
   }
 
   void sendFriendRequest(String userId) async {

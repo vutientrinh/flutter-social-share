@@ -26,14 +26,15 @@ class UserService {
       return [];
     }
   }
+
   Future<List<User>> getSuggestedUsers() async {
     try {
-      final response = await _dio
-          .get('/api/users/suggested'); // Adjust according to your backend endpoint
+      final response = await _dio.get(
+          '/api/users/suggested'); // Adjust according to your backend endpoint
       if (response.statusCode == 200) {
         // Access 'data' field and cast it as a List of user objects
         List<User> users = (response.data['data']
-        as List) // Ensure 'data' is treated as a List
+                as List) // Ensure 'data' is treated as a List
             .map((userJson) => User.fromJson(userJson))
             .toList();
         return users;
@@ -45,6 +46,7 @@ class UserService {
       return [];
     }
   }
+
   Future<User> getProfileById(String userId) async {
     try {
       final response = await _dio.get(
@@ -57,19 +59,18 @@ class UserService {
       throw Exception('Failed to fetch profile: $e');
     }
   }
-  Future<Response> updateProfile(String avatar,String cover,String firstName,String lastName,String bio,String websiteUrl) async {
+
+  Future<Response> updateProfile(String avatar, String cover, String firstName,
+      String lastName, String bio, String websiteUrl) async {
     try {
-      final response = await _dio.put(
-        '/api/users/profile',
-        data: {
-          "avatar":avatar,
-          "cover":cover,
-          "firstName":firstName,
-          "lastName":lastName,
-          "bio":bio,
-          "websiteUrl":websiteUrl
-        }
-      );
+      final response = await _dio.put('/api/users/profile', data: {
+        "avatar": avatar,
+        "cover": cover,
+        "firstName": firstName,
+        "lastName": lastName,
+        "bio": bio,
+        "websiteUrl": websiteUrl
+      });
 
       return response;
     } catch (e) {

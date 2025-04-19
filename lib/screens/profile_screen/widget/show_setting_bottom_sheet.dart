@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 
+import '../../../providers/auth_token_provider.dart';
 import '../../authentication/login_screen.dart';
 
 class ShowSettingBottomSheet extends ConsumerWidget {
@@ -20,6 +21,7 @@ class ShowSettingBottomSheet extends ConsumerWidget {
             onTap: () async {
               Navigator.of(context).pop(); // close bottom sheet
               await ref.read(authServiceProvider).logout();
+              await ref.read(authTokenProvider.notifier).clearToken();
               if (context.mounted) {
                 Navigator.pushReplacement(
                   context,

@@ -31,9 +31,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     setState(() {
       authorId = data['userId'];
     });
-
     if (authorId != null) {
-
       // _postsBloc.getPostAuthor(authorId!);
     } else {
       print("Author ID is null. Skipping getPostAuthor call.");

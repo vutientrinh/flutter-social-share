@@ -29,7 +29,7 @@ class _ListUserState extends State<ListUser> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfileScreen(userName: widget.username!, userId: widget.userId!,),
+            builder: (context) => ProfileScreen(userName: widget.username!),
           ),
         )
       },

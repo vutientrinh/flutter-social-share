@@ -78,7 +78,7 @@ class AuthService {
         'username': name,
         'email': email,
         'password': password,
-        'role': []
+        'role': ['ROLE_USER']
       });
       return response;
     } catch (e) {

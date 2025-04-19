@@ -7,10 +7,13 @@ import 'package:flutter_social_share/utils/uidata.dart';
 import '../../model/post.dart';
 import '../posts/widgets/post_item_remake.dart';
 import 'package:riverpod/riverpod.dart';
+
 class ProfileScreen extends ConsumerStatefulWidget {
   final String userName;
-  final String userId;
-  const ProfileScreen({super.key, required this.userName, required this.userId});
+
+  // final String userId;
+  const ProfileScreen(
+      {super.key, required this.userName});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -30,7 +33,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     });
 
     if (authorId != null) {
-
       // _postsBloc.getPostAuthor(authorId!);
     } else {
       print("Author ID is null. Skipping getPostAuthor call.");
@@ -58,7 +60,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 alignment: Alignment.topCenter,
                 children: [
                   Ink.image(
-                    image:  NetworkImage(
+                    image: NetworkImage(
                         LINK_IMAGE.publicImage("")),
                     height: 200,
                     width: double.infinity,
@@ -91,7 +93,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                             children: [
                               Text('Bio:',
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  TextStyle(fontWeight: FontWeight.bold)),
                               Text(
                                   'Passionate about coding, design, and technology.'),
                               SizedBox(height: 10),
@@ -117,7 +119,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               ],
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.6,
               child: TabBarView(
                 controller: _tabController,
                 children: [
@@ -148,7 +153,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
         return ListView(
           children:
-              snapshot.data?.map((post) => PostItem(post: post)).toList() ?? [],
+          snapshot.data?.map((post) => PostItem(post: post)).toList() ?? [],
         );
       },
     );

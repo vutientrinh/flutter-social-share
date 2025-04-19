@@ -62,7 +62,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       const EcommerceHomeScreen(),
       const FriendScreen(),
       const NotificationScreen(),
-      ProfileScreen(userName: "Vu tien trinh", userId: authorId??"",),
+      ProfileScreen(userName: "Vu tien trinh"),
     ];
     return Scaffold(
         body: _pages[_selectedIndex],

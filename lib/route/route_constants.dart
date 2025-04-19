@@ -11,3 +11,4 @@ const String createPostScreenRoute = "create_post";
 const String chatDetailScreenRoute = "chat_detail";
 const String suggestionScreenRoute = "suggestion_user";
 const String friendScreenRoute = "friend_list";
+const String userProfileScreenRoute = "user_profile";

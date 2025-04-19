@@ -1,5 +1,6 @@
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:flutter_social_share/route/route_constants.dart';
+import 'package:flutter_social_share/screens/profile_screen/user_profile_screen.dart';
 
 import 'screen_export.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +18,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case suggestionScreenRoute:
       return MaterialPageRoute(builder: (context) => const SuggestionUser());
     case friendScreenRoute:
-      return MaterialPageRoute(builder: (context)=> const FriendList());
+      return MaterialPageRoute(builder: (context) => const FriendList());
     case profileScreenRoute:
       return MaterialPageRoute(
-          builder: (context) =>
-              const ProfileScreen(userName: "followerName"));
+          builder: (context) => const ProfileScreen(userName: "followerName"));
+    case userProfileScreenRoute:
+      return MaterialPageRoute(builder: (context) => const UserProfileScreen());
     case chatScreenRoute:
       return MaterialPageRoute(builder: (context) => const MessagesScreen());
     case ecommerceScreenRoute:

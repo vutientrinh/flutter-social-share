@@ -28,7 +28,6 @@ class _ActionPostState extends ConsumerState<ActionPost> {
   @override
   void initState() {
     super.initState();
-    print(post);
     likeCount = post.likedCount ?? 0;
     isLiked = post.hasLiked;
   }

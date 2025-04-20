@@ -46,15 +46,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
+        backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings,color: Colors.black,),
             onPressed: () {
               showModalBottomSheet(
                 context: context,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
+
                 builder: (context) => const ShowSettingBottomSheet(),
               );
             },

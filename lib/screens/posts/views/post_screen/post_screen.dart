@@ -4,7 +4,6 @@ import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
-import 'package:http/http.dart';
 import '../../../../model/user.dart';
 import '../../../../providers/async_provider/post_async_provider.dart';
 import '../../../messages_screen/messages_screen.dart';
@@ -36,7 +35,6 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
   @override
   Widget build(BuildContext context) {
     final postsAsync = ref.watch(postAsyncNotifierProvider);
-    print("Post async : $postsAsync");
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
@@ -51,7 +49,7 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
             floating: true,
             elevation: 1,
             forceElevated: true,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.blueAccent,
             actions: [
               IconButton(
                 icon: const Icon(Icons.wechat_rounded, color: Colors.black),

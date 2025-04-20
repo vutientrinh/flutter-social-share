@@ -18,7 +18,6 @@ class _CommentInputState extends ConsumerState<CommentInput> {
   void _sendComment() async {
     final content = _commentController.text.trim();
     if (content.isNotEmpty) {
-      print("Send comment: to postId: $widget.postId");
       _commentController.clear();
       FocusScope.of(context).unfocus(); // hide keyboard
       final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);

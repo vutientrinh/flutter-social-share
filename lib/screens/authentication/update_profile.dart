@@ -49,13 +49,11 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
     if (_avatarImage != null) {
       final response = await fileService.uploadFile(_avatarImage!);
       avatar = response.filename;
-      print(avatar);
     }
 
     if (_coverImage != null) {
       final response = await fileService.uploadFile(_coverImage!);
       cover = response.filename;
-      print(cover);
     }
 
     final response = userService.updateProfile(

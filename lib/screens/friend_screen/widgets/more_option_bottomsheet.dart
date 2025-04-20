@@ -98,7 +98,7 @@ class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
             },
           ),
 
-          if (widget.option == "Follow")
+          if (widget.option == "Following")
             _buildListTile(
               icon: Icons.person_remove_alt_1,
               title: "Unfollow ${widget.username }",

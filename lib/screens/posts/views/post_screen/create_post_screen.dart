@@ -35,7 +35,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   void loadData() async {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
-    print(data['userId']);
     setState(() {
       username = data['username'];
       userId = data['userId'];

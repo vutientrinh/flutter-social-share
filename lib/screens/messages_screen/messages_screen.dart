@@ -40,7 +40,6 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     final count  = await ref.read(chatServiceProvider).getUnSeenMessageCount();
-    print("lajhdfjhadsljfhashdfkljlajsdhfjahsdjfhasjhdf: ${count}");
     setState(() {
       userId = data['userId']; // Assign userId once data is fetched
     });

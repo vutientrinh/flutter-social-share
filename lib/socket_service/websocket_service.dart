@@ -43,10 +43,10 @@ class WebSocketService {
     _subscribeToTopic("/topic/$userId");
 
     // Subscribe to /topic/notifications
-    // _subscribeToTopic("/topic/notifications");
-    //
-    // // Subscribe to /topic/notifications/{userId}
-    // _subscribeToTopic("/topic/notifications/$userId");
+    _subscribeToTopic("/topic/notifications");
+
+    // Subscribe to /topic/notifications/{userId}
+    _subscribeToTopic("/topic/notifications/$userId");
   }
 
   void _subscribeToTopic(String topic) {
@@ -63,7 +63,7 @@ class WebSocketService {
   }
 
   void _handleMessage(Conversation message) {
-    final type = message.deliveryStatus;
+    final type = message.messageDeliveryStatusEnum;
 
     switch (type) {
       case "CHAT":

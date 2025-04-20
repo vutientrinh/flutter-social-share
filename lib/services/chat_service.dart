@@ -31,6 +31,19 @@ class ChatService {
     }
   }
 
+  Future<List<dynamic>> getUnSeenMessageCount() async {
+    try {
+
+      final response = await _dio.get('/api/conversation/unseenMessages');
+      print("Data cho nay : ${response.data}");
+      return response.data;
+    } catch (e) {
+      print('Error fetching  messages in service: $e');
+      rethrow;
+    }
+  }
+
+
   Future<List<Conversation>> setReadMessages(
       List<Conversation> chatMessages) async {
     try {

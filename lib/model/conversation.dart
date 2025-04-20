@@ -1,35 +1,40 @@
 class Conversation {
   final String id;
-  final String? convId;
-  final String fromUser;
-  final String toUser;
-  final DateTime? time;
-  final DateTime? lastModified;
-  final String? content;
-  final dynamic deliveryStatus;
+  final String content;
+  final String messageType;
+  final String senderId;
+  final String senderUsername;
+  final String receiverId;
+  final String receiverUsername;
+  final String? userConnection;
+  final String? messageDeliveryStatusEnum;
+  final String? messageDeliveryStatusUpdates;
 
   Conversation({
     required this.id,
-    this.convId,
-    required this.fromUser,
-    required this.toUser,
-    this.time,
-    this.lastModified,
-    this.content,
-    this.deliveryStatus,
+    required this.content,
+    required this.messageType,
+    required this.senderId,
+    required this.senderUsername,
+    required this.receiverId,
+    required this.receiverUsername,
+    this.userConnection,
+    this.messageDeliveryStatusEnum,
+    this.messageDeliveryStatusUpdates,
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
     return Conversation(
       id: json['id'],
-      convId: json['convId'],
-      fromUser: json['fromUser'],
-      toUser: json['toUser'],
-      time: json['time'] != null ? DateTime.parse(json['time']) : null,
-      lastModified: json['lastModified'] != null ? DateTime.parse(json['lastModified']) : null,
       content: json['content'],
-      deliveryStatus: json['deliveryStatus'],
+      messageType: json['messageType'],
+      senderId: json['senderId'] ?? '',
+      senderUsername: json['senderUsername'],
+      receiverId: json['receiverId'],
+      receiverUsername: json['receiverUsername'],
+      userConnection: json['userConnection'],
+      messageDeliveryStatusEnum: json['messageDeliveryStatusEnum'],
+      messageDeliveryStatusUpdates: json['messageDeliveryStatusUpdates'],
     );
   }
-
 }

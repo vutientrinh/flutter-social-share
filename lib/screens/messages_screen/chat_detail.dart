@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/chat_provider.dart';
 import '../../model/conversation.dart';
 import '../../socket_service/websocket_service.dart';
 
@@ -54,30 +55,20 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
     }
   }
 
-  // Future<void> _fetchUnSeenMessages() async {
-  //   try {
-  //     final response = await ChatService().getUnSeenMessage(widget.receiverId);
-  //     print("Response ne check di : ${response}");
-  //     setState(() {
-  //       messages = response;
-  //     });
-  //     ChatService().setReadMessages(response);
-  //   } catch (e) {
-  //     print("Error fetching unseen messages: $e");
-  //   }
-  // }
-  //
-  // Future<void> _fetchReadMessage() async {
-  //   try {
-  //     final response = await ChatService().setReadMessages(messages);
-  //     print(response);
-  //     setState(() {
-  //       readMessages = response;
-  //     });
-  //   } catch (e) {
-  //     print("Error fetching read message");
-  //   }
-  // }
+  Future<void> _fetchUnSeenMessages() async {
+    try {
+      final data = await ref.read(chatServiceProvider).getUnSeenMessage(widget.receiverId);
+      print("Response ne check di : ${data}");
+      setState(() {
+        messages = data;
+      });
+      await ref.read(chatServiceProvider).setReadMessages(messages);
+    } catch (e) {
+      print("Error fetching unseen messages: $e");
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +82,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                final bool isMe = message.convId != widget.receiverId;
+                final bool isMe = message.receiverId != widget.receiverId;
 
                 return Align(
                   alignment:

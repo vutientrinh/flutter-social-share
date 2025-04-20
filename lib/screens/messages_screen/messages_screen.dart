@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/component/horizontal_user_list.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/chat_provider.dart';
 import '../../model/user.dart';
 import 'chat_detail.dart';
 
@@ -38,6 +39,8 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
   Future<void> initData() async {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
+    final count  = await ref.read(chatServiceProvider).getUnSeenMessageCount();
+    print("lajhdfjhadsljfhashdfkljlajsdhfjahsdjfhasjhdf: ${count}");
     setState(() {
       userId = data['userId']; // Assign userId once data is fetched
     });
@@ -66,7 +69,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // User Slider (Top)
-          HorizontalUserList(users: users),
+          const HorizontalUserList(),
 
           const Divider(thickness: 1),
 

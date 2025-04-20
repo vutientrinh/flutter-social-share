@@ -44,100 +44,89 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: user == null
-          ? const Center(child: CircularProgressIndicator())
-          : NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            expandedHeight: 250,
-            floating: false,
-            pinned: true,
-            backgroundColor: Colors.blueAccent,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  Ink.image(
-                    image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
-                    height: 250,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 45,
-                          backgroundColor: Colors.white,
-                          child: CircleAvatar(
-                            radius: 42,
-                            backgroundImage:
-                            NetworkImage(LINK_IMAGE.publicImage(user!.avatar)),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          user!.username,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}',
-                          style: const TextStyle(color: Colors.white70),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Bio: ${user!.bio ?? ""}',
-                          style: const TextStyle(color: Colors.white70),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: Colors.blueAccent,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.settings,
+              color: Colors.black,
             ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.settings, color: Colors.white),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                    ),
-                    builder: (context) => const ShowSettingBottomSheet(),
-                  );
-                },
-              ),
-            ],
-            bottom: TabBar(
-              controller: _tabController,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
-              indicatorColor: Colors.white,
-              tabs: const [
-                Tab(text: 'Posts'),
-                Tab(text: 'Products'),
-              ],
-            ),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (context) => const ShowSettingBottomSheet(),
+              );
+            },
           ),
         ],
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildPostsTab(),
-            _buildPhotoTab(),
-          ],
-        ),
       ),
+      body: user == null
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                // Header section
+                Stack(
+                  alignment: Alignment.topLeft,
+                  children: [
+                    Ink.image(
+                      image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 150),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            foregroundImage: NetworkImage(
+                                LINK_IMAGE.publicImage(user!.avatar)),
+                          ),
+                          Text(
+                            user!.username,
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                              'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}'),
+                          const SizedBox(height: 5),
+                          Text('Bio : ${user!.bio ?? ""}'),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                // Tab bar
+                TabBar(
+                  controller: _tabController,
+                  labelColor: Colors.blueAccent,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: Colors.blueAccent,
+                  tabs: const [
+                    Tab(text: 'Posts'),
+                    Tab(text: 'Products'),
+                  ],
+                ),
+                // Tab content
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildPostsTab(),
+                      _buildProductsTab(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
     );
   }
-
 
   Widget _buildPostsTab() {
     final postAsyncValue = ref.watch(postAsyncNotifierProvider);
@@ -157,7 +146,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     );
   }
 
-  Widget _buildPhotoTab() {
+  Widget _buildProductsTab() {
     final products = [
       {'name': 'iPhone 13 Pro', 'price': '\$999'},
       {'name': 'MacBook Air M2', 'price': '\$1199'},

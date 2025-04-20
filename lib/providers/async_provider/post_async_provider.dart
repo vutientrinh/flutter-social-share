@@ -11,7 +11,6 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
   Future<List<Post>> build() async {
     final postService = ref.watch(postServiceProvider);
     final response = await postService.getAllPosts();
-    print("post in provider: $response");
     return response;
   }
 

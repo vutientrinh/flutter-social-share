@@ -20,7 +20,7 @@ class NotificationService {
 
   Future<void> readNotification(String id) async{
     try {
-      final response = await _dio.post('/api/notifications/$id/read}');
+      final response = await _dio.post('/api/notifications/$id/read');
       return response.data;
     } catch (e) {
       throw Exception('Failed to fetch notification: $e');
@@ -28,8 +28,7 @@ class NotificationService {
   }
   Future<void> readAllNotification() async{
     try {
-      final response = await _dio.post('/api/notifications/read-all}');
-
+      final response = await _dio.post('/api/notifications/read-all');
       return response.data;
     } catch (e) {
       throw Exception('Failed to fetch notification: $e');

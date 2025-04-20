@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/profile_screen/widget/show_setting_bottom_sheet.dart';
@@ -14,9 +15,7 @@ import 'package:riverpod/riverpod.dart';
 class ProfileScreen extends ConsumerStatefulWidget {
   final String userId;
 
-  // final String userId;
-  const ProfileScreen(
-      {super.key, required this.userId});
+  const ProfileScreen({super.key, required this.userId});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -26,8 +25,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   User? user;
+
   Future<void> loadData() async {
-    final response = await ref.read(userServiceProvider).getProfileById(widget.userId);
+    final response =
+    await ref.read(userServiceProvider).getProfileById(widget.userId);
     setState(() {
       user = response;
     });
@@ -60,111 +61,100 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           ),
         ],
       ),
-
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Center(
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Ink.image(
-                    image: NetworkImage(
-                        LINK_IMAGE.publicImage(user!.cover)),
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                   Padding(
-                    padding: const EdgeInsets.only(top: 150),
-                    // Moves the column down
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                            radius: 50,
-                            foregroundImage: NetworkImage(
-                                LINK_IMAGE.publicImage(user!.avatar))),
-                        Text(
-                          user!.username,
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5),
-                        const SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Bio: ',
-                                  style:
-                                  TextStyle(fontWeight: FontWeight.bold)),
-                              Text(user!.bio??""),
-                              const SizedBox(height: 10),
-                              Text('Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}'),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  )
-                ],
+      body: user == null
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+        children: [
+          // Header section
+          Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Ink.image(
+                image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
-            ),
-            TabBar(
+              Padding(
+                padding: const EdgeInsets.only(top: 150),
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      foregroundImage:
+                      NetworkImage(LINK_IMAGE.publicImage(user!.avatar)),
+                    ),
+                    Text(
+                      user!.username,
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 5),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Bio:',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(user!.bio ?? ""),
+                          const SizedBox(height: 10),
+                          Text(
+                              'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              )
+            ],
+          ),
+          // Tab bar
+          TabBar(
+            controller: _tabController,
+            labelColor: Colors.blueAccent,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Colors.blueAccent,
+            tabs: const [
+              Tab(text: 'Posts'),
+              Tab(text: 'Products'),
+            ],
+          ),
+          // Tab content
+          Expanded(
+            child: TabBarView(
               controller: _tabController,
-              labelColor: Colors.blueAccent,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.blueAccent,
-              tabs: const [
-                Tab(text: 'Posts'),
-                Tab(text: 'Products'),
+              children: [
+                _buildPostsTab(),
+                _buildProductsTab(),
               ],
             ),
-            SizedBox(
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.6,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildPostsTab(),
-                  _buildProductsTab(),
-                ],
-              ),
-            )
-
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildPostsTab() {
-    return StreamBuilder<List<Post>?>(
-      // stream: _postsBloc.postsStream,
-      stream: null,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    final postAsyncValue = ref.watch(postAsyncNotifierProvider);
 
-        if (snapshot.hasError) {
-          return const Center(child: Text('Something went wrong'));
-        }
-
-        return ListView(
-          children:
-          snapshot.data?.map((post) => PostItem(post: post)).toList() ?? [],
+    return postAsyncValue.when(
+      data: (posts) {
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            return PostItem(post: posts[index]);
+          },
         );
       },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
     );
   }
 
-  // Products Tab
   Widget _buildProductsTab() {
     final products = [
       {'name': 'iPhone 13 Pro', 'price': '\$999'},
@@ -173,6 +163,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     ];
 
     return ListView.builder(
+      physics: const BouncingScrollPhysics(),
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];

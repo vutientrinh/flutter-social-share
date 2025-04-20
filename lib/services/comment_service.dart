@@ -19,7 +19,7 @@ class CommentService {
     }
   }
 
-  Future<Response> createComment(String postId, String content) async {
+  Future<Map<String, dynamic>> createComment(String postId, String content) async {
     try {
       final response = await _dio.post('/api/comments/create',
           data: {'postId': postId, 'content': content});

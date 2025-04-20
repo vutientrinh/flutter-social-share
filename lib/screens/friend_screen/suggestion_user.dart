@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/user_async_provider.dart';
 import 'package:flutter_social_share/screens/friend_screen/widgets/list_user.dart';
@@ -16,6 +17,7 @@ class SuggestionUser extends ConsumerStatefulWidget {
 
 class _SuggestionUserState extends ConsumerState<SuggestionUser> {
   String? requesterId;
+
   @override
   void initState() {
     super.initState();
@@ -35,8 +37,24 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
     print(requesterId);
     await ref
         .read(friendAsyncNotifierProvider.notifier)
-        .addFriend(userId,requesterId!);
+        .addFriend(userId, requesterId!);
+    ref.invalidate(userAsyncNotifierProvider);
+
   }
+
+  void followRequest(String userId) async {
+    print("Friend request sent to user: $userId");
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
+    requesterId = data['userId'];
+    print(userId);
+    print(requesterId);
+    await ref
+        .read(followAsyncNotifierProvider.notifier)
+        .follow(userId);
+    ref.invalidate(userAsyncNotifierProvider);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -65,18 +83,36 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
                   userId: user.id,
                   username: user.username,
                   avatar: user.avatar,
-                  trailing: ElevatedButton(
-                    onPressed: () => sendFriendRequest(user.id),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  trailing: Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => sendFriendRequest(user.id),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          "Request Friend",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      "Request Friend",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                      const SizedBox(width: 10,),
+                      ElevatedButton(
+                        onPressed: () => followRequest(user.id),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          "Follow",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    ],
                   ),
                 );
               },

@@ -10,7 +10,9 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
   @override
   Future<List<Post>> build() async {
     final postService = ref.watch(postServiceProvider);
-    return await postService.getAllPosts();
+    final response = await postService.getAllPosts();
+    print("post in provider: $response");
+    return response;
   }
 
   Future<void> addPost(PostRequest newPost) async {

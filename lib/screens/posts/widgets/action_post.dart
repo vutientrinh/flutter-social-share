@@ -78,7 +78,7 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                           likedService.unlike(post.id);
                         }
                       });
-                      ref.watch(postAsyncNotifierProvider);
+                      ref.invalidate(postAsyncNotifierProvider);
                     },
                     child: isLiked
                         ? Container(
@@ -108,11 +108,11 @@ class _ActionPostState extends ConsumerState<ActionPost> {
             children: <Widget>[
               TextCountNumber(
                 number: likeCount,
-                subText: 'lượt thích',
+                subText: 'Likes',
               ),
               TextCountNumber(
                 number: post.commentCount,
-                subText: 'bình luận',
+                subText: 'Comment',
               ),
             ],
           ),

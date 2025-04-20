@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
+import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -11,7 +12,8 @@ import '../../../../model/post_request.dart';
 import '../../../../providers/async_provider/post_async_provider.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
-  const CreatePostScreen({super.key});
+  final String? avatar;
+  const CreatePostScreen({super.key, required this.avatar});
 
   @override
   ConsumerState<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -22,6 +24,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   final List<File> _images = [];
   String? username;
   String? userId;
+
 
   @override
   void initState() {
@@ -42,21 +45,21 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   Future<void> _onPost() async {
     if (_controller.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Post content  missing')),
+        const SnackBar(content: Text('Post content missing')),
       );
       return;
     }
     try {
-      final notifier = ref.read(postAsyncNotifierProvider.notifier);
+      final createPost = ref.read(postAsyncNotifierProvider.notifier);
 
       final newPost = PostRequest(
         content: _controller.text,
         images: _images,
         authorId: userId!,
-        topicId: "57ffa366-c9e9-4658-b58b-a1c14ad0934b",
+        topicId: "73c21f7f-3a4e-4a58-bac5-edd1f009666f",
       );
 
-      await notifier.addPost(newPost);
+      await createPost.addPost(newPost);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Post created')),
@@ -139,10 +142,10 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
               child: Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 22,
                     backgroundImage: NetworkImage(
-                      'https://wallup.net/wp-content/uploads/2016/02/18/286966-nature-photography.jpg',
+                      LINK_IMAGE.publicImage(widget.avatar!),
                     ),
                   ),
                   const SizedBox(width: 10),

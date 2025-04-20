@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/follow_response.dart';
+import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/follow_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/friend_provider.dart';
@@ -104,6 +105,7 @@ class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
               subtitle: "Stop seeing posts but stay friends",
               onTap: () async {
                 await ref.read(followServiceProvider).unfollow(widget.id);
+                ref.invalidate(followAsyncNotifierProvider);
               },
             ),
 
@@ -114,6 +116,7 @@ class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
               subtitle: "Remove ${widget.username } as a friend",
               onTap: () async {
                 await ref.read(friendServiceProvider).deleteFriend(widget.id);
+                ref.invalidate(friendAsyncNotifierProvider);
               },
             ),
         ],

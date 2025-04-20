@@ -41,13 +41,42 @@ class _PostItemState extends ConsumerState<PostItem> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                   child: ItemRow(
-                    avatarUrl:  LINK_IMAGE.publicImage(widget.post.author.avatar?? ""),
-                    title: widget.post.author.username,
+                    avatarUrl:  LINK_IMAGE.publicImage(widget.post.author!.avatar),
+                    title: widget.post.author!.username,
                     subtitle:widget.post.createdAt,
-                    rightWidget: IconButton(
-                      onPressed: () {},
+                    rightWidget: PopupMenuButton<String>(
+                      onSelected: (String value) {
+                        switch (value) {
+                          case 'update':
+                          // TODO: Implement update logic
+                            print('Update tapped for post: ${widget.post.id}');
+                            break;
+                          case 'delete':
+                            _showDeleteDialog(context);
+                            break;
+                          case 'save':
+                          // TODO: Save the post to bookmarks or similar
+                            print('Save tapped for post: ${widget.post.id}');
+                            break;
+                        }
+                      },
+                      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'update',
+                          child: Text('Update'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('Delete'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'save',
+                          child: Text('Save'),
+                        ),
+                      ],
                       icon: const Icon(Icons.more_horiz),
                     ),
+
                   ),
                 ),
                 GridImage(photos: widget.post.images),
@@ -69,4 +98,28 @@ class _PostItemState extends ConsumerState<PostItem> {
       ),
     );
   }
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Post'),
+        content: const Text('Are you sure you want to delete this post?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              // TODO: Implement actual delete logic using provider or service
+              print('Deleted post: ${widget.post.id}');
+              Navigator.pop(context);
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

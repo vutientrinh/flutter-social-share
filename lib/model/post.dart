@@ -1,5 +1,6 @@
 import 'package:flutter_social_share/model/topic.dart';
 import 'package:flutter_social_share/model/user.dart';
+import 'package:flutter_social_share/model/user_infor.dart';
 
 class Post {
   final String id;
@@ -14,7 +15,7 @@ class Post {
   final String createdAt;
   final String updatedAt;
   final Topic topic;
-  final User author;
+  final UserInfo author;
   final bool hasLiked;
   final bool hasSaved;
 
@@ -50,9 +51,9 @@ class Post {
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       topic: Topic.fromJson(json['topic']),
-      author: User.fromJson(json['author']),
+      author: UserInfo.fromJson(json['author']),
       hasLiked: json['hasLiked'] as bool,
-      hasSaved: json['hasSaved'],
+      hasSaved: json['hasSaved'] as bool,
     );
   }
 }

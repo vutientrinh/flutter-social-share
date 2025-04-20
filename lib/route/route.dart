@@ -35,8 +35,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case ecommerceScreenRoute:
       return MaterialPageRoute(
           builder: (context) => const EcommerceHomeScreen());
-    case createPostScreenRoute:
-      return MaterialPageRoute(builder: (context) => const CreatePostScreen());
     default:
       return MaterialPageRoute(
         builder: (context) => const Scaffold(

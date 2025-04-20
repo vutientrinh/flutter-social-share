@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/screens/authentication/update_profile.dart';
 
 import '../../../providers/auth_token_provider.dart';
 import '../../authentication/login_screen.dart';
@@ -15,6 +16,16 @@ class ShowSettingBottomSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          ListTile(
+            leading: const Icon(Icons.edit, color: Colors.black),
+            title: const Text('Edit profile'),
+            onTap: () async {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const UpdateProfile()),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Logout'),

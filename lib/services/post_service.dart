@@ -17,8 +17,6 @@ class PostService {
     String? keyword,
   }) async {
     try {
-      print("before get service");
-
       // ✅ Build query parameters
       final queryParams = {
         'page': page,
@@ -33,9 +31,7 @@ class PostService {
 
       // ✅ Extract the nested list
       final postListJson = response.data['data']['data'] as List;
-      print(postListJson);
-
-      print("after get service");
+      print('Post in service : $postListJson');
 
       // ✅ Parse into Post objects
       return postListJson.map((json) => Post.fromJson(json)).toList();
@@ -44,19 +40,16 @@ class PostService {
     }
   }
 
-  /// Get paginated posts
-  Future<Response> listPost(int page, {int size = 10}) async {
-    try {
-      return await _dio.get('/api/posts?page=$page&size=$size');
-    } catch (e) {
-      throw Exception('Failed to fetch posts on page $page: $e');
-    }
-  }
 
   /// Get a single post by UUID
-  Future<Response> getPostById(String uuid) async {
+  Future<List<Post>> getPostById(String uuid) async {
     try {
-      return await _dio.get('/api/posts/$uuid');
+      final response =  await _dio.get('/api/posts/$uuid');
+      final postListJson = response.data['data']['data'] as List;
+      print('Post in service : $postListJson');
+
+      // ✅ Parse into Post objects
+      return postListJson.map((json) => Post.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch post $uuid: $e');
     }

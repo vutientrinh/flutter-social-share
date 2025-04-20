@@ -119,11 +119,13 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton(
-                          onPressed: () => {ref
-                              .read(friendAsyncNotifierProvider.notifier)
-                              .acceptFriend(friendRequest.requestId),
+                          onPressed: () => {
+                            ref
+                                .read(friendAsyncNotifierProvider.notifier)
+                                .acceptFriend(friendRequest.requestId),
                             getFriendRequest(),
-                            print(friendRequest.requestId)
+                            print(friendRequest.requestId),
+                            ref.invalidate(friendRequestAsyncProvider)
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue),
@@ -134,9 +136,12 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                         ),
                         const SizedBox(width: 10),
                         OutlinedButton(
-                          onPressed: () => ref
-                              .read(friendAsyncNotifierProvider.notifier)
-                              .removeFriend(friendRequest.id),
+                          onPressed: () => {
+                            ref
+                                .read(friendAsyncNotifierProvider.notifier)
+                                .removeFriend(friendRequest.id),
+                            ref.invalidate(friendRequestAsyncProvider),
+                          },
                           child: const Text(
                             "Deny",
                             style: TextStyle(color: Colors.black),

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:flutter_social_share/component/create_post.dart';
-import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
-
+import 'package:http/http.dart';
 import '../../../../model/user.dart';
 import '../../../../providers/async_provider/post_async_provider.dart';
-import '../../../../providers/async_provider/user_async_provider.dart';
 import '../../../messages_screen/messages_screen.dart';
 
 class ListPostsScreen extends ConsumerStatefulWidget {
@@ -30,18 +27,16 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
 
   Future<void> fetchUser() async {
     final userId = await ref.read(authServiceProvider).getSavedData();
-    print('User id ne :${userId['userId']}');
     final user = await ref.read(userServiceProvider).getProfileById(userId['userId']);
     setState(() {
       author = user;
-      print("user nè ${author}");
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final postsAsync = ref.watch(postAsyncNotifierProvider);
-
+    print("Post async : $postsAsync");
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
@@ -71,7 +66,9 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
             ],
           ),
           SliverToBoxAdapter(
-            child: CreatePost(
+            child: author == null
+                ? const SizedBox.shrink()
+                : CreatePost(
               avatar: author!.avatar,
             ),
           ),

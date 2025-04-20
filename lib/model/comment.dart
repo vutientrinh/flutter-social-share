@@ -1,13 +1,13 @@
 import 'package:flutter_social_share/model/post.dart';
 import 'package:flutter_social_share/model/user.dart';
+import 'package:flutter_social_share/model/user_infor.dart';
 
 class Comment {
   final String id;
   final String authorId;
   final String postId;
   final String? content;
-  final User? author;
-  final Post? post;
+  final UserInfo author;
   final int? likedCount;
   final bool hasLiked;
   final String? status;
@@ -17,8 +17,7 @@ class Comment {
     required this.authorId,
     required this.postId,
     this.content,
-    this.author,
-    this.post,
+    required this.author,
     this.likedCount,
     required this.hasLiked,
     this.status,
@@ -30,8 +29,7 @@ class Comment {
       authorId: json['authorId'],
       postId: json['postId'],
       content: json['content'],
-      author: json['author'] != null ? User.fromJson(json['author']) : null,
-      post: json['post'] != null ? Post.fromJson(json['post']) : null,
+      author: UserInfo.fromJson(json['author']),
       likedCount: json['likedCount'],
       hasLiked: json['hasLiked'],
       status: json['status'],

@@ -18,7 +18,7 @@ class FriendService {
           'receiverId': receiverId,
         },
       );
-      print(response);
+      print("add friend Response : $response");
       return response;
     } catch (e) {
       print('Error adding friend: $e');

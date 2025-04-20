@@ -32,7 +32,7 @@ class _CreatePostState extends State<CreatePost> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const CreatePostScreen()),
+                      builder: (context) => CreatePostScreen(avatar: widget.avatar,)),
                 );
               },
               child: Container(

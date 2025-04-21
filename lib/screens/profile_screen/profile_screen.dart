@@ -73,35 +73,75 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 Stack(
                   alignment: Alignment.topLeft,
                   children: [
+                    // Cover image
                     Ink.image(
                       image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
                       height: 200,
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 150),
-                      child: Column(
+                    // Profile info
+                    Positioned(
+                      bottom: 10,
+                      left: 16,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Avatar
                           CircleAvatar(
-                            radius: 50,
-                            foregroundImage: NetworkImage(
-                                LINK_IMAGE.publicImage(user!.avatar)),
+                            radius: 45,
+                            backgroundColor: Colors.black,
+                            child: CircleAvatar(
+                              radius: 42,
+                              backgroundImage: NetworkImage(
+                                LINK_IMAGE.publicImage(user!.avatar),
+                              ),
+                            ),
                           ),
-                          Text(
-                            user!.username,
-                            style: const TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
+                          const SizedBox(width: 12),
+                          // User Info
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user!.username,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black45,
+                                      offset: Offset(1, 1),
+                                      blurRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Bio: ${user!.bio ?? ""}',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                              'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}'),
-                          const SizedBox(height: 5),
-                          Text('Bio : ${user!.bio ?? ""}'),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
+
                 // Tab bar
                 TabBar(
                   controller: _tabController,

@@ -24,6 +24,8 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
   File? _avatarImage;
   File? _coverImage;
 
+  String avatar = '';
+  String cover = '';
   Future<void> _pickImage(bool isAvatar) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -38,12 +40,15 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
       });
     }
   }
+  Future<void> loadData () async{
+    final userService = ref.read(userServiceProvider);
+
+  }
 
   Future<void> _submit() async {
     final fileService = ref.read(uploadServiceProvider);
     final userService = ref.read(userServiceProvider);
-    String avatar = '';
-    String cover = '';
+
     if (!_formKey.currentState!.validate()) return;
 
     if (_avatarImage != null) {

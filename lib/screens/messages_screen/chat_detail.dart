@@ -21,6 +21,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   List<Conversation> messages = [];
   List<Conversation> readMessages = [];
   final TextEditingController _messageController = TextEditingController();
+
   @override
   void initState() {
     final authService = ref.read(authServiceProvider);
@@ -35,7 +36,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
       },
     );
     _webSocketService.connect();
-    // _fetchUnSeenMessages();
+    _fetchUnSeenMessages();
     // _fetchReadMessage();
   }
 
@@ -57,7 +58,9 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
 
   Future<void> _fetchUnSeenMessages() async {
     try {
-      final data = await ref.read(chatServiceProvider).getUnSeenMessage(widget.receiverId);
+      final data = await ref
+          .read(chatServiceProvider)
+          .getUnSeenMessage(widget.receiverId);
       print("Response ne check di : ${data}");
       setState(() {
         messages = data;
@@ -67,8 +70,6 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
       print("Error fetching unseen messages: $e");
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +83,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                final bool isMe = message.receiverId != widget.receiverId;
+                final bool isMe = message.receiverId == widget.receiverId;
 
                 return Align(
                   alignment:

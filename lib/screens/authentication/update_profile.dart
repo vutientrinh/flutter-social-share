@@ -1,11 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/upload_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
+import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../model/user.dart';
 
 class UpdateProfile extends ConsumerStatefulWidget {
   const UpdateProfile({super.key});
@@ -23,9 +27,10 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
 
   File? _avatarImage;
   File? _coverImage;
-
+  User? user;
   String avatar = '';
   String cover = '';
+
   Future<void> _pickImage(bool isAvatar) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -40,9 +45,26 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
       });
     }
   }
-  Future<void> loadData () async{
-    final userService = ref.read(userServiceProvider);
 
+  Future<void> loadData() async {
+    final userData = await ref.read(authServiceProvider).getSavedData();
+    final response =
+    await ref.read(userServiceProvider).getProfileById(userData['userId']);
+    setState(() {
+      user = response;
+      _firstName.text = user?.firstName ?? '';
+      _lastName.text = user?.lastName ?? '';
+      _bio.text = user?.bio ?? '';
+      _websiteUrl.text = user?.websiteUrl ?? '';
+      avatar = user?.avatar ?? '';
+      cover = user?.cover ?? '';
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
   }
 
   Future<void> _submit() async {
@@ -51,23 +73,37 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
 
     if (!_formKey.currentState!.validate()) return;
 
+    String updatedAvatar = avatar;
+    String updatedCover = cover;
+
+    // Upload new avatar if changed
     if (_avatarImage != null) {
       final response = await fileService.uploadFile(_avatarImage!);
-      avatar = response.filename;
+      updatedAvatar = response.filename;
     }
 
+    // Upload new cover if changed
     if (_coverImage != null) {
       final response = await fileService.uploadFile(_coverImage!);
-      cover = response.filename;
+      updatedCover = response.filename;
     }
 
-    final response = userService.updateProfile(
-      avatar,
-      cover,
-      _firstName.text.trim(),
-      _lastName.text.trim(),
-      _bio.text.trim(),
-      _websiteUrl.text.trim(),
+    final String updatedFirstName =
+    _firstName.text.trim().isEmpty ? user?.firstName ?? '' : _firstName.text.trim();
+    final String updatedLastName =
+    _lastName.text.trim().isEmpty ? user?.lastName ?? '' : _lastName.text.trim();
+    final String updatedBio =
+    _bio.text.trim().isEmpty ? user?.bio ?? '' : _bio.text.trim();
+    final String updatedWebsiteUrl =
+    _websiteUrl.text.trim().isEmpty ? user?.websiteUrl ?? '' : _websiteUrl.text.trim();
+
+    await userService.updateProfile(
+      updatedAvatar,
+      updatedCover,
+      updatedFirstName,
+      updatedLastName,
+      updatedBio,
+      updatedWebsiteUrl,
     );
 
     Navigator.pushReplacement(
@@ -75,6 +111,7 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
       MaterialPageRoute(builder: (context) => const HomePage()),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,14 +135,23 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
                     ),
                     child: _coverImage != null
                         ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.file(
+                              _coverImage!,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : (cover.isNotEmpty
+                        ? ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.file(
-                        _coverImage!,
+                      child: Image.network(
+                        LINK_IMAGE.publicImage(user!.avatar),
                         width: double.infinity,
                         fit: BoxFit.cover,
                       ),
                     )
-                        : const Center(child: Text("Tap to pick cover image")),
+                        : const Center(child: Text("Tap to pick cover image"))),
                   ),
                   Positioned(
                     top: 8,
@@ -129,7 +175,7 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
                   CircleAvatar(
                     radius: 50,
                     backgroundImage:
-                    _avatarImage != null ? FileImage(_avatarImage!) : null,
+                        _avatarImage != null ? FileImage(_avatarImage!) : (NetworkImage(LINK_IMAGE.publicImage(user!.avatar))),
                     child: _avatarImage == null
                         ? const Icon(Icons.person, size: 50)
                         : null,
@@ -142,7 +188,8 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
                       backgroundColor: Colors.blue,
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.edit, size: 16, color: Colors.white),
+                        icon: const Icon(Icons.edit,
+                            size: 16, color: Colors.white),
                         onPressed: () => _pickImage(true),
                       ),
                     ),
@@ -195,10 +242,10 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
   }
 
   Widget _buildTextField(
-      TextEditingController controller,
-      String label,
-      bool isRequired,
-      ) {
+    TextEditingController controller,
+    String label,
+    bool isRequired,
+  ) {
     return TextFormField(
       controller: controller,
       validator: isRequired ? (val) => val!.isEmpty ? 'Required' : null : null,

@@ -56,14 +56,15 @@ class WebSocketService {
         if (frame.body != null) {
           print(frame.body);
           final message = json.decode(frame.body!);
-          _handleMessage(message);
+          final newMessage = Conversation.fromJson(message);
+          _handleMessage(newMessage);
         }
       },
     );
   }
 
   void _handleMessage(Conversation message) {
-    final type = message.messageDeliveryStatusEnum;
+    final type = message.messageType;
 
     switch (type) {
       case "CHAT":

@@ -7,19 +7,69 @@ import '../state_provider/post_provider.dart';
 final postAsyncNotifierProvider = AsyncNotifierProvider<PostNotifier, List<Post>>(PostNotifier.new);
 
 class PostNotifier extends AsyncNotifier<List<Post>> {
+  int _currentPage = 1;
+  final int _pageSize = 10;
+  bool _isFetchingMore = false;
+  bool _hasNextPage = true;
+
   @override
   Future<List<Post>> build() async {
+    return await _fetchPosts(reset: true);
+  }
+
+  Future<List<Post>> _fetchPosts({bool reset = false}) async {
     final postService = ref.watch(postServiceProvider);
-    final response = await postService.getAllPosts();
-    return response;
+
+    if (reset) {
+      _currentPage = 1;
+      _hasNextPage = true;
+    }
+
+    final fetchedPosts = await postService.getAllPosts(
+      page: _currentPage,
+      size: _pageSize,
+    );
+
+    if (fetchedPosts.length < _pageSize) {
+      _hasNextPage = false;
+    }
+
+    return fetchedPosts;
+  }
+
+  Future<void> fetchNextPage() async {
+    if (_isFetchingMore || !_hasNextPage) return;
+
+    _isFetchingMore = true;
+    _currentPage++;
+
+    try {
+      final postService = ref.watch(postServiceProvider);
+      final newPosts = await postService.getAllPosts(
+        page: _currentPage,
+        size: _pageSize,
+      );
+
+      if (newPosts.length < _pageSize) {
+        _hasNextPage = false;
+      }
+
+      final currentPosts = state.value ?? [];
+      state = AsyncData([...currentPosts, ...newPosts]);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    } finally {
+      _isFetchingMore = false;
+    }
   }
 
   Future<void> addPost(PostRequest newPost) async {
     final postService = ref.watch(postServiceProvider);
     await postService.createPost(newPost);
 
-    // Update the list
-    final updatedPosts = await postService.getAllPosts();
+    // Reset and fetch from first page again
+    state = const AsyncLoading();
+    final updatedPosts = await _fetchPosts(reset: true);
     state = AsyncData(updatedPosts);
   }
 
@@ -27,8 +77,30 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     final postService = ref.watch(postServiceProvider);
     await postService.deletePost(id);
 
-    // Refresh posts
-    final updatedPosts = await postService.getAllPosts();
+    // Reset and fetch from first page again
+    state = const AsyncLoading();
+    final updatedPosts = await _fetchPosts(reset: true);
     state = AsyncData(updatedPosts);
   }
+
+  Future<void> updatePost(String uuid, Map<String, dynamic> update) async {
+    final postService = ref.read(postServiceProvider);
+    await postService.updatePost(uuid, update);
+
+    // Refresh list
+    state = const AsyncLoading();
+    final updatedPosts = await _fetchPosts(reset: true);
+    state = AsyncData(updatedPosts);
+  }
+
+  Future<void> savePost(String authorId, String postId) async {
+    final postService = ref.read(postServiceProvider);
+    await postService.savePost(authorId, postId);
+  }
+
+  Future<void> unSavePost(String authorId, String postId) async {
+    final postService = ref.read(postServiceProvider);
+    await postService.unSavePost(authorId, postId);
+  }
+
 }

@@ -17,19 +17,31 @@ class ListPostsScreen extends ConsumerStatefulWidget {
 
 class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
   User? author;
-
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
     fetchUser();
+    _scrollController.addListener(_onScroll);
   }
 
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      ref.read(postAsyncNotifierProvider.notifier).fetchNextPage();
+    }
+  }
   Future<void> fetchUser() async {
     final userId = await ref.read(authServiceProvider).getSavedData();
     final user = await ref.read(userServiceProvider).getProfileById(userId['userId']);
     setState(() {
       author = user;
     });
+  }
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,6 +51,7 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
       backgroundColor: Colors.white,
       body: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
+        controller: _scrollController,
         slivers: <Widget>[
           SliverAppBar(
             title: const Text(
@@ -77,6 +90,7 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
             error: (error, _) => SliverFillRemaining(
               child: Center(child: Text('Error: $error')),
             ),
+
             data: (posts) {
               if (posts.isEmpty) {
                 return const SliverFillRemaining(

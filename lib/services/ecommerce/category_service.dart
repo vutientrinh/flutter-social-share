@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 
 import '../../model/ecommerce/category.dart';
@@ -17,8 +15,8 @@ class CategoryService {
       final response = await _dio.post(
         '/api/categories/create',
         data: {
-          name: name,
-          description: description,
+          'name': name,
+          'description': description,
         },
       );
 

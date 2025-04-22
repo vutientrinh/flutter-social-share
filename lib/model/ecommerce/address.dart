@@ -1,16 +1,5 @@
 import '../user.dart';
 
-class AddressResponse {
-  final Address data;
-
-  AddressResponse({required this.data});
-
-  factory AddressResponse.fromJson(Map<String, dynamic> json) {
-    return AddressResponse(
-      data: Address.fromJson(json['data']),
-    );
-  }
-}
 
 class Address {
   final String id;

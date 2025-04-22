@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/social/friend_request.dart';
 import 'package:flutter_social_share/model/user.dart';
 
-import '../model/social/follow_response.dart';
+import '../../model/social/follow_response.dart';
 
 class FriendService {
   final Dio _dio;

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import '../model/social/post.dart';
-import '../model/social/post_request.dart';
+import '../../model/social/post.dart';
+import '../../model/social/post_request.dart';
 
 class PostService {
   final Dio _dio;

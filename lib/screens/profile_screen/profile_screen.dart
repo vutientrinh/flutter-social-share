@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/profile_screen/widget/show_setting_bottom_sheet.dart';
-import 'package:flutter_social_share/services/auth_service.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 
-import '../../model/post.dart';
 import '../../model/user.dart';
 import '../posts/widgets/post_item_remake.dart';
 import 'package:riverpod/riverpod.dart';

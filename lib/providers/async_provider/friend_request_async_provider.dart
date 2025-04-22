@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/friend_provider.dart';
 
-import '../../model/friend_request.dart';
+import '../../model/social/friend_request.dart';
 import '../state_provider/auth_provider.dart';
 
 final friendRequestAsyncProvider =

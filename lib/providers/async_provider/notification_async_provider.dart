@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/post_request.dart';
+import 'package:flutter_social_share/model/social/post_request.dart';
 import 'package:flutter_social_share/providers/state_provider/notification_provider.dart';
 
-import '../../model/notification.dart';
+import '../../model/social/notification.dart';
 
 final notificationAsyncNotifierProvider =
     AsyncNotifierProvider<NotificationNotifier, List<AppNotification>>(

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_social_share/model/notification.dart';
+import 'package:flutter_social_share/model/social/notification.dart';
 
 class NotificationService {
   final Dio _dio;

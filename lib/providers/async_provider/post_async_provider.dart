@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/post_request.dart';
+import 'package:flutter_social_share/model/social/post_request.dart';
 
-import '../../model/post.dart';
+import '../../model/social/post.dart';
 import '../state_provider/post_provider.dart';
 
 final postAsyncNotifierProvider = AsyncNotifierProvider<PostNotifier, List<Post>>(PostNotifier.new);

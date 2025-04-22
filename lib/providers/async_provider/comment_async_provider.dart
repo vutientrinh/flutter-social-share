@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/comment.dart';
+import 'package:flutter_social_share/model/social/comment.dart';
 import '../state_provider/comment_provider.dart';
 
 final commentAsyncNotifierProvider =

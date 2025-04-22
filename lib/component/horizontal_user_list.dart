@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/friend_connection.dart';
+import 'package:flutter_social_share/model/social/friend_connection.dart';
 import 'package:flutter_social_share/model/user.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/chat_provider.dart';

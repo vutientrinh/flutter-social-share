@@ -117,7 +117,7 @@ class WebSocketService {
       "receiverId": connectionId,
       "receiverUsername": connectionUsername,
     });
-
+    print(body);
     _stompClient.send(
       destination: "/app/chat/sendMessage/$convId",
       body: body,

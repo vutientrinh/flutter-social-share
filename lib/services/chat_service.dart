@@ -1,15 +1,18 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/conversation.dart';
+import 'package:flutter_social_share/model/friend_connection.dart';
 
 class ChatService {
   final Dio _dio;
 
   ChatService(this._dio);
 
-  Future<Response> getFriends() async {
-    final response = await _dio.get('/api/users/all');
+  Future<List<FriendConnection>> getFriends() async {
+    final response = await _dio.get('/api/conversation/friends');
     print(response.data);
-    return response;
+    return (response.data as List)
+        .map((json) => FriendConnection.fromJson(json))
+        .toList();
   }
 
   Future<List<Conversation>> getUnSeenMessage(String fromUserId) async {
@@ -20,7 +23,7 @@ class ChatService {
       }
 
       final response = await _dio.get(url);
-      print(response);
+      print("Get unseenmessage : $response");
       List<Conversation> conversations = (response.data as List)
           .map((json) => Conversation.fromJson(json))
           .toList();

@@ -36,14 +36,19 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
-                    onPressed: () {
-                       ref. read(notificationServiceProvider).readAllNotification();
-                       ref.invalidate(notificationAsyncNotifierProvider);
+                    onPressed: () async {
+                      await ref
+                          .read(notificationServiceProvider)
+                          .readAllNotification();
+                      ref.invalidate(notificationAsyncNotifierProvider);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent, // Make the button background transparent
-                      elevation: 0, // Remove shadow
-                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), // Minimal padding
+                      backgroundColor: Colors.transparent,
+                      // Make the button background transparent
+                      elevation: 0,
+                      // Remove shadow
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 12), // Minimal padding
                     ),
                     child: const Text(
                       "Read All",
@@ -85,7 +90,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                     bool isUnread = notification.isRead == false;
 
                     return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -96,30 +102,33 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                         title: Text(
                           notification.content,
                           style: TextStyle(
-                            fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
+                            fontWeight:
+                                isUnread ? FontWeight.bold : FontWeight.normal,
                             color: isUnread ? Colors.black : Colors.grey,
                           ),
                         ),
                         subtitle: Text(
                           _formatTime(notification.createdAt),
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         trailing: isUnread
                             ? const Icon(
-                          Icons.mark_chat_read,
-                          color: Colors.blue,
-                        )
+                                Icons.mark_chat_read,
+                                color: Colors.blue,
+                              )
                             : null,
-                        onTap: () {
-                           ref.read(notificationServiceProvider).readNotification(notification.id);
-                           ref.invalidate(notificationAsyncNotifierProvider);
+                        onTap: () async {
+                          await ref
+                              .read(notificationServiceProvider)
+                              .readNotification(notification.id);
+                          ref.invalidate(notificationAsyncNotifierProvider);
                         },
                       ),
                     );
                   },
                 ),
               ),
-
             ],
           );
         },

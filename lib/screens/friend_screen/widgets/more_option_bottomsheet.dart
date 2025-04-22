@@ -86,15 +86,15 @@ class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
             subtitle: "Send message",
             onTap: () =>
             {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ChatDetail(
-                          receiverId: widget.id ,
-                          receiverUsername: widget.username),
-                ),
-              )
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) =>
+              //         ChatDetail(
+              //             receiverId: widget.id ,
+              //             receiverUsername: widget.username),
+              //   ),
+              // )
             },
           ),
 

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/friend_connection.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/chat_provider.dart';
 import '../../model/conversation.dart';
 import '../../socket_service/websocket_service.dart';
 
 class ChatDetail extends ConsumerStatefulWidget {
-  final String receiverId; // The current user's ID
-  final String receiverUsername;
+  final FriendConnection friend;
 
   const ChatDetail(
-      {super.key, required this.receiverId, required this.receiverUsername});
+      {super.key, required this.friend});
 
   @override
   ConsumerState<ChatDetail> createState() => _ChatDetailState();
@@ -27,13 +27,21 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
     final authService = ref.read(authServiceProvider);
     super.initState();
     _webSocketService = WebSocketService(
-      userId: widget.receiverId,
+      userId: widget.friend.convId,
       authService: authService,
       onMessageReceived: (message) {
         setState(() {
-          messages.add(message);
+          if (message.messageType == "MESSAGE_DELIVERY_UPDATE") {
+            int index = messages.indexWhere((m) => m.id == message.id);
+            if (index != -1) {
+              messages[index] = message; // Replace with updated delivery status
+            }
+          } else {
+            messages.add(message); // New message or other types
+          }
         });
       },
+
     );
     _webSocketService.connect();
     _fetchUnSeenMessages();
@@ -51,30 +59,44 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
     if (text.isNotEmpty) {
       print(text);
       _webSocketService.sendMessage(
-          text, widget.receiverId, widget.receiverId, widget.receiverUsername);
+          text, widget.friend.convId, widget.friend.connectionId, widget.friend.connectionUsername);
       _messageController.clear();
     }
   }
 
   Future<void> _fetchUnSeenMessages() async {
     try {
+      print(widget.friend.connectionId);
       final data = await ref
           .read(chatServiceProvider)
-          .getUnSeenMessage(widget.receiverId);
+          .getUnSeenMessage(widget.friend.connectionId);
       print("Response ne check di : ${data}");
       setState(() {
         messages = data;
       });
-      await ref.read(chatServiceProvider).setReadMessages(messages);
+      // await ref.read(chatServiceProvider).setReadMessages(messages);
     } catch (e) {
       print("Error fetching unseen messages: $e");
+    }
+  }
+  Widget _buildDeliveryIcon(String? status) {
+    switch (status) {
+      case "NOT_DELIVERED":
+        return const Icon(Icons.check, size: 16, color: Colors.red);
+      case "DELIVERED":
+        return const Icon(Icons.done_all, size: 16, color: Colors.green);
+      case "SEEN":
+        return const Icon(Icons.done_all, size: 16, color: Colors.black);
+      default:
+        return const SizedBox.shrink();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.receiverUsername)),
+      appBar: AppBar(title: Text(widget.friend.connectionUsername)),
+
       body: Column(
         children: [
           Expanded(
@@ -83,33 +105,43 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                final bool isMe = message.receiverId == widget.receiverId;
+                final bool isMe =
+                    message.senderId != widget.friend.connectionId;
 
                 return Align(
-                  alignment:
-                      isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.blue[300] : Colors.grey[300],
-                      borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(12),
-                        topRight: const Radius.circular(12),
-                        bottomLeft:
-                            isMe ? const Radius.circular(12) : Radius.zero,
-                        bottomRight:
-                            isMe ? Radius.zero : const Radius.circular(12),
+                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Column(
+                    crossAxisAlignment:
+                    isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    children: [
+                      // Message bubble
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isMe ? Colors.blue[300] : Colors.grey[300],
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(12),
+                            topRight: const Radius.circular(12),
+                            bottomLeft: isMe ? const Radius.circular(12) : Radius.zero,
+                            bottomRight: isMe ? Radius.zero : const Radius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          message.content ?? "Not found",
+                          style: const TextStyle(fontSize: 16, color: Colors.black87),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      message.content ?? "Not found",
-                      style:
-                          const TextStyle(fontSize: 16, color: Colors.black87),
-                    ),
+                      // Delivery status icon outside the message bubble
+                      if (isMe)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12, top: 2, bottom: 5),
+                          child: _buildDeliveryIcon(message.messageDeliveryStatusEnum),
+                        ),
+                    ],
                   ),
                 );
+
               },
             ),
           ),

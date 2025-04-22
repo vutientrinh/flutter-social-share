@@ -12,17 +12,17 @@ class ChatNotifier extends AsyncNotifier<List<Conversation>> {
   Future<List<Conversation>> build() async {
     return [];
   }
-  // Future<int> getUnseenMessageCount() async{
-  //   final chatService = ref.watch(chatServiceProvider);
-  //   final count = await chatService.getUnSeenMessageCount();
-  //   return count.data;
-  // }
+  Future<List<dynamic>> getUnseenMessageCount() async{
+    final chatService = ref.watch(chatServiceProvider);
+    final count = await chatService.getUnSeenMessageCount();
+    print(count);
+    return count;
+  }
 
   Future<void> getUnseenMessage(String fromUserId) async{
     final chatService = ref.watch(chatServiceProvider);
     final unSeenMessages = await chatService.getUnSeenMessage(fromUserId);
     state = AsyncData(unSeenMessages);
   }
-
 
 }

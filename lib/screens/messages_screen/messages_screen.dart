@@ -17,14 +17,6 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
   // Sample data for users and chats
   String? userId;
 
-  final List<Map<String, String>> chatList = [
-    {"name": "Alice", "message": "Hey! How's it going?"},
-    {"name": "Bob", "message": "Don't forget our meeting."},
-    {"name": "Charlie", "message": "Check this out!"},
-    {"name": "David", "message": "Let's hang out this weekend."},
-    {"name": "Emma", "message": "Can you send me the files?"},
-  ];
-
   List<User> users = [];
   Future<void> fetchUsers() async {
     // try {
@@ -73,34 +65,34 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
           const Divider(thickness: 1),
 
           // Chat List (Below)
-          Expanded(
-            child: ListView.builder(
-              itemCount: chatList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: Text(
-                      chatList[index]["name"]![0], // First letter as avatar
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  title: Text(chatList[index]["name"]!),
-                  subtitle: Text(chatList[index]["message"]!),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {
-                    // Add navigation to detailed chat screen if needed
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChatDetail(receiverId: userId!, receiverUsername: "VuTienTrin"),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
+          // Expanded(
+          //   child: ListView.builder(
+          //     itemCount: chatList.length,
+          //     itemBuilder: (context, index) {
+          //       return ListTile(
+          //         leading: CircleAvatar(
+          //           backgroundColor: Colors.green,
+          //           child: Text(
+          //             chatList[index]["name"]![0], // First letter as avatar
+          //             style: const TextStyle(color: Colors.white),
+          //           ),
+          //         ),
+          //         title: Text(chatList[index]["name"]!),
+          //         subtitle: Text(chatList[index]["message"]!),
+          //         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+          //         onTap: () {
+          //           // Add navigation to detailed chat screen if needed
+          //           Navigator.push(
+          //             context,
+          //             MaterialPageRoute(
+          //                 builder: (context) => ChatDetail(friend: ,),
+          //             ),
+          //           );
+          //         },
+          //       );
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );

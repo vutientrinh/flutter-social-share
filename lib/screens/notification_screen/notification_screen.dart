@@ -13,6 +13,16 @@ class NotificationScreen extends ConsumerStatefulWidget {
 
 class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   @override
+  void initState() {
+    super.initState();
+
+    // This causes build() in the notifier to be called
+    Future.microtask(() {
+      ref.invalidate(notificationAsyncNotifierProvider);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final notificationState = ref.watch(notificationAsyncNotifierProvider);
 
@@ -140,6 +150,11 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   String _formatTime(String isoTime) {
     final dateTime = DateTime.tryParse(isoTime);
     if (dateTime == null) return isoTime;
-    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} - ${dateTime.day}/${dateTime.month}/${dateTime.year}';
+
+    // Convert to local time
+    final localDateTime = dateTime.toLocal();
+
+    return '${localDateTime.hour.toString().padLeft(2, '0')}:${localDateTime.minute.toString().padLeft(2, '0')} - ${localDateTime.day}/${localDateTime.month}/${localDateTime.year}';
   }
+
 }

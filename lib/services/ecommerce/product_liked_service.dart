@@ -7,7 +7,7 @@ class ProductLikedService {
   ProductLikedService(this._dio);
 
   // Like a product
-  Future<String> likeProduct(String productId) async {
+  Future<bool> likeProduct(String productId) async {
     try {
       final response = await _dio.post(
         '/api/products/like',

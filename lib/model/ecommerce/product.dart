@@ -5,11 +5,11 @@ class Product {
   final String name;
   final String description;
   final Category category;
-  final int price;
-  final int weight;
-  final int width;
-  final int height;
-  final int length;
+  final double price;
+  final double weight;
+  final double width;
+  final double height;
+  final double length;
   final List<String> images;
   final int stockQuantity;
   final String currency;

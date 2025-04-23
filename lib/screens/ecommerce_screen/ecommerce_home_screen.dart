@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/ecommerce/product.dart';
+import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
 
 import 'cart_screen.dart';
 import 'grid_product_list.dart';
 
-class EcommerceHomeScreen extends StatefulWidget {
+class EcommerceHomeScreen extends ConsumerStatefulWidget {
   const EcommerceHomeScreen({super.key});
 
   @override
-  State<EcommerceHomeScreen> createState() => _EcommerceHomeScreenState();
+  ConsumerState<EcommerceHomeScreen> createState() => _EcommerceHomeScreenState();
 }
 
-class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
+class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
   final slidersLists = [
     "assets/images/slider_1.png",
     "assets/images/slider_2.png",
@@ -19,13 +22,14 @@ class _EcommerceHomeScreenState extends State<EcommerceHomeScreen> {
   ];
 
   int _currentIndex = 0;
-
+   List<Product>? products;
   @override
   void initState() {
     super.initState();
-    // Auto slide logic
     Future.delayed(const Duration(seconds: 3), _autoSlide);
   }
+
+
 
   void _autoSlide() {
     if (!mounted) return;

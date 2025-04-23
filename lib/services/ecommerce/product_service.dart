@@ -79,7 +79,7 @@ class ProductService {
         throw Exception('Failed to load users');
       }
     } catch (e) {
-      print('Error fetching users: $e');
+      print('Error fetching products: $e');
       return [];
     }
   }

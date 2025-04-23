@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/ecommerce/order_request.dart';
+import 'package:flutter_social_share/model/ecommerce/order_response.dart';
 
 class OrderService {
   final Dio _dio;
@@ -33,7 +34,7 @@ class OrderService {
   }
 
   // Get all orders with optional status filter
-  Future<List<OrderRequest>> getAllOrders({
+  Future<List<OrderResponse>> getAllOrders({
     required String customerId,
     int page = 1,
     int size = 10,
@@ -52,7 +53,7 @@ class OrderService {
 
       if (response.statusCode == 200) {
         List<dynamic> data = response.data['data']['content'];
-        return data.map((json) => OrderRequest.fromJson(json)).toList();
+        return data.map((json) => OrderResponse.fromJson(json)).toList();
       } else {
         throw Exception('Failed to fetch orders');
       }
@@ -62,12 +63,12 @@ class OrderService {
   }
 
   // Get a single order by ID
-  Future<OrderRequest> getOrderById(String id) async {
+  Future<OrderResponse> getOrderById(String id) async {
     try {
       final response = await _dio.get('/api/orders/$id');
 
       if (response.statusCode == 200) {
-        return OrderRequest.fromJson(response.data['data']);
+        return OrderResponse.fromJson(response.data['data']);
       } else {
         throw Exception('Failed to fetch order');
       }

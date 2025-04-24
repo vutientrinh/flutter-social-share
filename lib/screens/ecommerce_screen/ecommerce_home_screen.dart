@@ -4,7 +4,7 @@ import 'package:flutter_social_share/model/ecommerce/product.dart';
 import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
 
 import 'cart_screen.dart';
-import 'grid_product_list.dart';
+import 'widget/grid_product_list.dart';
 
 class EcommerceHomeScreen extends ConsumerStatefulWidget {
   const EcommerceHomeScreen({super.key});

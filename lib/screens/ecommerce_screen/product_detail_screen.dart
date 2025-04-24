@@ -1,19 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/ecommerce/product_review.dart';
+import 'package:flutter_social_share/providers/async_provider/review_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
+import 'package:flutter_social_share/screens/ecommerce_screen/widget/review_item.dart';
+import 'package:flutter_social_share/utils/uidata.dart';
 
+import '../../model/ecommerce/product.dart';
 import 'cart_screen.dart';
 
-class ProductDetailScreen extends StatefulWidget {
-  final String productName;
+class ProductDetailScreen extends ConsumerStatefulWidget {
+  final Product product;
 
-  const ProductDetailScreen({super.key, required this.productName});
+  const ProductDetailScreen({super.key, required this.product});
 
   @override
-  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  ConsumerState<ProductDetailScreen> createState() =>
+      _ProductDetailScreenState();
 }
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
+  List<ProductReview>? productReviews;
+
+  @override
+  void initState() {
+    super.initState();
+    loadReview();
+  }
+
+  Future<void> loadReview() async {
+    final data = await ref
+        .read(productReviewProvider)
+        .getComments(productId: widget.product.id);
+    setState(() {
+      productReviews = data;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final reviewProductState = ref.watch(reviewProductAsyncNotifierProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -55,11 +82,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   controller: PageController(viewportFraction: 1),
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
-                    return Image.asset(
-                      'assets/images/pi1.jpg',
-                      width: double.infinity,
-                      fit: BoxFit.fitHeight,
-                    );
+                    return Image.network(
+                        LINK_IMAGE.publicImage(widget.product.images[0]),
+                        width: double.infinity,
+                        fit: BoxFit.fitHeight);
                   },
                 ),
               ),
@@ -67,74 +93,46 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  widget.productName,
+                  widget.product.name,
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    const Text("Available Colors: ",
-                        style: TextStyle(fontSize: 16)),
-                    ...List.generate(
-                      3,
-                      (index) => Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: [Colors.red, Colors.blue, Colors.green][index],
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.amber),
-                    SizedBox(width: 4),
-                    // Small space between icon and rating text
-                    Text("4.5",
-                        style: TextStyle(fontSize: 16, color: Colors.black)),
-                  ],
-                ),
-              ),
               const SizedBox(height: 10),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundImage:
-                              AssetImage('assets/image2/profile_image.png'),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "In House Brands",
-                          style: TextStyle(color: Colors.black, fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.message_rounded, color: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            widget.product.rating.toStringAsFixed(1),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.shopping_cart_outlined,
+                              color: Colors.grey, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            "${widget.product.salesCount} sold",
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
               const SizedBox(height: 10),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
@@ -143,10 +141,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                    "This is a high-quality product with amazing features, durable materials, and stylish design."),
+                child: Text(widget.product.description),
               ),
               const SizedBox(height: 10),
               const Padding(
@@ -156,92 +153,38 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              const Column(
-                children: [
-                  ListTile(
-                    leading: CircleAvatar(
-                        child: Icon(Icons.person),
-                        backgroundColor: Colors.grey),
-                    title: Text("John Doe"),
-                    subtitle: Text("Great product! Highly recommend."),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                        child: Icon(Icons.person),
-                        backgroundColor: Colors.grey),
-                    title: Text("Jane Smith"),
-                    subtitle: Text("Good quality, fast delivery!"),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                        child: Icon(Icons.person),
-                        backgroundColor: Colors.grey),
-                    title: Text("John Doe"),
-                    subtitle: Text("Great product! Highly recommend."),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                        child: Icon(Icons.person),
-                        backgroundColor: Colors.grey),
-                    title: Text("Jane Smith"),
-                    subtitle: Text("Good quality, fast delivery!"),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                        child: Icon(Icons.person),
-                        backgroundColor: Colors.grey),
-                    title: Text("John Doe"),
-                    subtitle: Text("Great product! Highly recommend."),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                        child: Icon(Icons.person),
-                        backgroundColor: Colors.grey),
-                    title: Text("Jane Smith"),
-                    subtitle: Text("Good quality, fast delivery!"),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                        child: Icon(Icons.person),
-                        backgroundColor: Colors.grey),
-                    title: Text("John Doe"),
-                    subtitle: Text("Great product! Highly recommend."),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                        child: Icon(Icons.person),
-                        backgroundColor: Colors.grey),
-                    title: Text("Jane Smith"),
-                    subtitle: Text("Good quality, fast delivery!"),
-                  ),
-                ],
-              ),
+              productReviews == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(
+                      children: productReviews!
+                          .map((review) => ReviewItem(productReview: review))
+                          .toList(),
+                    )
             ],
           ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(4),
           child: Row(
             children: [
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  child: const Text("Add to Cart"),
+                  child: ElevatedButton.icon(
+                onPressed: () {
+
+                },
+                icon: const Icon(Icons.shopping_cart_outlined, size: 18, color: Colors.white),
+                label: const Text("Add to Cart", style: TextStyle(color: Colors.white),),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                  child: const Text("Buy Now"),
-                ),
-              ),
+              ))
             ],
           ),
         ),

@@ -1,0 +1,138 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/product_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
+import 'package:flutter_social_share/screens/ecommerce_screen/product_detail_screen.dart';
+import 'package:flutter_social_share/utils/uidata.dart';
+
+import '../../../model/ecommerce/product.dart';
+import '../../../providers/state_provider/product_provider.dart';
+
+class GridProductList extends ConsumerStatefulWidget {
+  const GridProductList({super.key});
+
+  @override
+  ConsumerState<GridProductList> createState() => _GridProductListState();
+}
+
+class _GridProductListState extends ConsumerState<GridProductList> {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask((){
+      ref.read(productAsyncNotifierProvider.notifier);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final productState = ref.watch(productAsyncNotifierProvider);
+
+    return productState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text("Error: $err")),
+      data: (products) {
+        return GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: products.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            mainAxisExtent: 250,
+          ),
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailScreen(product: product),
+                  ),
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 5,
+                      spreadRadius: 1,
+                      offset: const Offset(2, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.network(
+                      LINK_IMAGE.publicImage(product.images[0]),
+                      width: 150,
+                      height: 120,
+                      fit: BoxFit.fitHeight,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "₫ ${product.price.toStringAsFixed(0)} ",
+                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.amber, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              product.rating.toStringAsFixed(1),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.shopping_cart_outlined, color: Colors.grey, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${product.salesCount} sold",
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+
+
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}

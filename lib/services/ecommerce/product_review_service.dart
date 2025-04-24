@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/ecommerce/product_review.dart';
 
-class ProductCommentService {
+class ProductReviewService {
   final Dio _dio;
 
-  ProductCommentService(this._dio);
+  ProductReviewService(this._dio);
 
   // Add a comment to a product
   Future<ProductReview> comment({
@@ -50,7 +50,7 @@ class ProductCommentService {
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> data = response.data['data'];
+        List<dynamic> data = response.data['data']['data'];
         return data.map((json) => ProductReview.fromJson(json)).toList();
       } else {
         throw Exception('Failed to fetch comments');

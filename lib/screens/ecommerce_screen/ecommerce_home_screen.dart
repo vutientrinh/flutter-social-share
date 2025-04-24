@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/product.dart';
@@ -64,7 +65,16 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.shopping_bag, color: Colors.black),
+              icon: const Icon(CupertinoIcons.suit_heart, color: Colors.black),
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const FavoriteScreen()),
+                // );
+              },
+            ),
+            IconButton(
+              icon: const Icon(CupertinoIcons.cart, color: Colors.black),
               onPressed: () {
                 Navigator.push(
                   context,

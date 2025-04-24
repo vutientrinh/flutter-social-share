@@ -4,6 +4,7 @@ import 'package:flutter_social_share/providers/async_provider/product_async_prov
 import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/product_detail_screen.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
+import 'package:intl/intl.dart';
 
 import '../../../model/ecommerce/product.dart';
 import '../../../providers/state_provider/product_provider.dart';
@@ -16,11 +17,10 @@ class GridProductList extends ConsumerStatefulWidget {
 }
 
 class _GridProductListState extends ConsumerState<GridProductList> {
-
   @override
   void initState() {
     super.initState();
-    Future.microtask((){
+    Future.microtask(() {
       ref.read(productAsyncNotifierProvider.notifier);
     });
   }
@@ -41,7 +41,7 @@ class _GridProductListState extends ConsumerState<GridProductList> {
             crossAxisCount: 2,
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
-            mainAxisExtent: 250,
+            mainAxisExtent: 270,
           ),
           itemBuilder: (context, index) {
             final product = products[index];
@@ -78,7 +78,13 @@ class _GridProductListState extends ConsumerState<GridProductList> {
                       height: 120,
                       fit: BoxFit.fitHeight,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
+                    Text(
+                      product.category.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.grey, fontSize: 10),
+                    ),
+                    const SizedBox(height: 5),
                     Text(
                       product.name,
                       maxLines: 2,
@@ -90,15 +96,17 @@ class _GridProductListState extends ConsumerState<GridProductList> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "₫ ${product.price.toStringAsFixed(0)} ",
-                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                      "₫${NumberFormat("#,###", "vi_VN").format(product.price.toInt())}",
+                      style: const TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.star, color: Colors.amber, size: 16),
+                            const Icon(Icons.star,
+                                color: Colors.amber, size: 16),
                             const SizedBox(width: 4),
                             Text(
                               product.rating.toStringAsFixed(1),
@@ -111,7 +119,8 @@ class _GridProductListState extends ConsumerState<GridProductList> {
                         ),
                         Row(
                           children: [
-                            const Icon(Icons.shopping_cart_outlined, color: Colors.grey, size: 16),
+                            const Icon(Icons.shopping_cart_outlined,
+                                color: Colors.grey, size: 16),
                             const SizedBox(width: 4),
                             Text(
                               "${product.salesCount} sold",
@@ -124,8 +133,6 @@ class _GridProductListState extends ConsumerState<GridProductList> {
                         ),
                       ],
                     )
-
-
                   ],
                 ),
               ),

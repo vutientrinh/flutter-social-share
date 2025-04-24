@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/product_review.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_social_share/providers/state_provider/product_provider.d
 import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/widget/review_item.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
+import 'package:intl/intl.dart';
 
 import '../../model/ecommerce/product.dart';
 import 'cart_screen.dart';
@@ -49,23 +51,17 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           IconButton(
               onPressed: () {},
               icon: const Icon(
-                Icons.share,
-              )),
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
                 Icons.favorite_outline,
               )),
           IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CartScreen()),
-                );
-              },
-              icon: const Icon(
-                Icons.shopping_bag,
-              )),
+            icon: const Icon(CupertinoIcons.cart, color: Colors.black),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CartScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -87,6 +83,15 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         width: double.infinity,
                         fit: BoxFit.fitHeight);
                   },
+                ),
+              ),
+              const SizedBox(height: 5),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  widget.product.category.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.grey, fontSize: 10),
                 ),
               ),
               const SizedBox(height: 10),
@@ -134,6 +139,17 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     ],
                   )),
               const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "₫${NumberFormat("#,###", "vi_VN").format(widget.product.price.toInt())}",
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red),
+                ),
+              ),
+              const SizedBox(height: 10),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
@@ -142,7 +158,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(widget.product.description),
               ),
               const SizedBox(height: 10),
@@ -171,18 +187,19 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             children: [
               Expanded(
                   child: ElevatedButton.icon(
-                onPressed: () {
-
-                },
-                icon: const Icon(Icons.shopping_cart_outlined, size: 18, color: Colors.white),
-                label: const Text("Add to Cart", style: TextStyle(color: Colors.white),),
+                onPressed: () {},
+                icon: const Icon(Icons.shopping_cart_outlined,
+                    size: 18, color: Colors.white),
+                label: const Text(
+                  "Add to Cart",
+                  style: TextStyle(color: Colors.white),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-
                 ),
               ))
             ],

@@ -74,12 +74,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               SizedBox(
                 height: 250,
                 child: PageView.builder(
-                  itemCount: 6,
+                  itemCount: widget.product.images.length,
                   controller: PageController(viewportFraction: 1),
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
                     return Image.network(
-                        LINK_IMAGE.publicImage(widget.product.images[0]),
+                        LINK_IMAGE.publicImage(widget.product.images[index]),
                         width: double.infinity,
                         fit: BoxFit.fitHeight);
                   },
@@ -138,16 +138,30 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       ),
                     ],
                   )),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  "₫${NumberFormat("#,###", "vi_VN").format(widget.product.price.toInt())}",
-                  style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "₫${NumberFormat("#,###", "vi_VN").format(widget.product.price.toInt())}",
+                      style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      widget.product.isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: widget.product.isLiked ? Colors.red : Colors.black,
+                      size: 18,
+                    ),
+                    onPressed: () {
+
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               const Padding(

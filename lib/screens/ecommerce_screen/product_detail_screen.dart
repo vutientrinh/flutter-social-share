@@ -6,10 +6,11 @@ import 'package:flutter_social_share/providers/async_provider/review_async_provi
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
+import 'package:flutter_social_share/route/screen_export.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/widget/review_item.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
-
+import 'package:another_flushbar/flushbar.dart';
 import '../../model/ecommerce/product.dart';
 import '../../providers/async_provider/cart_async_provider.dart';
 import 'cart_screen.dart';
@@ -155,13 +156,13 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   ),
                   IconButton(
                     icon: Icon(
-                      widget.product.isLiked ? Icons.favorite : Icons.favorite_border,
+                      widget.product.isLiked
+                          ? Icons.favorite
+                          : Icons.favorite_border,
                       color: widget.product.isLiked ? Colors.red : Colors.black,
                       size: 18,
                     ),
-                    onPressed: () {
-
-                    },
+                    onPressed: () {},
                   ),
                 ],
               ),
@@ -204,8 +205,30 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               Expanded(
                   child: ElevatedButton.icon(
                 onPressed: () async {
-                    final data = await ref.read(authServiceProvider).getSavedData();
-                    ref.read(cartAsyncNotifierProvider.notifier).addToCart(data['userId'], widget.product.id, widget.product.price, 1);
+                  final data =
+                      await ref.read(authServiceProvider).getSavedData();
+                  ref.read(cartAsyncNotifierProvider.notifier).addToCart(
+                      data['userId'],
+                      widget.product.id,
+                      widget.product.price,
+                      1);
+
+                  await Flushbar(
+                    title: 'Success',
+                    message: 'Product added to cart successfully!',
+                    backgroundColor: Colors.green,
+                    flushbarPosition: FlushbarPosition.TOP,
+                    duration: const Duration(seconds: 1),
+                    margin: const EdgeInsets.all(8),
+                    borderRadius: BorderRadius.circular(8),
+                    animationDuration: const Duration(milliseconds: 500),
+                  ).show(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const EcommerceHomeScreen(),
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.shopping_cart_outlined,
                     size: 18, color: Colors.white),

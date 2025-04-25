@@ -35,7 +35,8 @@ class AddressService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data =
-            response.data['data']['content'] ?? response.data['data'];
+            response.data['data']['data'];
+        print("address : ${data}");
         return data.map((json) => Address.fromJson(json)).toList();
       } else {
         throw Exception('Failed to fetch addresses');

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/ecommerce/cart_response.dart';
 
+
 class CartService {
   final Dio _dio;
 
@@ -10,7 +11,7 @@ class CartService {
   Future<List<CartResponse>> addToCart({
     required String userId,
     required String productId,
-    required int price,
+    required double price,
     required int quantity,
   }) async {
     try {

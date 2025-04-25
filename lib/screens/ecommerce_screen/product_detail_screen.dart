@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/product_review.dart';
 import 'package:flutter_social_share/providers/async_provider/review_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/widget/review_item.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/ecommerce/product.dart';
+import '../../providers/async_provider/cart_async_provider.dart';
 import 'cart_screen.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
@@ -201,7 +203,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             children: [
               Expanded(
                   child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () async {
+                    final data = await ref.read(authServiceProvider).getSavedData();
+                    ref.read(cartAsyncNotifierProvider.notifier).addToCart(data['userId'], widget.product.id, widget.product.price, 1);
+                },
                 icon: const Icon(Icons.shopping_cart_outlined,
                     size: 18, color: Colors.white),
                 label: const Text(

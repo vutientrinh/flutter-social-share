@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/cart_response.dart';
 import 'package:flutter_social_share/providers/async_provider/cart_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/utils/uidata.dart';
+import 'package:intl/intl.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -12,31 +14,38 @@ class CartScreen extends ConsumerStatefulWidget {
 }
 
 class _CartScreenState extends ConsumerState<CartScreen> {
+  String? userId;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   loadData();
+  // }
   @override
-  void initState() {
-    super.initState();
-    loadData();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (userId == null) {
+      loadData();
+    }
   }
 
   Future<void> loadData() async {
-    final authService = ref.watch(authServiceProvider);
+    final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
+    setState(() {
+      userId = data['userId'];
+    });
     Future.microtask(() {
       ref.read(cartAsyncNotifierProvider.notifier).getCartItems(data['userId']);
     });
   }
 
-  // List<Map<String, dynamic>> cartItems = [
-  //   {"name": "Product 1", "price": 20.0, "quantity": 1},
-  //   {"name": "Product 2", "price": 15.5, "quantity": 2},
-  //   {"name": "Product 3", "price": 10.0, "quantity": 1},
-  // ];
-  void increaseQuantity(String cartItemId) {
-    // ref.read(cartAsyncNotifierProvider.notifier).increaseQuantity(cartItemId);
+  void increaseQuantity(CartResponse item, int quantity) {
+    ref.read(cartAsyncNotifierProvider.notifier).addToCart(userId!, item.product.id, item.product.price, quantity);
   }
 
-  void decreaseQuantity(String cartItemId) {
-    // ref.read(cartAsyncNotifierProvider.notifier).decreaseQuantity(cartItemId);
+  void decreaseQuantity(CartResponse item, int  quantity) {
+    ref.read(cartAsyncNotifierProvider.notifier).addToCart(userId!, item.product.id, item.product.price, quantity);
   }
 
   void removeItem(String cartItemId) {
@@ -72,26 +81,67 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     return Card(
                       margin: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
-                      child: ListTile(
-                        title: Text(item.product.name),
-                        subtitle: Text(
-                            "Price: \$${item.product.price.toStringAsFixed(2)}"),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove),
-                              onPressed: () {},
+                            // Image on the left
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                LINK_IMAGE.publicImage(item.product.images[0]),
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                            Text("${item.quantity}"),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {},
-                            ),
+                            const SizedBox(width: 10),
+                            // Info on the right
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.product.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    "₫${NumberFormat("#,###", "vi_VN").format(item.price)}",
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.remove),
+                                        onPressed: () {
+                                          decreaseQuantity(item,-1);
+                                        },
+                                      ),
+                                      Text("${item.quantity}"),
+                                      IconButton(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () {
+                                          increaseQuantity(item,1);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () {
+                                          decreaseQuantity(item,- item.quantity);
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -99,25 +149,57 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text(
-                      "Total: \$${getTotalPrice(items).toStringAsFixed(2)}",
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle checkout
-                      },
-                      child: const Text("Proceed to Checkout"),
-                    ),
-                  ],
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            "Total : ",
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "${NumberFormat("#,###", "vi_VN").format(getTotalPrice(items))} ₫",
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          // Handle checkout
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart_checkout,
+                          color: Colors.black,
+                        ),
+                        label: const Text(
+                          "Order",
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              )
             ],
           );
         },

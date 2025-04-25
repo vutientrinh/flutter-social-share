@@ -18,7 +18,32 @@ class CartNotifier extends AsyncNotifier<List<CartResponse>> {
   Future<List<CartResponse>> getCartItems(String userId) async {
     final cartService = ref.watch(cartServiceProvider);
     final cartItems = await cartService.getCartItems(userId);
-    print("cart item ne ${cartItems}");
     return cartItems;
   }
+
+  Future<void> addToCart(
+      String userId, String productId, double price, int quantity) async {
+    final cartService = ref.watch(cartServiceProvider);
+
+    await cartService.addToCart(
+        userId: userId, productId: productId, price: price, quantity: quantity);
+
+    final cartItems = await getCartItems(userId);
+
+    // ✅ THIS is what was missing
+    state = AsyncValue.data(cartItems);
+  }
+
+  Future<void> clearCart(
+      String userId) async {
+    final cartService = ref.watch(cartServiceProvider);
+
+    await cartService.clearCart(userId);
+
+    final cartItems = await getCartItems(userId);
+
+    // ✅ THIS is what was missing
+    state = AsyncValue.data(cartItems);
+  }
+
 }

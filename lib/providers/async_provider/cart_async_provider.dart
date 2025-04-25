@@ -22,7 +22,7 @@ class CartNotifier extends AsyncNotifier<List<CartResponse>> {
   }
 
   Future<void> addToCart(
-      String userId, String productId, double price, int quantity) async {
+      String userId, String productId, num price, int quantity) async {
     final cartService = ref.watch(cartServiceProvider);
 
     await cartService.addToCart(

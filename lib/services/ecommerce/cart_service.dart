@@ -11,7 +11,7 @@ class CartService {
   Future<List<CartResponse>> addToCart({
     required String userId,
     required String productId,
-    required double price,
+    required num price,
     required int quantity,
   }) async {
     try {

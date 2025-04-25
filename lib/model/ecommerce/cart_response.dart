@@ -2,7 +2,7 @@ import 'package:flutter_social_share/model/ecommerce/product.dart';
 
 class  CartResponse {
   final Product product;
-  final int price;
+  final num price;
   final int quantity;
 
   CartResponse({

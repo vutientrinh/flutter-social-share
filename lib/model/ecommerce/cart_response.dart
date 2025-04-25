@@ -14,7 +14,7 @@ class  CartResponse {
 
   factory CartResponse.fromJson(Map<String, dynamic> json) {
     return CartResponse(
-      product: Product.fromJson(json['id']),
+      product: Product.fromJson(json['product']),
       price: json['price'],
       quantity: json['quantity']
     );

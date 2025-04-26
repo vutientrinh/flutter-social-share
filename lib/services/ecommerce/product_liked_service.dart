@@ -15,9 +15,9 @@ class ProductLikedService {
       );
 
       if (response.statusCode == 200) {
-        return response.data['data']; // UUID as String
+        return true;
       } else {
-        throw Exception('Failed to like product');
+        return false;
       }
     } catch (e) {
       throw Exception('Error liking product: $e');
@@ -33,9 +33,9 @@ class ProductLikedService {
       );
 
       if (response.statusCode == 200) {
-        return response.data['data'] == true;
+        return true;
       } else {
-        throw Exception('Failed to unlike product');
+        return false;
       }
     } catch (e) {
       throw Exception('Error unliking product: $e');
@@ -48,14 +48,14 @@ class ProductLikedService {
     int size = 10,
   }) async {
     try {
-      final response = await _dio.get(
-        '/api/products/liked',
-        queryParameters: {'page': page, 'size': size},
-      );
+      final response = await _dio.get('/api/products/liked');
 
       if (response.statusCode == 200) {
-        final data = response.data['data'] as List;
-        return data.map((item) => Product.fromJson(item)).toList();
+        final data = response.data['data']; // Map with currentPage, totalPages, data
+        final List<dynamic> productsJson = data['data']; // Here is the List<Product>
+
+        List<Product> products = productsJson.map((item) => Product.fromJson(item)).toList();
+        return products;
       } else {
         throw Exception('Failed to fetch liked products');
       }

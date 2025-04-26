@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/cart_response.dart';
 import 'package:flutter_social_share/providers/async_provider/address_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/cart_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
-import 'package:flutter_social_share/screens/ecommerce_screen/create_address.dart';
-import 'package:flutter_social_share/screens/ecommerce_screen/mock_data/shipping_option.dart';
+import 'package:flutter_social_share/providers/state_provider/shipping_provider.dart';
+import 'package:flutter_social_share/screens/ecommerce_screen/create_address_screen.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
 
@@ -18,9 +19,37 @@ class CartScreen extends ConsumerStatefulWidget {
 
 class _CartScreenState extends ConsumerState<CartScreen> {
   String? userId;
-  final TextEditingController _addressController = TextEditingController();
   String _paymentMethod = 'COD';
   num shippingFee = 0;
+
+  final Map<String, double> summary = {
+    'subtotal': 0,
+    'tax': 0,
+    'shipping': 30000,
+    'discount': 0,
+    'total': 0,
+  };
+  final List<Map<String, dynamic>> shippingOptions = [
+    {
+      "id": "light",
+      "name": "Hàng nhẹ",
+      "minWeight": 0,
+      "maxWeight": 50000,
+      "options": "Tối đa 50kg",
+      "selected": true,
+      "service_id": 53321,
+      "service_type_id": 2,
+    },
+    {
+      "id": "heavy",
+      "name": "Hàng nặng",
+      "minWeight": 50000,
+      "options": "Trên 50kg",
+      "selected": false,
+      "service_id": 53321,
+      "service_type_id": 2,
+    },
+  ];
 
   @override
   void didChangeDependencies() {
@@ -68,11 +97,73 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   }
 
   double calculateWeightItems(List<CartResponse> items) {
-    return items.fold(
-        0, (sum, item) => sum + (item.product.price * item.quantity));
+    return items.fold(0, (sum, item) => sum + (item.product.weight));
   }
 
-  void updateOption() {}
+  void updateOption(List<CartResponse> cartItems, {String? manualSelectedId}) {
+    final double weight = calculateWeightItems(cartItems);
+
+    setState(() {
+      for (var option in shippingOptions) {
+        // If manually selected by user
+        if (manualSelectedId != null) {
+          option['selected'] = option['id'] == manualSelectedId;
+        } else {
+          // Auto-select based on weight
+          if (option['id'] == 'light' && weight <= 50000) {
+            option['selected'] = true;
+          } else if (option['id'] == 'heavy' && weight > 50000) {
+            option['selected'] = true;
+          } else {
+            option['selected'] = false;
+          }
+        }
+      }
+    });
+
+    // After selecting option, calculate shipping fee
+    final selectedOption = shippingOptions.firstWhere(
+      (option) => option['selected'] == true,
+      orElse: () => {},
+    );
+
+    if (selectedOption.isNotEmpty) {
+      calculateShippingFee(selectedOption, cartItems);
+    } else {
+      setState(() {
+        shippingFee = 0;
+        summary['shipping'] = 0;
+      });
+    }
+  }
+
+  Future<void> calculateShippingFee(
+      Map<String, dynamic> shippingSelection, List<CartResponse> items) async {
+    final request = {
+      'shop_id': dotenv.env['GHN_SHOPID'],
+      'service_id': shippingSelection['service_id'],
+      'service_type_id': shippingSelection['service_type_id'],
+      'to_ward_code': shippingSelection['wardCode'], // make sure you pass these
+      'to_district_id': shippingSelection['districtId'],
+      'weight': calculateWeightItems(items),
+    };
+    try {
+      final response = await ref.read(shippingProvider).getShippingFee(request);
+      final data = response.data;
+      setState(() {
+        shippingFee = data['total']; // assume total shipping fee comes here
+        summary['shipping'] = shippingFee.toDouble();
+      });
+    } catch (e) {
+      print('Error calculating shipping fee: $e');
+    }
+    final subTotal = getTotalPrice(items);
+    const taxRate = 0.08;
+    final tax = subTotal * taxRate;
+    final discount = subTotal * 0.1;
+    final total = subTotal + tax + shippingFee - discount;
+    // return
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +175,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       ),
       body: cartState.when(
         data: (items) {
+          calculateShippingFee(shippingOptions[0], items);
           if (items.isEmpty) {
             return const Center(child: Text("Your cart is empty"));
           }
@@ -201,7 +293,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CreateAddress()),
+                              builder: (context) => const CreateAddressScreen()),
                         )
                       },
                       child: const Text(
@@ -232,11 +324,27 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                     if (isDefault)
                                       Container(
                                         margin: const EdgeInsets.only(right: 8),
-                                        width: 10,
-                                        height: 10,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.red,
+                                        width: 18,
+                                        // bigger size
+                                        height: 18,
+                                        decoration: BoxDecoration(
                                           shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.red,
+                                            // border color
+                                            width: 2, // border thickness
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Container(
+                                            width: 10,
+                                            height: 10,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.red,
+                                              // inner filled color
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
                                         ),
                                       )
                                     else
@@ -339,7 +447,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         return GestureDetector(
                           onTap: () {},
                           child: Container(
-                            width: (MediaQuery.of(context).size.width / 2) - 20,
+                            width: (MediaQuery.of(context).size.width) - 20,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: isSelected
@@ -379,7 +487,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         );
                       }).toList(),
                     ),
-
                     const SizedBox(
                       height: 10,
                     ),

@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/shipping_provider.dart';
 
-class CreateAddress extends ConsumerStatefulWidget {
-  const CreateAddress({super.key});
+class CreateAddressScreen extends ConsumerStatefulWidget {
+  const CreateAddressScreen({super.key});
 
   @override
-  ConsumerState<CreateAddress> createState() => _CreateAddressState();
+  ConsumerState<CreateAddressScreen> createState() => _CreateAddressState();
 }
 
-class _CreateAddressState extends ConsumerState<CreateAddress> {
+class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
@@ -253,7 +253,7 @@ class _CreateAddressState extends ConsumerState<CreateAddress> {
                     ),
                   ),
                   child: const Text('Submit Address',
-                      style: TextStyle(fontSize: 18)),
+                      style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
               ],
             ),

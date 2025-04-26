@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/product.dart';
 import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
+import 'package:flutter_social_share/screens/ecommerce_screen/favorite_product_screen.dart';
 
+import '../../providers/async_provider/product_async_provider.dart';
 import 'cart_screen.dart';
 import 'widget/grid_product_list.dart';
 
@@ -11,7 +13,8 @@ class EcommerceHomeScreen extends ConsumerStatefulWidget {
   const EcommerceHomeScreen({super.key});
 
   @override
-  ConsumerState<EcommerceHomeScreen> createState() => _EcommerceHomeScreenState();
+  ConsumerState<EcommerceHomeScreen> createState() =>
+      _EcommerceHomeScreenState();
 }
 
 class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
@@ -23,14 +26,15 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
   ];
 
   int _currentIndex = 0;
-   List<Product>? products;
+
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), _autoSlide);
+    Future.microtask(() {
+      ref.read(productAsyncNotifierProvider.notifier);
+    });
   }
-
-
 
   void _autoSlide() {
     if (!mounted) return;
@@ -42,6 +46,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final productState = ref.watch(productAsyncNotifierProvider);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -67,10 +72,10 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
             IconButton(
               icon: const Icon(CupertinoIcons.suit_heart, color: Colors.black),
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => const FavoriteScreen()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const FavoriteProductScreen()),
+                );
               },
             ),
             IconButton(
@@ -147,7 +152,18 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                           ),
                         ),
                       ),
-                      const GridProductList(),
+                      productState.when(
+                        data: (products) {
+                          if (products.isEmpty) {
+                            return const Center(child: Text('No products found.'));
+                          }
+                          return GridProductList(products: products);
+                        },
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (error, _) =>
+                            Center(child: Text('Error: $error')),
+                      )
                     ],
                   ),
                 )),

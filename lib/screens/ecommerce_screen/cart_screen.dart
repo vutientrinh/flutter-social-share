@@ -4,6 +4,7 @@ import 'package:flutter_social_share/model/ecommerce/cart_response.dart';
 import 'package:flutter_social_share/providers/async_provider/address_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/cart_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/screens/ecommerce_screen/create_address.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/mock_data/shipping_option.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +19,7 @@ class CartScreen extends ConsumerStatefulWidget {
 class _CartScreenState extends ConsumerState<CartScreen> {
   String? userId;
   final TextEditingController _addressController = TextEditingController();
-  String _paymentMethod = 'cash';
+  String _paymentMethod = 'COD';
   num shippingFee = 0;
 
   @override
@@ -53,6 +54,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         .addToCart(userId!, item.product.id, item.product.price, quantity);
   }
 
+  void setDefaultAddress(String id) {
+    ref.read(addressAsyncNotifierProvider.notifier).setDefaultAddress(id);
+  }
+
+  void deleteAddress(String id) {
+    ref.read(addressAsyncNotifierProvider.notifier).deleteAddress(id);
+  }
+
   double getTotalPrice(List<CartResponse> items) {
     return items.fold(
         0, (sum, item) => sum + (item.product.price * item.quantity));
@@ -62,6 +71,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     return items.fold(
         0, (sum, item) => sum + (item.product.price * item.quantity));
   }
+
+  void updateOption() {}
 
   @override
   Widget build(BuildContext context) {
@@ -186,8 +197,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18)),
                     TextButton(
-                      onPressed: () {
-                        // TODO: Handle change address logic
+                      onPressed: () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CreateAddress()),
+                        )
                       },
                       child: const Text(
                         "Add more",
@@ -227,7 +242,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                     else
                                       const SizedBox(width: 18),
 
-                                    // Address details and actions
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -241,8 +255,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                               Text(
                                                 '${user.firstName} ${user.lastName}',
                                                 style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
                                               ),
                                               Text("📞 ${address.phone}"),
                                             ],
@@ -252,8 +266,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                           Text(
                                               '${address.wardName}, ${address.districtName}, ${address.provinceName}'),
                                           const SizedBox(height: 8),
-
-                                          // Actions
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
@@ -261,7 +273,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                               if (!isDefault)
                                                 OutlinedButton.icon(
                                                   onPressed: () {
-                                                    // TODO: Handle set default logic
+                                                    setDefaultAddress(
+                                                        address.id);
                                                   },
                                                   icon: const Icon(
                                                     Icons.check_circle_outline,
@@ -290,7 +303,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                                       color: Colors.red),
                                                   tooltip: 'Delete address',
                                                   onPressed: () {
-                                                    // TODO: Handle delete logic
+                                                    deleteAddress(address.id);
                                                   },
                                                 ),
                                             ],
@@ -324,15 +337,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       children: shippingOptions.map((option) {
                         final isSelected = option['selected'] == true;
                         return GestureDetector(
-                          onTap: () {
-                            // setState(() {
-                            //   for (var opt in shippingOptions) {
-                            //     opt['selected'] = (opt['id'] == option['id']);
-                            //   }
-                            //   _selectedShippingId = option['id'];
-                            // });
-                          },
+                          onTap: () {},
                           child: Container(
+                            width: (MediaQuery.of(context).size.width / 2) - 20,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: isSelected
@@ -372,13 +379,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         );
                       }).toList(),
                     ),
+
                     const SizedBox(
                       height: 10,
                     ),
                     const Text("Payment Method",
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     RadioListTile(
-                      value: 'cash',
+                      value: 'COD',
                       groupValue: _paymentMethod,
                       title: const Text('Cash on Delivery'),
                       onChanged: (value) {
@@ -388,7 +396,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       },
                     ),
                     RadioListTile(
-                      value: 'VN Pay',
+                      value: 'VNPAY',
                       groupValue: _paymentMethod,
                       title: const Text('VN Pay'),
                       onChanged: (value) {

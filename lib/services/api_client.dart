@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,6 +55,43 @@ final apiClientProvider = Provider<Dio>((ref) {
       },
     ),
   );
+
+  return dio;
+});
+final shippingApiClientProvider = Provider<Dio>((ref) {
+  final dio = Dio(BaseOptions(
+    baseUrl: dotenv.env['GHN_URL'] ??
+        'https://dev-online-gateway.ghn.vn/shiip/public-api/v2',
+    connectTimeout: const Duration(seconds: 5),
+    receiveTimeout: const Duration(seconds: 5),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  ));
+
+  dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final tokenGHN = dotenv.env['GHN_TOKEN'] ?? '';
+    final locale = prefs.getString('defaultLocale') ?? 'en-US';
+
+    if (token != null && token.isNotEmpty) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
+
+    options.headers['Token'] = tokenGHN;
+    options.headers['Accept-Language'] = locale;
+
+    return handler.next(options);
+  }, onResponse: (response, handler) {
+    print("✅ [Response] ${response.statusCode} - ${response.data}");
+    return handler.next(response);
+  }, onError: (DioException e, handler) {
+    print("❌ [Dio Error] ${e.response?.statusCode} - ${e.message}");
+    return handler.next(e);
+  }));
 
   return dio;
 });

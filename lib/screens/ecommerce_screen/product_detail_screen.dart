@@ -6,10 +6,7 @@ import 'package:flutter_social_share/providers/async_provider/product_async_prov
 import 'package:flutter_social_share/providers/async_provider/product_liked_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/review_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/product_liked_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
-import 'package:flutter_social_share/route/screen_export.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/create_comment_screen.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/widget/review_item.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
@@ -31,25 +28,26 @@ class ProductDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
-  List<ProductReview>? productReviews;
+  // List<ProductReview>? productReviews;
 
   @override
   void initState() {
     super.initState();
-    loadReview();
+    // loadReview();
     Future.microtask(() {
       ref.read(productAsyncNotifierProvider.notifier);
+      ref.read(reviewProductAsyncNotifierProvider.notifier).getReviewProduct(widget.product.id);
     });
   }
 
-  Future<void> loadReview() async {
-    final data = await ref
-        .read(productReviewProvider)
-        .getComments(productId: widget.product.id);
-    setState(() {
-      productReviews = data;
-    });
-  }
+  // Future<void> loadReview() async {
+  //   final data = await ref
+  //       .read(productReviewProvider)
+  //       .getComments(productId: widget.product.id);
+  //   setState(() {
+  //     productReviews = data;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +61,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const FavoriteProductScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const FavoriteProductScreen()),
                 );
               },
               icon: const Icon(
@@ -207,16 +206,19 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   children: [
                     const Text(
                       "Customer Reviews:",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center, // Center align the content
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      // Center align the content
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey, // Button background color
-                            borderRadius: BorderRadius.circular(30), // Rounded corners
+                            color: Colors.grey,
+                            // Button background color
+                            borderRadius: BorderRadius.circular(30),
+                            // Rounded corners
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.3),
@@ -226,29 +228,37 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                               ),
                             ],
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16),
                           child: InkWell(
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => CreateCommentScreen(productId: widget.product.id)),
+                                MaterialPageRoute(
+                                    builder: (context) => CreateCommentScreen(
+                                        productId: widget.product.id)),
                               );
                             },
-                            borderRadius: BorderRadius.circular(30), // Apply rounded corners to InkWell as well
+                            borderRadius: BorderRadius.circular(30),
+                            // Apply rounded corners to InkWell as well
                             child: const Row(
                               children: [
                                 Icon(
                                   Icons.comment,
-                                  color: Colors.white, // Icon color for contrast
-                                  size: 20, // Adjust size for better visual balance
+                                  color: Colors.white,
+                                  // Icon color for contrast
+                                  size:
+                                      20, // Adjust size for better visual balance
                                 ),
-                                SizedBox(width: 8), // Spacing between icon and text
+                                SizedBox(width: 8),
+                                // Spacing between icon and text
                                 Text(
                                   'Review',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white, // Text color for contrast
+                                    color:
+                                        Colors.white, // Text color for contrast
                                   ),
                                 ),
                               ],
@@ -257,18 +267,28 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         ),
                       ],
                     )
-
                   ],
                 ),
               ),
+              reviewProductState.when(
+                data: (productReviews) {
+                  if (productReviews.isEmpty) {
+                    return const Center(child: Text('No products found.'));
+                  }
 
-              productReviews == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: productReviews!
-                          .map((review) => ReviewItem(productReview: review))
-                          .toList(),
-                    )
+                  return ListView.builder(
+                    shrinkWrap: true,  // IMPORTANT: add this to make it work inside Column
+                    physics: const NeverScrollableScrollPhysics(), // disable inner scrolling
+                    itemCount: productReviews.length,
+                    itemBuilder: (context, index) {
+                      final productReview = productReviews[index];
+                      return ReviewItem(productReview: productReview);
+                    },
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => Center(child: Text('Error: $error')),
+              ),
             ],
           ),
         ),

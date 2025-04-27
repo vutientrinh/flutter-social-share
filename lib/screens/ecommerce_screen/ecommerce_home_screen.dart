@@ -28,9 +28,8 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
   int _currentIndex = 0;
 
   @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(seconds: 3), _autoSlide);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     Future.microtask(() {
       ref.read(productAsyncNotifierProvider.notifier);
     });

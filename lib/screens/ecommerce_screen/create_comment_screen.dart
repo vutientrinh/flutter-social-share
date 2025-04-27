@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
 
+import '../../providers/async_provider/review_async_provider.dart';
+
 class CreateCommentScreen extends ConsumerStatefulWidget {
   final String productId;
 
@@ -18,7 +20,7 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
   final TextEditingController _commentController = TextEditingController();
   int _rating = 1;
 
-  void _submitComment() {
+  void _submitComment() async {
     if (_formKey.currentState!.validate()) {
 
       ref.read(productReviewProvider).comment(
@@ -26,14 +28,15 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
           author: _authorController.text.trim(),
           comment: _commentController.text.trim(),
           rating: _rating);
-
+      ref.read(reviewProductAsyncNotifierProvider.notifier)
+          .getReviewProduct(widget.productId);
       // You can also clear the fields after submission
       _authorController.clear();
       _commentController.clear();
       setState(() {
         _rating = 1;
       });
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     }
   }
 

@@ -8,7 +8,6 @@ import 'package:flutter_social_share/utils/uidata.dart';
 
 import '../../model/user.dart';
 import '../posts/widgets/post_item_remake.dart';
-import 'package:riverpod/riverpod.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final String userId;
@@ -30,6 +29,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     setState(() {
       user = response;
     });
+    if (user != null) {
+      // Now you can safely call getAllOrders
+      ref.read(orderAsyncNotifierProvider.notifier).getAllOrders(user!.id);
+    }
   }
 
   @override
@@ -185,7 +188,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   Widget _buildProductsTab() {
-    final orderAsyncValue = ref.watch(orderAsyncNotifierProvider);
+    final orderAsyncValue = ref.read(orderAsyncNotifierProvider);
+    print("Order ne : $orderAsyncValue");
     return orderAsyncValue.when(
       data: (orders) {
         return ListView.builder(
@@ -196,7 +200,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             return ListTile(
               leading: const Icon(Icons.shopping_bag, color: Colors.blueAccent),
               title: Text(order.orderCode),
-              subtitle: Text(order.payment.amountPaid.toString()),
+              subtitle: Text(order.payment!.amountPaid.toString()),
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("Clicked on ${order.totalAmount}")),

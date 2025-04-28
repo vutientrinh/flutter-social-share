@@ -7,12 +7,12 @@ class OrderResponse {
   final String id;
   final String orderCode;
   final String status;
-  final int totalAmount;
-  final int shippingFee;
+  final num totalAmount;
+  final num shippingFee;
   final User customer;
   final List<LineItemResponse> items;
-  final ShippingInfoResponse shippingInfo;
-  final PaymentResponse payment;
+  final ShippingInfoResponse? shippingInfo;
+  final PaymentResponse? payment;
   final String createAt;
   final String updateAt;
 
@@ -24,8 +24,8 @@ class OrderResponse {
     required this.shippingFee,
     required this.customer,
     required this.items,
-    required this.shippingInfo,
-    required this.payment,
+    this.shippingInfo,
+    this.payment,
     required this.createAt,
     required this.updateAt,
   });
@@ -41,41 +41,46 @@ class OrderResponse {
         items: (json['items'] as List)
             .map((item) => LineItemResponse.fromJson(item))
             .toList(),
-        shippingInfo: ShippingInfoResponse.fromJson(json['shippingInfo']),
-        payment: PaymentResponse.fromJson(json["payment"]),
+        shippingInfo: json['shippingInfo'] != null
+            ? ShippingInfoResponse.fromJson(json['shippingInfo'])
+            : null,
+        payment: json['payment'] != null
+            ? PaymentResponse.fromJson(json["payment"])
+            : null,
         createAt: json['createAt'],
         updateAt: json['updateAt']);
   }
 }
 
 class PaymentResponse {
-  final String createAt;
-  final String updatedAt;
-  final String id;
-  final String method;
-  final String status;
-  final bool transactionId;
-  final double amountPaid;
+  final String? createAt;
+  final String? updatedAt;
+  final String? id;
+  final String? method;
+  final String? status;
+  final String? transactionId;
+  final num? amountPaid;
 
   PaymentResponse({
-    required this.createAt,
-    required this.updatedAt,
-    required this.id,
-    required this.method,
-    required this.status,
-    required this.transactionId,
-    required this.amountPaid,
+    this.createAt,
+    this.updatedAt,
+    this.id,
+    this.method,
+    this.status,
+    this.transactionId,
+    this.amountPaid,
   });
 
   factory PaymentResponse.fromJson(Map<String, dynamic> json) {
     return PaymentResponse(
-      createAt: json['createAt'],
-      updatedAt: json['updateAt'],
-      id: json['id'],
-      method: json['method'],
-      status: json['status'],
-      transactionId: json['transactionId'] as bool,
-      amountPaid: json['amountPaid'],
+      createAt: json['createAt'] ?? '',
+      updatedAt: json['updateAt'] ?? '',
+      id: json['id'] ?? '',
+      method: json['method'] ?? '',
+      status: json['status'] ?? '',
+      transactionId: json['transactionId'],
+      // Nullable
+      amountPaid: (json['amountPaid'] as num).toDouble(),
     );
   }
 }
@@ -109,17 +114,17 @@ class ShippingInfoResponse {
 
   factory ShippingInfoResponse.fromJson(Map<String, dynamic> json) {
     return ShippingInfoResponse(
-      ghnOrderCode: json['ghnOrderCode'],
-      receiverName: json['receiverName'],
-      receiverPhone: json['receiverPhone'],
-      address: json['address'],
-      wardCode: json['wardCode'],
-      districtId: json['districtId'],
-      serviceId: json['serviceId'],
-      serviceTypeId: json['serviceTypeId'],
-      weight: json['weight'],
-      shippingStatus: json['shippingStatus'],
-      estimateDeliveryDate: json['estimateDeliveryDate'],
+      ghnOrderCode: json['ghnOrderCode'] ?? '',
+      receiverName: json['receiverName'] ?? '',
+      receiverPhone: json['receiverPhone'] ?? '',
+      address: json['address'] ?? '',
+      wardCode: json['wardCode'] ?? '',
+      districtId: json['districtId'] ?? 0,
+      serviceId: json['serviceId'] ?? '',
+      serviceTypeId: json['serviceTypeId'] ?? '',
+      weight: json['weight'] ?? '',
+      shippingStatus: json['shippingStatus'] ?? '',
+      estimateDeliveryDate: json['estimateDeliveryDate'] ?? '',
     );
   }
 }

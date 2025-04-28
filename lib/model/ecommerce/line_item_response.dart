@@ -6,8 +6,8 @@ class LineItemResponse {
   final int quantity;
   final double price;
   final double total;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
 
   LineItemResponse({
     required this.id,
@@ -26,8 +26,8 @@ class LineItemResponse {
       quantity: json['quantity'],
       price: json['price'],
       total: json['total'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 }

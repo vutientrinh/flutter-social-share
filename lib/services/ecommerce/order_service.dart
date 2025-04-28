@@ -36,24 +36,22 @@ class OrderService {
   // Get all orders with optional status filter
   Future<List<OrderResponse>> getAllOrders({
     required String customerId,
-    int page = 1,
-    int size = 10,
-    String? status, // Optional
   }) async {
     try {
       final response = await _dio.get(
         '/api/orders/all',
         queryParameters: {
-          'page': page,
-          'size': size,
           'customerId': customerId,
-          if (status != null) 'status': status,
         },
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> data = response.data['data']['content'];
-        return data.map((json) => OrderResponse.fromJson(json)).toList();
+        print(response.data['data']);
+        List<OrderResponse> orders = (response.data['data']
+        as List)
+            .map((productJson) => OrderResponse.fromJson(productJson))
+            .toList();
+        return orders;
       } else {
         throw Exception('Failed to fetch orders');
       }

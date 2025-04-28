@@ -18,42 +18,61 @@ class ProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends ConsumerState<ProfileScreen>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   User? user;
+  final ScrollController _scrollController = ScrollController();
+  bool _isFetchingMore = false;
 
   Future<void> loadData() async {
     final response =
-        await ref.read(userServiceProvider).getProfileById(widget.userId);
+    await ref.read(userServiceProvider).getProfileById(widget.userId);
     setState(() {
       user = response;
     });
+
     if (user != null) {
       // Now you can safely call getAllOrders
       ref.read(orderAsyncNotifierProvider.notifier).getAllOrders(user!.id);
     }
+
   }
 
   @override
   void initState() {
     super.initState();
     loadData();
-    _tabController = TabController(length: 2, vsync: this);
+
+    _scrollController.addListener(() async {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final currentScroll = _scrollController.position.pixels;
+
+      if (maxScroll - currentScroll <= 300) {
+        if (!_isFetchingMore) {
+          _isFetchingMore = true;
+          await ref.read(postAsyncNotifierProvider.notifier).fetchNextPage();
+          _isFetchingMore = false;
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final postAsyncValue = ref.watch(postAsyncNotifierProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
         backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.settings,
-              color: Colors.black,
-            ),
+            icon: const Icon(Icons.settings, color: Colors.black),
             onPressed: () {
               showModalBottomSheet(
                 context: context,
@@ -68,80 +87,77 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
       ),
       body: user == null
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Header section
-                Stack(
-                  alignment: Alignment.topLeft,
+          : ListView(
+        controller: _scrollController,
+        children: [
+          // Header
+          Stack(
+            alignment: Alignment.topLeft,
+            children: [
+              Ink.image(
+                image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+              Positioned(
+                bottom: 10,
+                left: 16,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Cover image
-                    Ink.image(
-                      image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                    CircleAvatar(
+                      radius: 45,
+                      backgroundColor: Colors.black,
+                      child: CircleAvatar(
+                        radius: 42,
+                        backgroundImage: NetworkImage(
+                          LINK_IMAGE.publicImage(user!.avatar),
+                        ),
+                      ),
                     ),
-                    // Profile info
-                    Positioned(
-                      bottom: 10,
-                      left: 16,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Avatar
-                          CircleAvatar(
-                            radius: 45,
-                            backgroundColor: Colors.black,
-                            child: CircleAvatar(
-                              radius: 42,
-                              backgroundImage: NetworkImage(
-                                LINK_IMAGE.publicImage(user!.avatar),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          // User Info
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                user!.username,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black45,
-                                      offset: Offset(1, 1),
-                                      blurRadius: 2,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Bio: ${user!.bio ?? ""}',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white70,
-                                ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user!.username,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black45,
+                                offset: Offset(1, 1),
+                                blurRadius: 2,
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Bio: ${user!.bio ?? ""}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+              ),
+            ],
+          ),
 
                 // Tab bar
                 TabBar(
@@ -212,6 +228,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, stack) => Center(child: Text('Error: $err')),
+
     );
   }
 }

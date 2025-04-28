@@ -22,6 +22,9 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
   void initState() {
     super.initState();
     fetchUser();
+    Future.microtask(() {
+      ref.invalidate(postAsyncNotifierProvider);
+    });
     _scrollController.addListener(_onScroll);
   }
 

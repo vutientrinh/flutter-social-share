@@ -9,8 +9,7 @@ import '../../socket_service/websocket_service.dart';
 class ChatDetail extends ConsumerStatefulWidget {
   final FriendConnection friend;
 
-  const ChatDetail(
-      {super.key, required this.friend});
+  const ChatDetail({super.key, required this.friend});
 
   @override
   ConsumerState<ChatDetail> createState() => _ChatDetailState();
@@ -41,7 +40,6 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
           }
         });
       },
-
     );
     _webSocketService.connect();
     _fetchUnSeenMessages();
@@ -58,8 +56,8 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
     String text = _messageController.text;
     if (text.isNotEmpty) {
       print(text);
-      _webSocketService.sendMessage(
-          text, widget.friend.convId, widget.friend.connectionId, widget.friend.connectionUsername);
+      _webSocketService.sendMessage(text, widget.friend.convId,
+          widget.friend.connectionId, widget.friend.connectionUsername);
       _messageController.clear();
     }
   }
@@ -79,14 +77,57 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
       print("Error fetching unseen messages: $e");
     }
   }
+
   Widget _buildDeliveryIcon(String? status) {
     switch (status) {
       case "NOT_DELIVERED":
-        return const Icon(Icons.check, size: 16, color: Colors.red);
+        return const Align(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                "Not delivered",
+                style: TextStyle(fontSize: 10, color: Colors.black),
+              ),
+              SizedBox(width: 4),
+              Icon(Icons.check, size: 16, color: Colors.black),
+            ],
+          ),
+        );
       case "DELIVERED":
-        return const Icon(Icons.done_all, size: 16, color: Colors.green);
+        return const Align(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                "Delivered",
+                style: TextStyle(fontSize: 10, color: Colors.black),
+              ),
+              SizedBox(width: 4),
+              Icon(Icons.done_all, size: 16, color: Colors.black)
+            ],
+          ),
+        );
       case "SEEN":
-        return const Icon(Icons.done_all, size: 16, color: Colors.black);
+        return const Align(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                "Seen",
+                style: TextStyle(fontSize: 10, color: Colors.black),
+              ),
+              SizedBox(width: 4),
+              Icon(Icons.done_all, size: 16, color: Colors.black)
+            ],
+          ),
+        );
       default:
         return const SizedBox.shrink();
     }
@@ -96,7 +137,6 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.friend.connectionUsername)),
-
       body: Column(
         children: [
           Expanded(
@@ -109,39 +149,46 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
                     message.senderId != widget.friend.connectionId;
 
                 return Align(
-                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment:
+                      isMe ? Alignment.centerRight : Alignment.centerLeft,
                   child: Column(
-                    crossAxisAlignment:
-                    isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    crossAxisAlignment: isMe
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
                     children: [
                       // Message bubble
                       Container(
-                        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 10),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: isMe ? Colors.blue[300] : Colors.grey[300],
                           borderRadius: BorderRadius.only(
                             topLeft: const Radius.circular(12),
                             topRight: const Radius.circular(12),
-                            bottomLeft: isMe ? const Radius.circular(12) : Radius.zero,
-                            bottomRight: isMe ? Radius.zero : const Radius.circular(12),
+                            bottomLeft:
+                                isMe ? const Radius.circular(12) : Radius.zero,
+                            bottomRight:
+                                isMe ? Radius.zero : const Radius.circular(12),
                           ),
                         ),
                         child: Text(
                           message.content ?? "Not found",
-                          style: const TextStyle(fontSize: 16, color: Colors.black87),
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.black87),
                         ),
                       ),
                       // Delivery status icon outside the message bubble
                       if (isMe)
                         Padding(
-                          padding: const EdgeInsets.only(right: 12, top: 2, bottom: 5),
-                          child: _buildDeliveryIcon(message.messageDeliveryStatusEnum),
+                          padding: const EdgeInsets.only(
+                              right: 12, top: 2, bottom: 5),
+                          child: _buildDeliveryIcon(
+                              message.messageDeliveryStatusEnum),
                         ),
                     ],
                   ),
                 );
-
               },
             ),
           ),

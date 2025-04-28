@@ -18,14 +18,14 @@ class ProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> with TickerProviderStateMixin {
   User? user;
   final ScrollController _scrollController = ScrollController();
   bool _isFetchingMore = false;
+  late TabController _tabController;
 
   Future<void> loadData() async {
-    final response =
-    await ref.read(userServiceProvider).getProfileById(widget.userId);
+    final response = await ref.read(userServiceProvider).getProfileById(widget.userId);
     setState(() {
       user = response;
     });
@@ -34,14 +34,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       // Now you can safely call getAllOrders
       ref.read(orderAsyncNotifierProvider.notifier).getAllOrders(user!.id);
     }
-
   }
 
   @override
   void initState() {
     super.initState();
     loadData();
-
+    _tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(() async {
       final maxScroll = _scrollController.position.maxScrollExtent;
       final currentScroll = _scrollController.position.pixels;
@@ -59,6 +58,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -159,29 +159,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ],
           ),
 
-                // Tab bar
-                TabBar(
-                  controller: _tabController,
-                  labelColor: Colors.blueAccent,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: Colors.blueAccent,
-                  tabs: const [
-                    Tab(text: 'Posts'),
-                    Tab(text: 'Products'),
-                  ],
-                ),
-                // Tab content
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildPostsTab(),
-                      _buildProductsTab(),
-                    ],
-                  ),
-                ),
+          // Tab bar
+          TabBar(
+            controller: _tabController,
+            labelColor: Colors.blueAccent,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Colors.blueAccent,
+            tabs: const [
+              Tab(text: 'Posts'),
+              Tab(text: 'Products'),
+            ],
+          ),
+          // Tab content
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildPostsTab(),
+                _buildProductsTab(),
               ],
             ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -228,7 +228,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, stack) => Center(child: Text('Error: $err')),
-
     );
   }
 }

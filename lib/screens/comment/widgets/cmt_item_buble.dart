@@ -4,7 +4,7 @@ import 'package:flutter_social_share/common/widgets/stateful/react_button/reacti
 import 'package:flutter_social_share/common/widgets/stateful/react_button/reactive_icon_definition.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 
-import '../../../model/comment.dart';
+import '../../../model/social/comment.dart';
 
 class CommentItemBubble extends StatefulWidget {
   final Comment cmt;

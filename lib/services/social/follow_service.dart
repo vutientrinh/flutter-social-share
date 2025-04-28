@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_social_share/model/follow_response.dart';
+import 'package:flutter_social_share/model/social/follow_response.dart';
 import 'package:flutter_social_share/model/user.dart';
 
 class FollowService {

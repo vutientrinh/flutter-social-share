@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
-import 'package:flutter_social_share/providers/async_provider/friend_request_async_provider.dart';
-
 import 'widgets/more_option_bottomsheet.dart';
 import '../../providers/state_provider/auth_provider.dart';
 import 'widgets/list_user.dart';

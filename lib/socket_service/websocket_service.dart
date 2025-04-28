@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_social_share/model/conversation.dart';
+import 'package:flutter_social_share/model/social/conversation.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 import '../services/auth_service.dart';
 

@@ -5,7 +5,7 @@ import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
 
-import '../../../model/post.dart';
+import '../../../model/social/post.dart';
 import '../../../providers/async_provider/comment_async_provider.dart';
 import '../../../utils/uidata.dart';
 
@@ -41,8 +41,8 @@ class _PostItemState extends ConsumerState<PostItem> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                   child: ItemRow(
-                    avatarUrl:  LINK_IMAGE.publicImage(widget.post.author!.avatar),
-                    title: widget.post.author!.username,
+                    avatarUrl:  LINK_IMAGE.publicImage(widget.post.author.avatar),
+                    title: widget.post.author.username,
                     subtitle:widget.post.createdAt,
                     rightWidget: PopupMenuButton<String>(
                       onSelected: (String value) {

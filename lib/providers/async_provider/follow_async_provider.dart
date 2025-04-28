@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/follow_response.dart';
+import 'package:flutter_social_share/model/social/follow_response.dart';
 import 'package:flutter_social_share/providers/state_provider/follow_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 

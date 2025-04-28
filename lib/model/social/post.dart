@@ -1,4 +1,4 @@
-import 'package:flutter_social_share/model/topic.dart';
+import 'package:flutter_social_share/model/social/topic.dart';
 import 'package:flutter_social_share/model/user.dart';
 import 'package:flutter_social_share/model/user_infor.dart';
 

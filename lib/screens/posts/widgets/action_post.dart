@@ -6,7 +6,7 @@ import 'package:flutter_social_share/providers/state_provider/liked_post_provide
 import 'package:flutter_social_share/screens/posts/widgets/icon_post_comment.dart';
 import 'package:flutter_social_share/screens/posts/widgets/text_count_number.dart';
 
-import '../../../model/post.dart';
+import '../../../model/social/post.dart';
 
 class ActionPost extends ConsumerStatefulWidget {
   final Post post;

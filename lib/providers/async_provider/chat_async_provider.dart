@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/comment.dart';
-import 'package:flutter_social_share/model/conversation.dart';
+import 'package:flutter_social_share/model/social/comment.dart';
+import 'package:flutter_social_share/model/social/conversation.dart';
 import 'package:flutter_social_share/providers/state_provider/chat_provider.dart';
 import '../state_provider/comment_provider.dart';
 

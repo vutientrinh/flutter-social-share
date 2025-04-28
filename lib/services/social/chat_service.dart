@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_social_share/model/conversation.dart';
-import 'package:flutter_social_share/model/friend_connection.dart';
+import 'package:flutter_social_share/model/social/conversation.dart';
+import 'package:flutter_social_share/model/social/friend_connection.dart';
 
 class ChatService {
   final Dio _dio;

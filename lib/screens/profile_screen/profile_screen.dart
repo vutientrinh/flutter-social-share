@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/profile_screen/widget/show_setting_bottom_sheet.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
+
 import '../../model/user.dart';
 import '../posts/widgets/post_item_remake.dart';
 
@@ -29,7 +30,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       user = response;
     });
 
-    // Fetch first page of posts
+    if (user != null) {
+      // Now you can safely call getAllOrders
+      ref.read(orderAsyncNotifierProvider.notifier).getAllOrders(user!.id);
+    }
+
   }
 
   @override
@@ -154,29 +159,76 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ],
           ),
 
-          // Posts list
-          postAsyncValue.when(
-            data: (posts) {
-              final authorPosts = posts
-                  .where((post) => post.authorId == widget.userId)
-                  .toList();
-
-              return Column(
-                children: authorPosts
-                    .map((post) => PostItem(post: post))
-                    .toList(),
-              );
-            },
-            loading: () => const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(),
-              ),
+                // Tab bar
+                TabBar(
+                  controller: _tabController,
+                  labelColor: Colors.blueAccent,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: Colors.blueAccent,
+                  tabs: const [
+                    Tab(text: 'Posts'),
+                    Tab(text: 'Products'),
+                  ],
+                ),
+                // Tab content
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildPostsTab(),
+                      _buildProductsTab(),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            error: (err, stack) => Center(child: Text('Error: $err')),
-          ),
-        ],
-      ),
+    );
+  }
+
+  Widget _buildPostsTab() {
+    final postAsyncValue = ref.watch(postAsyncNotifierProvider);
+
+    return postAsyncValue.when(
+      data: (posts) {
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            return PostItem(post: posts[index]);
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
+    );
+  }
+
+  Widget _buildProductsTab() {
+    final orderAsyncValue = ref.read(orderAsyncNotifierProvider);
+    print("Order ne : $orderAsyncValue");
+    return orderAsyncValue.when(
+      data: (orders) {
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          itemCount: orders.length,
+          itemBuilder: (context, index) {
+            final order = orders[index];
+            return ListTile(
+              leading: const Icon(Icons.shopping_bag, color: Colors.blueAccent),
+              title: Text(order.orderCode),
+              subtitle: Text(order.payment!.amountPaid.toString()),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Clicked on ${order.totalAmount}")),
+                );
+              },
+            );
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
+
     );
   }
 }

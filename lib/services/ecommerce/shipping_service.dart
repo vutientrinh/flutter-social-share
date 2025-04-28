@@ -11,14 +11,14 @@ class ShippingService {
     return dio.get('/master-data/province');
   }
 
-  Future<Response> getDistricts(String provinceId) async {
+  Future<Response> getDistricts(int provinceId) async {
     return dio.get(
       '/master-data/district',
       queryParameters: {'province_id': provinceId},
     );
   }
 
-  Future<Response> getWards(String districtId) async {
+  Future<Response> getWards(int districtId) async {
     return dio.get(
       '/master-data/ward',
       queryParameters: {'district_id': districtId},

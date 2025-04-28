@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
-
 import '../../providers/async_provider/review_async_provider.dart';
 
 class CreateCommentScreen extends ConsumerStatefulWidget {
@@ -10,8 +9,7 @@ class CreateCommentScreen extends ConsumerStatefulWidget {
   const CreateCommentScreen({super.key, required this.productId});
 
   @override
-  ConsumerState<CreateCommentScreen> createState() =>
-      _CreateCommentScreenState();
+  ConsumerState<CreateCommentScreen> createState() => _CreateCommentScreenState();
 }
 
 class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
@@ -22,15 +20,15 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
 
   void _submitComment() async {
     if (_formKey.currentState!.validate()) {
-
       ref.read(productReviewProvider).comment(
-          productId: widget.productId,
-          author: _authorController.text.trim(),
-          comment: _commentController.text.trim(),
-          rating: _rating);
+        productId: widget.productId,
+        author: _authorController.text.trim(),
+        comment: _commentController.text.trim(),
+        rating: _rating,
+      );
       ref.read(reviewProductAsyncNotifierProvider.notifier)
           .getReviewProduct(widget.productId);
-      // You can also clear the fields after submission
+      // Clear the fields after submission
       _authorController.clear();
       _commentController.clear();
       setState(() {
@@ -45,16 +43,17 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(5, (index) {
         final starIndex = index + 1;
-        return IconButton(
-          icon: Icon(
-            Icons.star,
-            color: _rating >= starIndex ? Colors.amber : Colors.grey,
-          ),
-          onPressed: () {
+        return GestureDetector(
+          onTap: () {
             setState(() {
               _rating = starIndex;
             });
           },
+          child: Icon(
+            Icons.star,
+            color: _rating >= starIndex ? Colors.orange : Colors.grey,
+            size: 30,
+          ),
         );
       }),
     );
@@ -65,47 +64,91 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add a Comment'),
+        backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _authorController,
-                decoration: const InputDecoration(
-                  labelText: 'Your Name',
-                  border: OutlineInputBorder(),
+        padding: const EdgeInsets.all(20.0),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name input
+                TextFormField(
+                  controller: _authorController,
+                  decoration: InputDecoration(
+                    labelText: 'Your Name',
+                    labelStyle: TextStyle(color: Colors.blueAccent),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.blueAccent),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  ),
+                  validator: (value) =>
+                  value == null || value.isEmpty ? 'Please enter your name' : null,
                 ),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter your name'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _commentController,
-                decoration: const InputDecoration(
-                  labelText: 'Your Comment',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 20),
+
+                // Comment input
+                TextFormField(
+                  controller: _commentController,
+                  decoration: InputDecoration(
+                    labelText: 'Your Comment',
+                    labelStyle: TextStyle(color: Colors.blueAccent),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.blueAccent),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  ),
+                  maxLines: 4,
+                  validator: (value) =>
+                  value == null || value.isEmpty ? 'Please enter a comment' : null,
                 ),
-                maxLines: 4,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter a comment'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Rating',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              _buildStarRating(),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _submitComment,
-                child: const Text('Submit'),
-              ),
-            ],
+                const SizedBox(height: 20),
+
+                // Rating Section
+                const Text(
+                  'Rating',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _buildStarRating(),
+                const SizedBox(height: 24),
+
+                // Submit Button
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: _submitComment,
+                    child: const Text('Submit Comment', style: TextStyle(color: Colors.white),),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

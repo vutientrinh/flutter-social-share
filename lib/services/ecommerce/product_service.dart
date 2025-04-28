@@ -5,12 +5,10 @@ import 'package:flutter_social_share/model/ecommerce/product.dart';
 
 import '../../model/ecommerce/update_product_request.dart';
 
-
 class ProductService {
   final Dio _dio;
 
   ProductService(this._dio);
-
 
   Future<Product> createProduct({
     required String name,
@@ -29,7 +27,8 @@ class ProductService {
       if (images != null && images.isNotEmpty) {
         for (var file in images) {
           final fileName = file.path.split('/').last;
-          multipartImages.add(await MultipartFile.fromFile(file.path, filename: fileName));
+          multipartImages
+              .add(await MultipartFile.fromFile(file.path, filename: fileName));
         }
       }
 
@@ -64,14 +63,24 @@ class ProductService {
     }
   }
 
-  Future<List<Product>> getAllProduct() async {
+  Future<List<Product>> getAllProduct(
+      {int page = 1,
+      int size = 10,
+      String? search,
+      String? category,
+      String? minPrice,
+      String? maxPrice,
+      String? rating,
+      String? inStock,
+      String? field,
+      String? direction}) async {
     try {
-      final response = await _dio
-          .get('/api/products/all'); // Adjust according to your backend endpoint
+      final response = await _dio.get(
+          '/api/products/all'); // Adjust according to your backend endpoint
       if (response.statusCode == 200) {
         // Access 'data' field and cast it as a List of user objects
         List<Product> products = (response.data['data']
-        as List) // Ensure 'data' is treated as a List
+                as List) // Ensure 'data' is treated as a List
             .map((productJson) => Product.fromJson(productJson))
             .toList();
         return products;
@@ -112,6 +121,7 @@ class ProductService {
       throw Exception('Error updating product: $e');
     }
   }
+
   Future<bool> deleteProduct(String id) async {
     try {
       final response = await _dio.delete('/api/products/$id/delete');

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/ecommerce/address_request.dart';
+import 'package:flutter_social_share/providers/async_provider/address_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/shipping_provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class CreateAddressScreen extends ConsumerStatefulWidget {
   const CreateAddressScreen({super.key});
@@ -20,8 +23,8 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
   List<dynamic> districts = [];
   List<dynamic> wards = [];
 
-  String? selectedProvinceId;
-  String? selectedDistrictId;
+  int? selectedProvinceId;
+  int? selectedDistrictId;
   String? selectedWardCode;
   String? selectedProvinceName;
   String? selectedDistrictName;
@@ -41,7 +44,7 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
     });
   }
 
-  Future<void> _loadDistricts(String provinceId) async {
+  Future<void> _loadDistricts(int provinceId) async {
     final shippingService = ref.read(shippingProvider);
     final res = await shippingService.getDistricts(provinceId);
     setState(() {
@@ -54,7 +57,7 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
     });
   }
 
-  Future<void> _loadWards(String districtId) async {
+  Future<void> _loadWards(int districtId) async {
     final shippingService = ref.read(shippingProvider);
     final res = await shippingService.getWards(districtId);
     setState(() {
@@ -66,25 +69,27 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
 
   void _submitForm() async {
     final authService = ref.read(authServiceProvider);
-    final data =
-        await authService.getSavedData(); // fixed typo `date` -> `data`
+    final data = await authService.getSavedData();
 
     if (_formKey.currentState!.validate() &&
         selectedProvinceId != null &&
         selectedDistrictId != null &&
         selectedWardCode != null) {
-      final address = {
-        'userId': data['userId'],
-        'phone': phoneController.text,
-        'address': detailController.text,
-        'wardCode': selectedWardCode,
-        'wardName': selectedWardName,
-        'districtId': selectedDistrictId,
-        'districtName': selectedDistrictName,
-        'provinceId': selectedProvinceId,
-        'provinceName': selectedProvinceName,
-      };
+
+      final address = AddressRequest(
+        userId: data['userId'],
+        phone: phoneController.text,
+        address: detailController.text,
+        wardCode: selectedWardCode!,
+        wardName: selectedWardName!,
+        districtId: selectedDistrictId!,
+        districtName: selectedDistrictName!,
+        provinceId: selectedProvinceId!,
+        provinceName: selectedProvinceName!,
+      );
+
       print("Submitting address: $address");
+      await ref.read(addressAsyncNotifierProvider.notifier).createAddress(address);
     } else {
       print("Form incomplete");
     }
@@ -111,150 +116,116 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
     );
   }
 
-  Widget _buildDropdown({
+  Widget _buildDropdown<T>({
     required String label,
-    required String? value,
+    required T? value,
     required List<dynamic> items,
-    required void Function(String?) onChanged,
+    required void Function(T?) onChanged,
     required String displayField,
     required String idField,
   }) {
-    return DropdownButtonFormField<String>(
+    return DropdownButtonFormField<T>(
       value: value,
-      decoration: InputDecoration(
-        labelText: label,
-        floatingLabelStyle: const TextStyle(color: Colors.blue, fontSize: 18),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.grey),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.blue, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        filled: true,
-        fillColor: Colors.grey.shade100,
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      ),
-      icon: const Icon(Icons.keyboard_arrow_down_rounded),
-      isExpanded: true,
-      dropdownColor: Colors.white,
-      menuMaxHeight: 200,
-      alignment: AlignmentDirectional.bottomStart,
-      items: items.map<DropdownMenuItem<String>>((item) {
-        return DropdownMenuItem<String>(
-          value: item[idField].toString(),
-          child: Text(
-            item[displayField],
-            style: const TextStyle(fontSize: 16),
-          ),
+      items: items.map<DropdownMenuItem<T>>((item) {
+        return DropdownMenuItem<T>(
+          value: item[idField] as T,
+          child: Text(item[displayField]),
         );
       }).toList(),
       onChanged: onChanged,
-      validator: (value) => value == null ? 'Required' : null,
+      decoration: _inputDecoration(label),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Address')),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: ListView(
+      appBar: AppBar(
+        title: const Text('Create Address'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                const SizedBox(height: 12),
                 TextFormField(
                   controller: nameController,
                   decoration: _inputDecoration('Full Name'),
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Required' : null,
+                  validator: (value) => value!.isEmpty ? 'Please enter your name' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: phoneController,
-                  keyboardType: TextInputType.phone,
                   decoration: _inputDecoration('Phone Number'),
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Required' : null,
+                  validator: (value) => value!.isEmpty ? 'Please enter your phone number' : null,
+                  keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: 16),
-                _buildDropdown(
+                _buildDropdown<int>(
                   label: 'Province',
                   value: selectedProvinceId,
                   items: provinces,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedProvinceId = value;
+                      selectedProvinceName = provinces.firstWhere((p) => p['ProvinceID'] == value)['ProvinceName'];
+                      selectedDistrictId = null;
+                      selectedDistrictName = null;
+                      selectedWardCode = null;
+                      selectedWardName = null;
+                      districts = [];
+                      wards = [];
+                    });
+                    if (value != null) _loadDistricts(value);
+                  },
                   displayField: 'ProvinceName',
                   idField: 'ProvinceID',
-                  onChanged: (value) {
-                    final selected = provinces.firstWhere(
-                        (element) => element['ProvinceID'].toString() == value);
-                    setState(() {
-                      selectedProvinceId = selected['ProvinceID'].toString();
-                      selectedProvinceName = selected['ProvinceName'];
-                    });
-                    _loadDistricts(selectedProvinceId!);
-                  },
                 ),
                 const SizedBox(height: 16),
-                _buildDropdown(
+                _buildDropdown<int>(
                   label: 'District',
                   value: selectedDistrictId,
                   items: districts,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDistrictId = value;
+                      selectedDistrictName = districts.firstWhere((d) => d['DistrictID'] == value)['DistrictName'];
+                      selectedWardCode = null;
+                      selectedWardName = null;
+                      wards = [];
+                    });
+                    if (value != null) _loadWards(value);
+                  },
                   displayField: 'DistrictName',
                   idField: 'DistrictID',
-                  onChanged: (value) {
-                    final selected = districts.firstWhere(
-                        (element) => element['DistrictID'].toString() == value);
-                    setState(() {
-                      selectedDistrictId = selected['DistrictID'].toString();
-                      selectedDistrictName = selected['DistrictName'];
-                    });
-                    _loadWards(selectedDistrictId!);
-                  },
                 ),
                 const SizedBox(height: 16),
-                _buildDropdown(
+                _buildDropdown<String>(
                   label: 'Ward',
                   value: selectedWardCode,
                   items: wards,
-                  displayField: 'WardName',
-                  idField: 'WardCode',
                   onChanged: (value) {
-                    final selected = wards.firstWhere(
-                        (element) => element['WardCode'].toString() == value);
                     setState(() {
-                      selectedWardCode = selected['WardCode'].toString();
-                      selectedWardName = selected['WardName'];
+                      selectedWardCode = value;
+                      selectedWardName = wards.firstWhere((w) => w['WardCode'] == value)['WardName'];
                     });
                   },
+                  displayField: 'WardName',
+                  idField: 'WardCode',
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: detailController,
-                  decoration: _inputDecoration('Detail Address'),
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Required' : null,
+                  decoration: _inputDecoration('Detail Address (Street, Building...)'),
+                  validator: (value) => value!.isEmpty ? 'Please enter detail address' : null,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text('Submit Address',
-                      style: TextStyle(fontSize: 18, color: Colors.white)),
-                ),
+                  child: const Text('Save Address'),
+                )
               ],
             ),
           ),

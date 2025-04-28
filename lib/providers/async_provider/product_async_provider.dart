@@ -4,11 +4,10 @@ import 'package:flutter_social_share/providers/state_provider/product_provider.d
 
 import '../state_provider/product_liked_provider.dart';
 
-
-final productAsyncNotifierProvider = AsyncNotifierProvider<ProductNotifier, List<Product>>(ProductNotifier.new);
+final productAsyncNotifierProvider =
+    AsyncNotifierProvider<ProductNotifier, List<Product>>(ProductNotifier.new);
 
 class ProductNotifier extends AsyncNotifier<List<Product>> {
-
   @override
   Future<List<Product>> build() async {
     final productService = ref.watch(productServiceProvider);
@@ -16,4 +15,9 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
     return products;
   }
 
+  Future<Product> getProductById(String productId) async {
+    final productService = ref.watch(productServiceProvider);
+    final product = await productService.getProductById(productId);
+    return product;
+  }
 }

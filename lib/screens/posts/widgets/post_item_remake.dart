@@ -41,8 +41,8 @@ class _PostItemState extends ConsumerState<PostItem> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                   child: ItemRow(
-                    avatarUrl:  LINK_IMAGE.publicImage(widget.post.author!.avatar),
-                    title: widget.post.author!.username,
+                    avatarUrl:  LINK_IMAGE.publicImage(widget.post.author.avatar),
+                    title: widget.post.author.username,
                     subtitle:widget.post.createdAt,
                     rightWidget: PopupMenuButton<String>(
                       onSelected: (String value) {

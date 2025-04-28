@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/profile_screen/widget/show_setting_bottom_sheet.dart';
@@ -184,28 +185,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   Widget _buildProductsTab() {
-    final products = [
-      {'name': 'iPhone 13 Pro', 'price': '\$999'},
-      {'name': 'MacBook Air M2', 'price': '\$1199'},
-      {'name': 'Gaming Chair', 'price': '\$250'},
-    ];
-
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        final product = products[index];
-        return ListTile(
-          leading: const Icon(Icons.shopping_bag, color: Colors.blueAccent),
-          title: Text(product['name']!),
-          subtitle: Text(product['price']!),
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Clicked on ${product['name']}")),
+    final orderAsyncValue = ref.watch(orderAsyncNotifierProvider);
+    return orderAsyncValue.when(
+      data: (orders) {
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          itemCount: orders.length,
+          itemBuilder: (context, index) {
+            final order = orders[index];
+            return ListTile(
+              leading: const Icon(Icons.shopping_bag, color: Colors.blueAccent),
+              title: Text(order.orderCode),
+              subtitle: Text(order.payment.amountPaid.toString()),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Clicked on ${order.totalAmount}")),
+                );
+              },
             );
           },
         );
       },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
     );
   }
 }

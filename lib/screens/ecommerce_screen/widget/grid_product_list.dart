@@ -46,7 +46,7 @@ class _GridProductListState extends ConsumerState<GridProductList> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProductDetailScreen(product: product),
+                builder: (context) => ProductDetailScreen(productId: product.id),
               ),
             );
           },

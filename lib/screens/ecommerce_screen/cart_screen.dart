@@ -9,6 +9,7 @@ import 'package:flutter_social_share/providers/state_provider/shipping_provider.
 import 'package:flutter_social_share/screens/ecommerce_screen/create_address_screen.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -293,7 +294,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CreateAddressScreen()),
+                              builder: (context) =>
+                                  const CreateAddressScreen()),
                         )
                       },
                       child: const Text(
@@ -550,8 +552,20 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: () {
-                          // Handle checkout
+                        onPressed: () async {
+                          final url = Uri.parse(
+                              "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=19990000&vnp_Command=pay&vnp_CreateDate=20250427191825&vnp_CurrCode=VND&vnp_ExpireDate=20250427193325&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=8dddef94-234c-420b-b010-62bc5992e942&vnp_OrderType=order-type&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A8080%2Fvnpay-payment&vnp_TmnCode=44SQ7IET&vnp_TxnRef=54997949&vnp_Version=2.1.0&vnp_SecureHash=eafd5f748f6a35b0e3e3d91b157b0161f96045dad9ce36e207b1f4c864ba85bd6da9521a3881d219b4d32e6e57d18c0f02fdfded6fa3a3012b1dece8b427226d");
+                          try {
+                            print(await canLaunchUrl(url));
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url, mode: LaunchMode.externalApplication); // open in external browser
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          } catch (e) {
+                            print(e.toString());
+                          }
+
                         },
                         icon: const Icon(
                           Icons.shopping_cart_checkout,

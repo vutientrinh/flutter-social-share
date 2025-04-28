@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/ecommerce/cart_response.dart';
 
-
 class CartService {
   final Dio _dio;
 

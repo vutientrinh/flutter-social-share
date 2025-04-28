@@ -15,6 +15,29 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
     return products;
   }
 
+  Future<void> getProducts(
+      {String? search,
+      String? category,
+      String? minPrice,
+      String? maxPrice,
+      String? rating,
+      String? inStock,
+      String? field,
+      String? direction}) async {
+    final productService = ref.watch(productServiceProvider);
+    final products = await productService.getAllProduct(
+      search: search,
+      category: category,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      rating: rating,
+      inStock: inStock,
+      field: field,
+      direction: direction,
+    );
+    state = AsyncData(products);
+  }
+
   Future<Product> getProductById(String productId) async {
     final productService = ref.watch(productServiceProvider);
     final product = await productService.getProductById(productId);

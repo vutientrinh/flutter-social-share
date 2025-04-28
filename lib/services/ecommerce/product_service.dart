@@ -76,7 +76,20 @@ class ProductService {
       String? direction}) async {
     try {
       final response = await _dio.get(
-          '/api/products/all'); // Adjust according to your backend endpoint
+        '/api/products/all',
+        queryParameters: {
+          'page': page,
+          'size': size,
+          if (search != null && search.isNotEmpty) 'search': search,
+          if (category != null && category.isNotEmpty) 'category': category,
+          if (minPrice != null) 'minPrice': minPrice,
+          if (maxPrice != null) 'maxPrice': maxPrice,
+          if (rating != null) 'rating': rating,
+          if (inStock != null) 'inStock': inStock,
+          if (field != null) 'field': field,
+          if (direction != null) 'direction': direction,
+        },
+      ); // Adjust according to your backend endpoint
       if (response.statusCode == 200) {
         // Access 'data' field and cast it as a List of user objects
         List<Product> products = (response.data['data']

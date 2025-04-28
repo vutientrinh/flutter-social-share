@@ -7,7 +7,7 @@ class CategoryService {
 
   CategoryService(this._dio);
 
-  Future<Category> createCategory({
+  Future<void> createCategory({
     required String name,
     required String description,
   }) async {
@@ -19,12 +19,6 @@ class CategoryService {
           'description': description,
         },
       );
-
-      if (response.statusCode == 200) {
-        return Category.fromJson(response.data['data']);
-      } else {
-        throw Exception('Failed to create category');
-      }
     } catch (e) {
       throw Exception('Error creating category: $e');
     }

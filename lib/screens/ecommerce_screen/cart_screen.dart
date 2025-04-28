@@ -122,7 +122,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
     });
 
-    // After selecting option, calculate shipping fee
     final selectedOption = shippingOptions.firstWhere(
       (option) => option['selected'] == true,
       orElse: () => {},

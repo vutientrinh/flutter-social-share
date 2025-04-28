@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/ecommerce/product.dart';
-import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
+import 'package:flutter_social_share/providers/async_provider/category_async_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/favorite_product_screen.dart';
 
 import '../../providers/async_provider/product_async_provider.dart';
@@ -25,13 +24,36 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
     "assets/images/slider_4.png"
   ];
 
+  List<String> categories = [];
+  String? selectedCategory;
+
+  void _onCategoryChanged(String? newCategory) {
+    if (newCategory == null) return;
+    setState(() {
+      selectedCategory = newCategory;
+    });
+
+    print(selectedCategory);
+    ref.read(productAsyncNotifierProvider.notifier).getProducts(
+          category: selectedCategory,
+        );
+  }
+
   int _currentIndex = 0;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    _autoSlide();
+
+    // 👇 Fetch default products when screen opens (without any filter)
     Future.microtask(() {
-      ref.read(productAsyncNotifierProvider.notifier);
+      ref.read(productAsyncNotifierProvider.notifier).getProducts();
+    });
+
+    // 👇 Fetch categories when screen opens
+    Future.microtask(() {
+      ref.read(categoryAsyncNotifierProvider.notifier);
     });
   }
 
@@ -46,6 +68,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productAsyncNotifierProvider);
+    final categoryState = ref.watch(categoryAsyncNotifierProvider);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -73,7 +96,8 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const FavoriteProductScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const FavoriteProductScreen()),
                 );
               },
             ),
@@ -130,6 +154,37 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                           },
                         ),
                       ),
+                      categoryState.when(
+                        data: (categories) {
+                          final allCategories = ['All', ...categories];
+                          return Row(
+                            children: [
+                              const Text(
+                                'Category: ',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              DropdownButton<String>(
+                                value: selectedCategory,
+                                items: categories.map((category) {
+                                  return DropdownMenuItem<String>(
+                                    value: category.name,
+                                    child: Text(category.name),
+                                  );
+                                }).toList(),
+                                onChanged: _onCategoryChanged,
+                              ),
+                            ],
+                          );
+                        },
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (error, _) =>
+                            Center(child: Text('Error: $error')),
+                      ),
 
                       const SizedBox(height: 10),
 
@@ -139,7 +194,8 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                         children: List.generate(
                           slidersLists.length,
                           (index) => Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 4),
                             width: 8,
                             height: 8,
                             decoration: BoxDecoration(
@@ -154,7 +210,8 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                       productState.when(
                         data: (products) {
                           if (products.isEmpty) {
-                            return const Center(child: Text('No products found.'));
+                            return const Center(
+                                child: Text('No products found.'));
                           }
                           return GridProductList(products: products);
                         },

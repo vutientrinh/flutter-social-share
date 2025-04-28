@@ -90,6 +90,7 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
 
       print("Submitting address: $address");
       await ref.read(addressAsyncNotifierProvider.notifier).createAddress(address);
+      Navigator.pop(context);
     } else {
       print("Form incomplete");
     }

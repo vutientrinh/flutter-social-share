@@ -12,6 +12,7 @@ import 'package:flutter_social_share/providers/state_provider/shipping_provider.
 import 'package:flutter_social_share/screens/ecommerce_screen/create_address_screen.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
@@ -201,7 +202,18 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final orderRequest = OrderRequest.fromJson(request);
     print("Order request ne : $orderRequest");
     ref.read(orderAsyncNotifierProvider.notifier).createOrder(orderRequest);
-
+    ref.read(cartAsyncNotifierProvider.notifier).clearCart(userId!);
+    await Flushbar(
+      title: 'Success',
+      message: 'Order successfully!',
+      backgroundColor: Colors.green,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: const Duration(seconds: 1),
+      margin: const EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(8),
+      animationDuration: const Duration(milliseconds: 300),
+    ).show(context);
+    Navigator.pop(context);
   }
 
   @override

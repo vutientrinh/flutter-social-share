@@ -20,7 +20,7 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
       String? category,
       String? minPrice,
       String? maxPrice,
-      String? rating,
+      num? rating,
       String? inStock,
       String? field,
       String? direction}) async {

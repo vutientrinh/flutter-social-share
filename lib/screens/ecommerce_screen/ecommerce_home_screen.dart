@@ -24,9 +24,18 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
     "assets/images/slider_3.png",
     "assets/images/slider_4.png"
   ];
+  final TextEditingController minPriceController = TextEditingController();
+  final TextEditingController maxPriceController = TextEditingController();
 
   List<Category> categories = [];
+  String? search;
   String? selectedCategory = "All";
+  String? minPrice;
+  String? maxPrice;
+  num? rating;
+  String? inStock;
+  String? field;
+  String? direction;
 
   void _onCategoryChanged(String? newCategory) {
     if (newCategory == null) return;
@@ -37,6 +46,19 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
     print(selectedCategory);
     ref.read(productAsyncNotifierProvider.notifier).getProducts(
           category: selectedCategory == "All" ? null : selectedCategory,
+        );
+  }
+
+  void _fetchProducts() {
+    ref.read(productAsyncNotifierProvider.notifier).getProducts(
+          search: search,
+          category: selectedCategory == 'All' ? null : selectedCategory,
+          minPrice: minPrice?.isEmpty ?? true ? null : minPrice,
+          maxPrice: maxPrice?.isEmpty ?? true ? null : maxPrice,
+          rating: rating,
+          inStock: inStock,
+          field: field,
+          direction: direction,
         );
   }
 
@@ -64,6 +86,19 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
       _currentIndex = (_currentIndex + 1) % slidersLists.length;
     });
     Future.delayed(const Duration(seconds: 3), _autoSlide);
+  }
+
+  void clearFilters() {
+    setState(() {
+      selectedCategory = 'All';
+      minPrice = '';
+      maxPrice = '';
+      rating = null;
+
+      minPriceController.clear();
+      maxPriceController.clear();
+    });
+    _fetchProducts();
   }
 
   @override
@@ -155,46 +190,6 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                           },
                         ),
                       ),
-                      categoryState.when(
-                        data: (categories) {
-                          final allCategories = [
-                            Category(
-                                id: 'all',
-                                name: 'All',
-                                description: 'All Categories',
-                                createdAt: "nothing",
-                                updatedAt: "Nothing"),
-                            ...categories,
-                          ];
-
-                          return Row(
-                            children: [
-                              const Text(
-                                'Category: ',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              DropdownButton<String>(
-                                value: selectedCategory,
-                                items: allCategories.map((category) {
-                                  return DropdownMenuItem<String>(
-                                    value: category.name,
-                                    child: Text(category.name),
-                                  );
-                                }).toList(),
-                                onChanged: _onCategoryChanged,
-                              ),
-                            ],
-                          );
-                        },
-                        loading: () =>
-                            const Center(child: CircularProgressIndicator()),
-                        error: (error, _) =>
-                            Center(child: Text('Error: $error')),
-                      ),
 
                       const SizedBox(height: 10),
 
@@ -216,6 +211,104 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                             ),
                           ),
                         ),
+                      ),
+                      categoryState.when(
+                        data: (categories) {
+                          final allCategories = [
+                            Category(
+                                id: 'all',
+                                name: 'All',
+                                description: 'All Categories',
+                                createdAt: "nothing",
+                                updatedAt: "Nothing"),
+                            ...categories,
+                          ];
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  IntrinsicWidth(
+                                    child: Container(
+                                      margin: const EdgeInsets.only(right: 8),
+                                      child: DropdownButtonFormField<String>(
+                                        value: selectedCategory,
+                                        decoration: InputDecoration(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 4),
+                                          filled: true,
+                                          fillColor: Colors.grey[200],
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                        ),
+                                        items: allCategories.map((category) {
+                                          return DropdownMenuItem<String>(
+                                            value: category.name,
+                                            child: Text(
+                                              category.name,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: _onCategoryChanged,
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: TextButton.icon(
+                                      onPressed: clearFilters,
+                                      icon: const Icon(Icons.clear),
+                                      label: const Text("Clear Filters"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              // Min Price
+                              Row(
+                                children: [
+                                  _buildSmallInput(
+                                    hintText: 'Min Price',
+                                    controller: minPriceController,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        minPrice = value;
+                                      });
+                                      _fetchProducts();
+                                    },
+                                  ),
+                                  _buildSmallInput(
+                                    hintText: 'Max Price',
+                                    controller: maxPriceController,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        maxPrice = value;
+                                      });
+                                      _fetchProducts();
+                                    },
+                                  ),
+                                ],
+                              ),
+                              // Rating Stars
+                              _buildRatingStars(),
+                            ],
+                          );
+                        },
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (error, _) =>
+                            Center(child: Text('Error: $error')),
+                      ),
+                      const SizedBox(
+                        height: 10,
                       ),
                       productState.when(
                         data: (products) {
@@ -240,5 +333,56 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
             ),
           ),
         ));
+  }
+
+  Widget _buildSmallInput({
+    required String hintText,
+    required Function(String) onChanged,
+    required TextEditingController controller,
+  }) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        child: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hintText,
+            filled: true,
+            fillColor: Colors.grey[200],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          keyboardType: TextInputType.number,
+          onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+
+// Rating Stars Widget
+  Widget _buildRatingStars() {
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      child: Row(
+        children: List.generate(5, (index) {
+          final starIndex = index + 1;
+          return IconButton(
+            icon: Icon(
+              starIndex <= (rating ?? 0) ? Icons.star : Icons.star_border,
+              color: Colors.amber,
+              size: 24,
+            ),
+            onPressed: () {
+              setState(() {
+                rating = starIndex;
+              });
+              _fetchProducts();
+            },
+          );
+        }),
+      ),
+    );
   }
 }

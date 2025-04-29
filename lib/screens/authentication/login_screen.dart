@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/screens/authentication/register_screen.dart';
 import '../home_screen/home_page.dart';
+import 'package:another_flushbar/flushbar.dart';
+
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -38,15 +40,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (response != null && response.statusCode == 200) {
       await _authService.saveLoginData(response.data);
       // Navigate to HomePage on successful login
+      await Flushbar(
+        title: 'Success',
+        message: 'Login successfully!',
+        backgroundColor: Colors.green,
+        flushbarPosition: FlushbarPosition.TOP,
+        duration: const Duration(seconds: 1),
+        margin: const EdgeInsets.all(8),
+        borderRadius: BorderRadius.circular(8),
+        animationDuration: const Duration(milliseconds: 300),
+      ).show(context);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } else {
-      // Show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed for user: $username')),
-      );
+      await Flushbar(
+        title: 'Error',
+        message: 'Login fail, check your email or password!',
+        backgroundColor: Colors.red,
+        flushbarPosition: FlushbarPosition.TOP,
+        duration: const Duration(seconds: 1),
+        margin: const EdgeInsets.all(8),
+        borderRadius: BorderRadius.circular(8),
+        animationDuration: const Duration(milliseconds: 300),
+      ).show(context);
     }
   }
 

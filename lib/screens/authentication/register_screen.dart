@@ -5,6 +5,7 @@ import 'package:flutter_social_share/screens/authentication/update_profile.dart'
 
 import '../../providers/state_provider/auth_provider.dart';
 import '../home_screen/home_page.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -58,16 +59,33 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
         if (response != null && response.statusCode == 200) {
           await _authService.saveLoginData(response.data);
-          // Navigate to HomePage on successful login
+
+          await Flushbar(
+            title: 'Success',
+            message: 'Create new account successfully!',
+            backgroundColor: Colors.green,
+            flushbarPosition: FlushbarPosition.TOP,
+            duration: const Duration(seconds: 1),
+            margin: const EdgeInsets.all(8),
+            borderRadius: BorderRadius.circular(8),
+            animationDuration: const Duration(milliseconds: 300),
+          ).show(context);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const UpdateProfile()),
           );
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Registration failed")),
-        );
+        await Flushbar(
+          title: 'Error',
+          message: 'Create new account fail!',
+          backgroundColor: Colors.green,
+          flushbarPosition: FlushbarPosition.TOP,
+          duration: const Duration(seconds: 1),
+          margin: const EdgeInsets.all(8),
+          borderRadius: BorderRadius.circular(8),
+          animationDuration: const Duration(milliseconds: 300),
+        ).show(context);
       }
     }
   }

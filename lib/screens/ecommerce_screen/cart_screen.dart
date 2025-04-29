@@ -13,7 +13,6 @@ import 'package:flutter_social_share/screens/ecommerce_screen/create_address_scr
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});

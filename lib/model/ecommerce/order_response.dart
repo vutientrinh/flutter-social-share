@@ -7,8 +7,8 @@ class OrderResponse {
   final String id;
   final String orderCode;
   final String status;
-  final num totalAmount;
-  final num shippingFee;
+  final double totalAmount;
+  final double shippingFee;
   final User customer;
   final List<LineItemResponse> items;
   final ShippingInfoResponse? shippingInfo;
@@ -32,43 +32,44 @@ class OrderResponse {
 
   factory OrderResponse.fromJson(Map<String, dynamic> json) {
     return OrderResponse(
-        id: json['id'],
-        orderCode: json['orderCode'],
-        status: json['status'],
-        totalAmount: json['totalAmount'],
-        shippingFee: json['shippingFee'],
-        customer: User.fromJson(json['customer']),
-        items: (json['items'] as List)
-            .map((item) => LineItemResponse.fromJson(item))
-            .toList(),
-        shippingInfo: json['shippingInfo'] != null
-            ? ShippingInfoResponse.fromJson(json['shippingInfo'])
-            : null,
-        payment: json['payment'] != null
-            ? PaymentResponse.fromJson(json["payment"])
-            : null,
-        createAt: json['createAt'],
-        updateAt: json['updateAt']);
+      id: json['id'] ?? '',
+      orderCode: json['orderCode'] ?? '',
+      status: json['status'] ?? '',
+      totalAmount: (json['totalAmount'] ?? 0).toDouble(),
+      shippingFee: (json['shippingFee'] ?? 0).toDouble(),
+      customer: User.fromJson(json['customer']),
+      items: (json['items'] as List<dynamic>)
+          .map((item) => LineItemResponse.fromJson(item))
+          .toList(),
+      shippingInfo: json['shippingInfo'] != null
+          ? ShippingInfoResponse.fromJson(json['shippingInfo'])
+          : null,
+      payment: json['payment'] != null
+          ? PaymentResponse.fromJson(json['payment'])
+          : null,
+      createAt: json['createAt'] ?? '',
+      updateAt: json['updateAt'] ?? '',
+    );
   }
 }
 
 class PaymentResponse {
-  final String? createAt;
-  final String? updatedAt;
-  final String? id;
-  final String? method;
-  final String? status;
-  final String? transactionId;
-  final num? amountPaid;
+  final String createAt;
+  final String updatedAt;
+  final String id;
+  final String method;
+  final String status;
+  final String transactionId;
+  final double amountPaid;
 
   PaymentResponse({
-    this.createAt,
-    this.updatedAt,
-    this.id,
-    this.method,
-    this.status,
-    this.transactionId,
-    this.amountPaid,
+    required this.createAt,
+    required this.updatedAt,
+    required this.id,
+    required this.method,
+    required this.status,
+    required this.transactionId,
+    required this.amountPaid,
   });
 
   factory PaymentResponse.fromJson(Map<String, dynamic> json) {
@@ -78,9 +79,8 @@ class PaymentResponse {
       id: json['id'] ?? '',
       method: json['method'] ?? '',
       status: json['status'] ?? '',
-      transactionId: json['transactionId'],
-      // Nullable
-      amountPaid: (json['amountPaid'] as num).toDouble(),
+      transactionId: json['transactionId'] ?? '',
+      amountPaid: (json['amountPaid'] ?? 0).toDouble(),
     );
   }
 }

@@ -5,7 +5,6 @@ import 'package:flutter_social_share/providers/async_provider/post_async_provide
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/profile_screen/widget/show_setting_bottom_sheet.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
-
 import '../../model/user.dart';
 import '../posts/widgets/post_item_remake.dart';
 
@@ -18,20 +17,21 @@ class ProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends ConsumerState<ProfileScreen> with TickerProviderStateMixin {
+class _ProfileScreenState extends ConsumerState<ProfileScreen>
+    with TickerProviderStateMixin {
   User? user;
   final ScrollController _scrollController = ScrollController();
   bool _isFetchingMore = false;
   late TabController _tabController;
 
   Future<void> loadData() async {
-    final response = await ref.read(userServiceProvider).getProfileById(widget.userId);
+    final response =
+        await ref.read(userServiceProvider).getProfileById(widget.userId);
     setState(() {
       user = response;
     });
 
     if (user != null) {
-      // Now you can safely call getAllOrders
       ref.read(orderAsyncNotifierProvider.notifier).getAllOrders(user!.id);
     }
   }
@@ -45,12 +45,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> with TickerProvid
       final maxScroll = _scrollController.position.maxScrollExtent;
       final currentScroll = _scrollController.position.pixels;
 
-      if (maxScroll - currentScroll <= 300) {
-        if (!_isFetchingMore) {
-          _isFetchingMore = true;
-          await ref.read(postAsyncNotifierProvider.notifier).fetchNextPage();
-          _isFetchingMore = false;
-        }
+      if (maxScroll - currentScroll <= 300 && !_isFetchingMore) {
+        _isFetchingMore = true;
+        await ref.read(postAsyncNotifierProvider.notifier).fetchNextPage();
+        _isFetchingMore = false;
       }
     });
   }
@@ -65,7 +63,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> with TickerProvid
   @override
   Widget build(BuildContext context) {
     final postAsyncValue = ref.watch(postAsyncNotifierProvider);
-
+    final orderAsyncValue = ref.watch(orderAsyncNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -88,146 +86,117 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> with TickerProvid
       body: user == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-        controller: _scrollController,
-        children: [
-          // Header
-          Stack(
-            alignment: Alignment.topLeft,
-            children: [
-              Ink.image(
-                image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-              Positioned(
-                bottom: 10,
-                left: 16,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              controller: _scrollController,
+              children: [
+                Stack(
+                  alignment: Alignment.topLeft,
                   children: [
-                    CircleAvatar(
-                      radius: 45,
-                      backgroundColor: Colors.black,
-                      child: CircleAvatar(
-                        radius: 42,
-                        backgroundImage: NetworkImage(
-                          LINK_IMAGE.publicImage(user!.avatar),
-                        ),
-                      ),
+                    Ink.image(
+                      image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user!.username,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black45,
-                                offset: Offset(1, 1),
-                                blurRadius: 2,
+                    Positioned(
+                      bottom: 10,
+                      left: 16,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 45,
+                            backgroundColor: Colors.black,
+                            child: CircleAvatar(
+                              radius: 42,
+                              backgroundImage: NetworkImage(
+                                LINK_IMAGE.publicImage(user!.avatar),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user!.username,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black45,
+                                      offset: Offset(1, 1),
+                                      blurRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black45,
+                                      offset: Offset(1, 1),
+                                      blurRadius: 2,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Followers: ${user!.followerCount}   Friends: ${user!.friendsCount}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.white70,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Bio: ${user!.bio ?? ""}',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Colors.white70,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-
-          // Tab bar
-          TabBar(
-            controller: _tabController,
-            labelColor: Colors.blueAccent,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: Colors.blueAccent,
-            tabs: const [
-              Tab(text: 'Posts'),
-              Tab(text: 'Products'),
-            ],
-          ),
-          // Tab content
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildPostsTab(),
-                _buildProductsTab(),
+                TabBar(
+                  controller: _tabController,
+                  tabs: const [
+                    Tab(text: 'Posts'),
+                    Tab(text: 'Orders'),
+                  ],
+                  labelColor: Colors.blueAccent,
+                  unselectedLabelColor: Colors.grey,
+                ),
+                SizedBox(
+                  height: 500, // or MediaQuery height if dynamic
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      postAsyncValue.when(
+                        data: (posts) => ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: posts.length,
+                          itemBuilder: (context, index) =>
+                              PostItem(post: posts[index]),
+                        ),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (e, st) => Center(child: Text('Error: $e')),
+                      ),
+                      orderAsyncValue.when(
+                        data: (orders) => ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: orders.length,
+                          itemBuilder: (context, index) =>
+                              Text(orders[index].id),
+                        ),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (e, st) => Center(child: Text('Error: $e')),
+                      ), // Replace with real orders widget
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPostsTab() {
-    final postAsyncValue = ref.watch(postAsyncNotifierProvider);
-
-    return postAsyncValue.when(
-      data: (posts) {
-        return ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          itemCount: posts.length,
-          itemBuilder: (context, index) {
-            return PostItem(post: posts[index]);
-          },
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
-    );
-  }
-
-  Widget _buildProductsTab() {
-    final orderAsyncValue = ref.read(orderAsyncNotifierProvider);
-    print("Order ne : $orderAsyncValue");
-    return orderAsyncValue.when(
-      data: (orders) {
-        return ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          itemCount: orders.length,
-          itemBuilder: (context, index) {
-            final order = orders[index];
-            return ListTile(
-              leading: const Icon(Icons.shopping_bag, color: Colors.blueAccent),
-              title: Text(order.orderCode),
-              subtitle: Text(order.payment!.amountPaid.toString()),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Clicked on ${order.totalAmount}")),
-                );
-              },
-            );
-          },
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
     );
   }
 }

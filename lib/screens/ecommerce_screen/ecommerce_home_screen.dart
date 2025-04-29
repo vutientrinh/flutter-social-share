@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/ecommerce/category.dart';
 import 'package:flutter_social_share/providers/async_provider/category_async_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/favorite_product_screen.dart';
 
@@ -24,8 +25,8 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
     "assets/images/slider_4.png"
   ];
 
-  List<String> categories = [];
-  String? selectedCategory;
+  List<Category> categories = [];
+  String? selectedCategory = "All";
 
   void _onCategoryChanged(String? newCategory) {
     if (newCategory == null) return;
@@ -35,7 +36,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
 
     print(selectedCategory);
     ref.read(productAsyncNotifierProvider.notifier).getProducts(
-          category: selectedCategory,
+          category: selectedCategory == "All" ? null : selectedCategory,
         );
   }
 
@@ -156,7 +157,16 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                       ),
                       categoryState.when(
                         data: (categories) {
-                          final allCategories = ['All', ...categories];
+                          final allCategories = [
+                            Category(
+                                id: 'all',
+                                name: 'All',
+                                description: 'All Categories',
+                                createdAt: "nothing",
+                                updatedAt: "Nothing"),
+                            ...categories,
+                          ];
+
                           return Row(
                             children: [
                               const Text(
@@ -169,7 +179,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                               const SizedBox(width: 10),
                               DropdownButton<String>(
                                 value: selectedCategory,
-                                items: categories.map((category) {
+                                items: allCategories.map((category) {
                                   return DropdownMenuItem<String>(
                                     value: category.name,
                                     child: Text(category.name),

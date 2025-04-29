@@ -88,9 +88,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
   void setDefaultAddress(String id) {
     ref.read(addressAsyncNotifierProvider.notifier).setDefaultAddress(id);
-    // setState(() {
-    //   defaultAddress =
-    // });
   }
 
   void deleteAddress(String id) {
@@ -106,9 +103,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     return items.fold(0, (sum, item) => sum + (item.product.weight));
   }
 
-  void updateOption(
-    List<CartResponse> cartItems,
-  ) {
+  void updateOption(List<CartResponse> cartItems) {
     final double weight = calculateWeightItems(cartItems);
     setState(() {
       for (var option in shippingOptions) {
@@ -122,40 +117,37 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
     });
 
-    setState(() {
-      shippingFee = 0;
-      summary['shipping'] = 0;
-    });
+    // Call this after setting selected option
+    final selectedOption = shippingOptions.firstWhere((e) => e['selected'] == true);
+    calculateShippingFee(selectedOption, cartItems, defaultAddress);
   }
 
-  Future<double> calculateShippingFee(
-      Map<String, dynamic> shippingSelection, List<CartResponse> items, Address? defaultAddress) async {
-    print(defaultAddress?.provinceName);
+  Future<void> calculateShippingFee(Map<String, dynamic> shippingSelection,
+      List<CartResponse> items, Address? defaultAddress) async {
+    if (defaultAddress == null) return;
+
     final request = {
       'shop_id': dotenv.env['GHN_SHOPID'],
       'service_id': shippingSelection['service_id'],
       'service_type_id': shippingSelection['service_type_id'],
-      'to_ward_code': defaultAddress!.wardCode.toString(),
+      'to_ward_code': defaultAddress.wardCode.toString(),
       'to_district_id': defaultAddress.districtId,
-      'weight': calculateWeightItems(items),
+      'weight': calculateWeightItems(items).toInt(),
     };
-    print("request ne : $request");
-    print("request ne : ${request['to_district_id']}");
+    print(request['weight']);
+
     try {
       final response = await ref.read(shippingProvider).getShippingFee(request);
-      final data = response.data;
+      final data = response.data['data']; // ✅ parse correctly
+      final fee = data['total'] ?? 0;
+
       setState(() {
-        shippingFee = data; // assume total shipping fee comes here
-        summary['shipping'] = shippingFee.toDouble();
+        shippingFee = fee.toDouble();
+        summary['shipping'] = shippingFee;
       });
-      print("shiping fee ne : $shippingFee");
-      return shippingFee;
     } catch (e) {
       print('Error calculating shipping fee: $e');
-      throw Exception('Error fetching orders: $e');
     }
-
-    // return
   }
 
   void calculateSummary(List<CartResponse> items) async {
@@ -183,10 +175,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       ),
       body: cartState.when(
         data: (items) {
-          calculateShippingFee(shippingOptions[0], items, defaultAddress);
           if (items.isEmpty) {
             return const Center(child: Text("Your cart is empty"));
           }
+          updateOption(items);
           return SingleChildScrollView(
               // padding: const EdgeInsets.all(12),
               child: Column(
@@ -457,10 +449,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       runSpacing: 10,
                       children: shippingOptions.map((option) {
                         final isSelected = option['selected'] == true;
-                        var shippingSelected;
-                        if (isSelected) {
-                          shippingSelected = option;
-                        }
+
+                        // if (isSelected) {
+                        //   updateOption(items);
+                        //   calculateShippingFee(option, items, defaultAddress);
+                        // }
 
                         return GestureDetector(
                           onTap: () {
@@ -506,10 +499,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                     ),
                                   ],
                                 ),
-                                if (isSelected)
-                                  Text(calculateShippingFee(
-                                          shippingSelected, items,defaultAddress!)
-                                      .toString()),
+                                if (isSelected) Text(shippingFee.toString()),
                               ],
                             ),
                           ),

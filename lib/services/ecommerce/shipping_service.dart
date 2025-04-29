@@ -26,6 +26,6 @@ class ShippingService {
   }
 
   Future<Response> getShippingFee(Map<String, dynamic> request) async {
-    return dio.get('/v2/shipping-order/fee', data: request);
+    return dio.post('/v2/shipping-order/fee', data: request);
   }
 }

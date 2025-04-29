@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/ecommerce/address.dart';
 import 'package:flutter_social_share/model/ecommerce/cart_response.dart';
 import 'package:flutter_social_share/providers/async_provider/address_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/cart_async_provider.dart';
@@ -21,12 +22,13 @@ class CartScreen extends ConsumerStatefulWidget {
 class _CartScreenState extends ConsumerState<CartScreen> {
   String? userId;
   String _paymentMethod = 'COD';
-  num shippingFee = 0;
+  double shippingFee = 0;
+  Address? defaultAddress;
 
   final Map<String, double> summary = {
-    'subtotal': 0,
+    'subtotal': 0.0,
     'tax': 0,
-    'shipping': 30000,
+    'shipping': 30000.0,
     'discount': 0,
     'total': 0,
   };
@@ -86,6 +88,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
   void setDefaultAddress(String id) {
     ref.read(addressAsyncNotifierProvider.notifier).setDefaultAddress(id);
+    // setState(() {
+    //   defaultAddress =
+    // });
   }
 
   void deleteAddress(String id) {
@@ -101,68 +106,71 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     return items.fold(0, (sum, item) => sum + (item.product.weight));
   }
 
-  void updateOption(List<CartResponse> cartItems, {String? manualSelectedId}) {
+  void updateOption(
+    List<CartResponse> cartItems,
+  ) {
     final double weight = calculateWeightItems(cartItems);
-
     setState(() {
       for (var option in shippingOptions) {
-        // If manually selected by user
-        if (manualSelectedId != null) {
-          option['selected'] = option['id'] == manualSelectedId;
+        if (option['id'] == 'light' && weight <= 50000) {
+          option['selected'] = true;
+        } else if (option['id'] == 'heavy' && weight > 50000) {
+          option['selected'] = true;
         } else {
-          // Auto-select based on weight
-          if (option['id'] == 'light' && weight <= 50000) {
-            option['selected'] = true;
-          } else if (option['id'] == 'heavy' && weight > 50000) {
-            option['selected'] = true;
-          } else {
-            option['selected'] = false;
-          }
+          option['selected'] = false;
         }
       }
     });
 
-    final selectedOption = shippingOptions.firstWhere(
-      (option) => option['selected'] == true,
-      orElse: () => {},
-    );
-
-    if (selectedOption.isNotEmpty) {
-      calculateShippingFee(selectedOption, cartItems);
-    } else {
-      setState(() {
-        shippingFee = 0;
-        summary['shipping'] = 0;
-      });
-    }
+    setState(() {
+      shippingFee = 0;
+      summary['shipping'] = 0;
+    });
   }
 
-  Future<void> calculateShippingFee(
-      Map<String, dynamic> shippingSelection, List<CartResponse> items) async {
+  Future<double> calculateShippingFee(
+      Map<String, dynamic> shippingSelection, List<CartResponse> items, Address? defaultAddress) async {
+    print(defaultAddress?.provinceName);
     final request = {
       'shop_id': dotenv.env['GHN_SHOPID'],
       'service_id': shippingSelection['service_id'],
       'service_type_id': shippingSelection['service_type_id'],
-      'to_ward_code': shippingSelection['wardCode'], // make sure you pass these
-      'to_district_id': shippingSelection['districtId'],
+      'to_ward_code': defaultAddress!.wardCode.toString(),
+      'to_district_id': defaultAddress.districtId,
       'weight': calculateWeightItems(items),
     };
+    print("request ne : $request");
+    print("request ne : ${request['to_district_id']}");
     try {
       final response = await ref.read(shippingProvider).getShippingFee(request);
       final data = response.data;
       setState(() {
-        shippingFee = data['total']; // assume total shipping fee comes here
+        shippingFee = data; // assume total shipping fee comes here
         summary['shipping'] = shippingFee.toDouble();
       });
+      print("shiping fee ne : $shippingFee");
+      return shippingFee;
     } catch (e) {
       print('Error calculating shipping fee: $e');
+      throw Exception('Error fetching orders: $e');
     }
+
+    // return
+  }
+
+  void calculateSummary(List<CartResponse> items) async {
     final subTotal = getTotalPrice(items);
     const taxRate = 0.08;
     final tax = subTotal * taxRate;
     final discount = subTotal * 0.1;
     final total = subTotal + tax + shippingFee - discount;
-    // return
+    setState(() {
+      summary['subtotal'] = subTotal;
+      summary['tax'] = tax;
+      summary['shipping'] = shippingFee;
+      summary['discount'] = discount;
+      summary['total'] = total;
+    });
   }
 
   @override
@@ -175,7 +183,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       ),
       body: cartState.when(
         data: (items) {
-          calculateShippingFee(shippingOptions[0], items);
+          calculateShippingFee(shippingOptions[0], items, defaultAddress);
           if (items.isEmpty) {
             return const Center(child: Text("Your cart is empty"));
           }
@@ -313,7 +321,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           children: addresses.map((address) {
                             final user = address.user;
                             final isDefault = address.isDefault;
-
+                            if (isDefault) {
+                              setState(() {
+                                defaultAddress = address;
+                              });
+                            }
                             return Card(
                               margin: const EdgeInsets.symmetric(vertical: 6),
                               child: Padding(
@@ -445,10 +457,17 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       runSpacing: 10,
                       children: shippingOptions.map((option) {
                         final isSelected = option['selected'] == true;
+                        var shippingSelected;
+                        if (isSelected) {
+                          shippingSelected = option;
+                        }
+
                         return GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            // You can handle selection change here if needed
+                          },
                           child: Container(
-                            width: (MediaQuery.of(context).size.width) - 20,
+                            width: MediaQuery.of(context).size.width - 20,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: isSelected
@@ -460,28 +479,37 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  option['name'],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: isSelected
-                                        ? Colors.blue.shade900
-                                        : Colors.black,
-                                  ),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      option['name'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: isSelected
+                                            ? Colors.blue.shade900
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      option['options'],
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.blueGrey
+                                            : Colors.black54,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  option['options'],
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.blueGrey
-                                        : Colors.black54,
-                                  ),
-                                ),
+                                if (isSelected)
+                                  Text(calculateShippingFee(
+                                          shippingSelected, items,defaultAddress!)
+                                      .toString()),
                               ],
                             ),
                           ),
@@ -557,14 +585,15 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           try {
                             print(await canLaunchUrl(url));
                             if (await canLaunchUrl(url)) {
-                              await launchUrl(url, mode: LaunchMode.externalApplication); // open in external browser
+                              await launchUrl(url,
+                                  mode: LaunchMode
+                                      .externalApplication); // open in external browser
                             } else {
                               throw 'Could not launch $url';
                             }
                           } catch (e) {
                             print(e.toString());
                           }
-
                         },
                         icon: const Icon(
                           Icons.shopping_cart_checkout,

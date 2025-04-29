@@ -15,12 +15,7 @@ class OrderService {
     try {
       final response = await _dio.post(
         '/api/orders/create',
-        data: {
-          'customerId': orderRequest.customerId,
-          'items': orderRequest.items,
-          'shippingInfo': orderRequest.shippingInfo,
-          'payment': orderRequest.payment,
-        },
+        data:orderRequest.toJson(),
       );
 
       if (response.statusCode == 200) {

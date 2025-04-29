@@ -3,8 +3,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/address.dart';
 import 'package:flutter_social_share/model/ecommerce/cart_response.dart';
+import 'package:flutter_social_share/model/ecommerce/order_request.dart';
 import 'package:flutter_social_share/providers/async_provider/address_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/cart_async_provider.dart';
+import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/shipping_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/create_address_screen.dart';
@@ -100,25 +102,21 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   }
 
   double calculateWeightItems(List<CartResponse> items) {
-    return items.fold(0, (sum, item) => sum + (item.product.weight));
+    double value = items.fold(
+        0, (sum, item) => sum + (item.product.weight * item.quantity));
+    return value;
   }
 
   void updateOption(List<CartResponse> cartItems) {
-    final double weight = calculateWeightItems(cartItems);
+    double weight = calculateWeightItems(cartItems);
     setState(() {
       for (var option in shippingOptions) {
-        if (option['id'] == 'light' && weight <= 50000) {
-          option['selected'] = true;
-        } else if (option['id'] == 'heavy' && weight > 50000) {
-          option['selected'] = true;
-        } else {
-          option['selected'] = false;
-        }
+        final isLight = option['id'] == 'light' && weight <= 50000;
+        final isHeavy = option['id'] == 'heavy' && weight > 50000;
+        option['selected'] = isLight || isHeavy;
       }
     });
-
-    // Call this after setting selected option
-    final selectedOption = shippingOptions.firstWhere((e) => e['selected'] == true);
+    final selectedOption = shippingOptions.firstWhere((e) => e['selected']);
     calculateShippingFee(selectedOption, cartItems, defaultAddress);
   }
 
@@ -134,7 +132,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       'to_district_id': defaultAddress.districtId,
       'weight': calculateWeightItems(items).toInt(),
     };
-    print(request['weight']);
 
     try {
       final response = await ref.read(shippingProvider).getShippingFee(request);
@@ -143,6 +140,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
       setState(() {
         shippingFee = fee.toDouble();
+        print("SHipping fee ne : $shippingFee");
         summary['shipping'] = shippingFee;
       });
     } catch (e) {
@@ -163,11 +161,53 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       summary['discount'] = discount;
       summary['total'] = total;
     });
+    print("Summary ne : $summary");
+  }
+
+  void orderSubmit(List<CartResponse> items) async {
+    final List<Map<String, dynamic>> itemList = items.map((item) {
+      return {
+        "productId": item.product.id,
+        "price": item.product.price,
+        "quantity": item.quantity,
+      };
+    }).toList();
+
+    final Map<String, dynamic> shippingInfo = {
+      "receiverName": defaultAddress?.user.username ?? '',
+      "receiverPhone": defaultAddress?.phone ?? '',
+      "address": defaultAddress?.address ?? '',
+      "wardCode": defaultAddress?.wardCode ?? '',
+      "districtId": defaultAddress?.districtId ?? 0,
+      "shippingFee": shippingFee,
+      "serviceId": shippingOptions
+          .firstWhere((e) => e['selected'] == true)['service_id'],
+      "serviceTypeId": shippingOptions
+          .firstWhere((e) => e['selected'] == true)['service_type_id'],
+      "weight": calculateWeightItems(items).toInt(),
+    };
+
+    final request = {
+      "customerId": userId,
+      "items": itemList,
+      "shippingInfo": shippingInfo,
+      "payment": {
+        "method": _paymentMethod,
+        "amountPaid": summary['total'],
+      }
+    };
+
+
+    final orderRequest = OrderRequest.fromJson(request);
+    print("Order request ne : $orderRequest");
+    ref.read(orderAsyncNotifierProvider.notifier).createOrder(orderRequest);
+
   }
 
   @override
   Widget build(BuildContext context) {
     final cartState = ref.watch(cartAsyncNotifierProvider);
+
     final addressState = ref.watch(addressAsyncNotifierProvider);
     return Scaffold(
       appBar: AppBar(
@@ -179,6 +219,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             return const Center(child: Text("Your cart is empty"));
           }
           updateOption(items);
+          calculateSummary(items);
           return SingleChildScrollView(
               // padding: const EdgeInsets.all(12),
               child: Column(
@@ -450,58 +491,51 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       children: shippingOptions.map((option) {
                         final isSelected = option['selected'] == true;
 
-                        // if (isSelected) {
-                        //   updateOption(items);
-                        //   calculateShippingFee(option, items, defaultAddress);
-                        // }
-
-                        return GestureDetector(
-                          onTap: () {
-                            // You can handle selection change here if needed
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width - 20,
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? Colors.blue.shade100
-                                  : Colors.grey.shade200,
-                              border: Border.all(
-                                color: isSelected ? Colors.blue : Colors.grey,
-                                width: 2,
+                        return Container(
+                          width: MediaQuery.of(context).size.width - 20,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Colors.blue.shade100
+                                : Colors.grey.shade200,
+                            border: Border.all(
+                              color: isSelected ? Colors.blue : Colors.grey,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    option['name'],
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isSelected
+                                          ? Colors.blue.shade900
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    option['options'],
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.blueGrey
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      option['name'],
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: isSelected
-                                            ? Colors.blue.shade900
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      option['options'],
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? Colors.blueGrey
-                                            : Colors.black54,
-                                      ),
-                                    ),
-                                  ],
+                              if (isSelected)
+                                Text(
+                                  "${NumberFormat("#,###", "vi_VN").format(shippingFee)} ₫",
                                 ),
-                                if (isSelected) Text(shippingFee.toString()),
-                              ],
-                            ),
+                            ],
                           ),
                         );
                       }).toList(),
@@ -541,16 +575,86 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            "Total : ",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22),
+                            "Total product :  ",
+                            style: TextStyle(color: Colors.black, fontSize: 18),
                           ),
                           Text(
-                            "${NumberFormat("#,###", "vi_VN").format(getTotalPrice(items))} ₫",
+                            "${NumberFormat("#,###", "vi_VN").format(summary['subtotal'])} ₫",
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Shipping : ",
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                          ),
+                          Text(
+                            "${NumberFormat("#,###", "vi_VN").format(summary['shipping'])} ₫",
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Tax : ",
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                          ),
+                          Text(
+                            "${NumberFormat("#,###", "vi_VN").format(summary['tax'])} ₫",
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Discount : ",
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                          ),
+                          Text(
+                            "- ${NumberFormat("#,###", "vi_VN").format(summary['discount'])} ₫",
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Payment : ",
+                            style: TextStyle(color: Colors.black, fontSize: 20),
+                          ),
+                          Text(
+                            "${NumberFormat("#,###", "vi_VN").format(summary['total'])} ₫",
                             textAlign: TextAlign.right,
                             style: const TextStyle(
                               fontSize: 20,
@@ -570,20 +674,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          final url = Uri.parse(
-                              "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=19990000&vnp_Command=pay&vnp_CreateDate=20250427191825&vnp_CurrCode=VND&vnp_ExpireDate=20250427193325&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=8dddef94-234c-420b-b010-62bc5992e942&vnp_OrderType=order-type&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A8080%2Fvnpay-payment&vnp_TmnCode=44SQ7IET&vnp_TxnRef=54997949&vnp_Version=2.1.0&vnp_SecureHash=eafd5f748f6a35b0e3e3d91b157b0161f96045dad9ce36e207b1f4c864ba85bd6da9521a3881d219b4d32e6e57d18c0f02fdfded6fa3a3012b1dece8b427226d");
-                          try {
-                            print(await canLaunchUrl(url));
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url,
-                                  mode: LaunchMode
-                                      .externalApplication); // open in external browser
-                            } else {
-                              throw 'Could not launch $url';
-                            }
-                          } catch (e) {
-                            print(e.toString());
-                          }
+                          orderSubmit(items);
                         },
                         icon: const Icon(
                           Icons.shopping_cart_checkout,

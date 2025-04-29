@@ -40,7 +40,6 @@ class CartService {
   Future<List<CartResponse>> getCartItems(String userId) async {
     try {
       final response = await _dio.get('/api/cart/$userId');
-      print("cart response ne : $response");
       if (response.statusCode == 200) {
         List<CartResponse> cartItems = (response.data['data'] as List)
             .map((json) => CartResponse.fromJson(json as Map<String, dynamic>))

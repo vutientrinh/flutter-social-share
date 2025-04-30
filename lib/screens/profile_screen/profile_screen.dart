@@ -157,9 +157,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
+                              const Text(
                                 'Your order',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white,
                                   shadows: [
@@ -190,26 +190,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       const Center(child: CircularProgressIndicator()),
                   error: (e, st) => Center(child: Text('Error: $e')),
                 ),
-                // SizedBox(
-                //   height: 500, // or MediaQuery height if dynamic
-                //   child: TabBarView(
-                //     children: [
-                //
-                //       orderAsyncValue.when(
-                //         data: (orders) => ListView.builder(
-                //           shrinkWrap: true,
-                //           physics: const NeverScrollableScrollPhysics(),
-                //           itemCount: orders.length,
-                //           itemBuilder: (context, index) =>
-                //               Text(orders[index].id),
-                //         ),
-                //         loading: () =>
-                //             const Center(child: CircularProgressIndicator()),
-                //         error: (e, st) => Center(child: Text('Error: $e')),
-                //       ), // Replace with real orders widget
-                //     ],
-                //   ),
-                // ),
+
               ],
             ),
     );

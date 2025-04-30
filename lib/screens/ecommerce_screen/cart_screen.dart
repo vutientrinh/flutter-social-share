@@ -161,7 +161,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       summary['discount'] = discount;
       summary['total'] = total;
     });
-    print("Summary ne : $summary");
   }
 
   void orderSubmit(List<CartResponse> items) async {

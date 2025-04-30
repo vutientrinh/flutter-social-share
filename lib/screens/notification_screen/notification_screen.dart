@@ -29,7 +29,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notifications"),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.white,
       ),
       body: notificationState.when(
         loading: () => const Center(child: CircularProgressIndicator()),

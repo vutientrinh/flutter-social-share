@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/category.dart';
 import 'package:flutter_social_share/providers/async_provider/category_async_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/favorite_product_screen.dart';
+import 'package:flutter_social_share/screens/ecommerce_screen/tracking_order_screen.dart';
 
 import '../../providers/async_provider/product_async_provider.dart';
 import 'cart_screen.dart';
@@ -133,7 +134,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const FavoriteProductScreen()),
+                      builder: (context) => const TrackingShippingScreen()),
                 );
               },
             ),

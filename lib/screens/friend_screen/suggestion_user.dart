@@ -29,12 +29,9 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
   }
 
   void sendFriendRequest(String userId) async {
-    print("Friend request sent to user: $userId");
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     requesterId = data['userId'];
-    print(userId);
-    print(requesterId);
     await ref
         .read(friendAsyncNotifierProvider.notifier)
         .addFriend(userId, requesterId!);
@@ -43,12 +40,9 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
   }
 
   void followRequest(String userId) async {
-    print("Friend request sent to user: $userId");
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     requesterId = data['userId'];
-    print(userId);
-    print(requesterId);
     await ref
         .read(followAsyncNotifierProvider.notifier)
         .follow(userId);

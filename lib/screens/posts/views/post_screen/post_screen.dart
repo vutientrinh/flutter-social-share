@@ -65,7 +65,7 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
             floating: true,
             elevation: 1,
             forceElevated: true,
-            backgroundColor: Colors.blueAccent,
+            backgroundColor: Colors.white,
             actions: [
               IconButton(
                 icon: const Icon(Icons.wechat_rounded, color: Colors.black),

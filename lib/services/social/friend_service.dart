@@ -18,10 +18,8 @@ class FriendService {
           'receiverId': receiverId,
         },
       );
-      print("add friend Response : $response");
       return response;
     } catch (e) {
-      print('Error adding friend: $e');
       throw Exception('Failed to add friend: $e');
     }
   }
@@ -30,7 +28,6 @@ class FriendService {
     try {
       return await _dio.post('/api/users/$friendRequestId/accept-friend');
     } catch (e) {
-      print('Error accepting friend: $e');
       throw Exception('Failed to accept friend: $e');
     }
   }
@@ -39,7 +36,6 @@ class FriendService {
     try {
       return await _dio.delete('/api/users/$friendRequestId/delete-friend');
     } catch (e) {
-      print('Error deleting friend: $e');
       throw Exception('Failed to delete friend: $e');
     }
   }
@@ -59,8 +55,7 @@ class FriendService {
 
       return friendListJson.map((json) => User.fromJson(json)).toList();
     } catch (e) {
-      print('Error get friend: $e');
-      throw Exception('Failed to get friends: $e');
+      throw Exception('Failed to delete friends: $e');
     }
   }
 
@@ -79,7 +74,6 @@ class FriendService {
           .map((json) => FriendRequest.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error getting friend requests: $e');
       throw Exception('Failed to get friend requests: $e');
     }
   }

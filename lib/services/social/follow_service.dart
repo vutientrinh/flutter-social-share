@@ -12,7 +12,6 @@ class FollowService {
       final response = await _dio.post('/api/users/$userId/follow');
       return response;
     } catch (e) {
-      print('Error adding follow: $e');
       throw Exception('Failed to add follow: $e');
     }
   }
@@ -22,7 +21,6 @@ class FollowService {
       final response = await _dio.delete('/api/users/$userId/unfollow');
       return response;
     } catch (e) {
-      print('Error delete follow: $e');
       throw Exception('Failed to delete follow: $e');
     }
   }
@@ -36,7 +34,6 @@ class FollowService {
 
       return followersListJson.map((json) => FollowUserResponse.fromJson(json)).toList();
     } catch (e) {
-      print('Error get followers: $e');
       throw Exception('Failed to get followers: $e');
     }
   }
@@ -51,7 +48,6 @@ class FollowService {
 
       return followingsListJson.map((json) => FollowUserResponse.fromJson(json)).toList();
     } catch (e) {
-      print('Error get followings: $e');
       throw Exception('Failed to get followings: $e');
     }
   }

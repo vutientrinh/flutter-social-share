@@ -14,7 +14,6 @@ class CommentService {
       final List<dynamic> listCommentJson = response.data['data']['data'];
       return listCommentJson.map((json) => Comment.fromJson(json)).toList();
     } catch (e) {
-      print('Error like comment by postId: $e');
       throw Exception('Failed to get comment by postId: $e');
     }
   }
@@ -25,7 +24,6 @@ class CommentService {
           data: {'postId': postId, 'content': content});
       return response.data;
     } catch (e) {
-      print('Error comment by postId: $e');
       throw Exception('Failed to get comment by postId: $e');
     }
   }

@@ -31,7 +31,6 @@ class PostService {
 
       // ✅ Extract the nested list
       final postListJson = response.data['data']['data'] as List;
-      print('Post in service : $postListJson');
 
       // ✅ Parse into Post objects
       return postListJson.map((json) => Post.fromJson(json)).toList();

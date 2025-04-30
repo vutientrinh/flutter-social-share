@@ -52,7 +52,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           const SnackBar(content: Text("Registration successful!")),
         );
         final response = await _authService.login(name, password);
-        print('Login response value : $response');
         setState(() {
           _isLoading = false;
         });

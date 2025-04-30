@@ -30,7 +30,10 @@ class OrderService {
 
   // Get all orders with optional status filter
   Future<List<OrderResponse>> getAllOrders({
-    required String customerId,
+    int? page = 1,
+    int? size = 10,
+    String? status,
+     String? customerId,
   }) async {
     try {
       final response = await _dio.get(

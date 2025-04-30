@@ -22,7 +22,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   User? user;
   final ScrollController _scrollController = ScrollController();
   bool _isFetchingMore = false;
-  late TabController _tabController;
 
   Future<void> loadData() async {
     final response =
@@ -40,14 +39,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   void initState() {
     super.initState();
     loadData();
-    _tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(() async {
       final maxScroll = _scrollController.position.maxScrollExtent;
       final currentScroll = _scrollController.position.pixels;
 
       if (maxScroll - currentScroll <= 300 && !_isFetchingMore) {
         _isFetchingMore = true;
-        await ref.read(postAsyncNotifierProvider.notifier).fetchNextPage();
+        await ref
+            .read(postAsyncNotifierProvider.notifier)
+            .fetchNextPage(user!.id);
         _isFetchingMore = false;
       }
     });
@@ -56,18 +56,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   @override
   void dispose() {
     _scrollController.dispose();
-    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final postAsyncValue = ref.watch(postAsyncNotifierProvider);
-    final orderAsyncValue = ref.watch(orderAsyncNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.black),
@@ -91,21 +89,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 Stack(
                   alignment: Alignment.topLeft,
                   children: [
-                    Ink.image(
-                      image: NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                    Stack(
+                      children: [
+                        Ink.image(
+                          image:
+                              NetworkImage(LINK_IMAGE.publicImage(user!.cover)),
+                          height: 250,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                        Container(
+                          height: 250,
+                          width: double.infinity,
+                          color: Colors.black
+                              .withOpacity(0.3), // Add 30% black overlay
+                        ),
+                      ],
                     ),
                     Positioned(
-                      bottom: 10,
+                      bottom: 70,
                       left: 16,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
                             radius: 45,
-                            backgroundColor: Colors.black,
+                            backgroundColor: Colors.white,
                             child: CircleAvatar(
                               radius: 42,
                               backgroundImage: NetworkImage(
@@ -147,6 +156,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Your order',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black45,
+                                      offset: Offset(1, 1),
+                                      blurRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -154,47 +178,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     ),
                   ],
                 ),
-                TabBar(
-                  controller: _tabController,
-                  tabs: const [
-                    Tab(text: 'Posts'),
-                    Tab(text: 'Orders'),
-                  ],
-                  labelColor: Colors.blueAccent,
-                  unselectedLabelColor: Colors.grey,
-                ),
-                SizedBox(
-                  height: 500, // or MediaQuery height if dynamic
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      postAsyncValue.when(
-                        data: (posts) => ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: posts.length,
-                          itemBuilder: (context, index) =>
-                              PostItem(post: posts[index]),
-                        ),
-                        loading: () =>
-                            const Center(child: CircularProgressIndicator()),
-                        error: (e, st) => Center(child: Text('Error: $e')),
-                      ),
-                      orderAsyncValue.when(
-                        data: (orders) => ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: orders.length,
-                          itemBuilder: (context, index) =>
-                              Text(orders[index].id),
-                        ),
-                        loading: () =>
-                            const Center(child: CircularProgressIndicator()),
-                        error: (e, st) => Center(child: Text('Error: $e')),
-                      ), // Replace with real orders widget
-                    ],
+                postAsyncValue.when(
+                  data: (posts) => ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) =>
+                        PostItem(post: posts[index]),
                   ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, st) => Center(child: Text('Error: $e')),
                 ),
+                // SizedBox(
+                //   height: 500, // or MediaQuery height if dynamic
+                //   child: TabBarView(
+                //     children: [
+                //
+                //       orderAsyncValue.when(
+                //         data: (orders) => ListView.builder(
+                //           shrinkWrap: true,
+                //           physics: const NeverScrollableScrollPhysics(),
+                //           itemCount: orders.length,
+                //           itemBuilder: (context, index) =>
+                //               Text(orders[index].id),
+                //         ),
+                //         loading: () =>
+                //             const Center(child: CircularProgressIndicator()),
+                //         error: (e, st) => Center(child: Text('Error: $e')),
+                //       ), // Replace with real orders widget
+                //     ],
+                //   ),
+                // ),
               ],
             ),
     );

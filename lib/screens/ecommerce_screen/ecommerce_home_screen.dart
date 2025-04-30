@@ -128,6 +128,16 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
           ),
           actions: [
             IconButton(
+              icon: const Icon(Icons.receipt_long, color: Colors.black),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FavoriteProductScreen()),
+                );
+              },
+            ),
+            IconButton(
               icon: const Icon(CupertinoIcons.suit_heart, color: Colors.black),
               onPressed: () {
                 Navigator.push(

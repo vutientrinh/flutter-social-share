@@ -64,7 +64,7 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add a Comment'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

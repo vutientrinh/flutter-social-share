@@ -74,7 +74,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } catch (e) {
-      debugPrint('Post error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error posting: $e')),
       );

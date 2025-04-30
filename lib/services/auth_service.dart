@@ -63,8 +63,6 @@ class AuthService {
         'username': username,
         'password': password,
       });
-      print('Login successfull');
-      print(response.data);
       return response;
     } catch (e) {
       print('Login Error: $e');

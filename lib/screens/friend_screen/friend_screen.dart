@@ -23,7 +23,7 @@ class FriendScreen extends StatelessWidget {
               Tab(text: "Following"),
             ],
           ),
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Colors.white,
         ),
         body: const TabBarView(
           children: [

@@ -64,11 +64,9 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
 
   Future<void> _fetchUnSeenMessages() async {
     try {
-      print(widget.friend.connectionId);
       final data = await ref
           .read(chatServiceProvider)
           .getUnSeenMessage(widget.friend.connectionId);
-      print("Response ne check di : ${data}");
       setState(() {
         messages = data;
       });

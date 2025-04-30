@@ -12,7 +12,6 @@ class CommentLikeService {
       );
       return response;
     } catch (e) {
-      print('Error like comment: $e');
       throw Exception('Failed to like comment: $e');
     }
   }
@@ -24,7 +23,6 @@ class CommentLikeService {
       );
       return response;
     } catch (e) {
-      print('Error unlike comment: $e');
       throw Exception('Failed to unlike comment: $e');
     }
   }
@@ -36,7 +34,6 @@ class CommentLikeService {
           data: {"page": page, "size": size});
       return response;
     } catch (e) {
-      print('Error get liked users: $e');
       throw Exception('Failed to get liked users: $e');
     }
   }

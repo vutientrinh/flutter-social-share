@@ -12,7 +12,6 @@ class LikedPostService {
       final response = await _dio.post('/api/posts/$postId/like');
       return response;
     } catch (e) {
-      print('Error like: $e');
       throw Exception('Failed to like post: $e');
     }
   }
@@ -21,7 +20,6 @@ class LikedPostService {
       final response = await _dio.delete('/api/posts/$postId/unlike');
       return response;
     } catch (e) {
-      print('Error unlike: $e');
       throw Exception('Failed to unlike post: $e');
     }
   }
@@ -30,7 +28,6 @@ class LikedPostService {
       final response = await _dio.get('/api/posts/$postId/liked-users');
       return response;
     } catch (e) {
-      print('Error get liked users: $e');
       throw Exception('Failed to liked users: $e');
     }
   }

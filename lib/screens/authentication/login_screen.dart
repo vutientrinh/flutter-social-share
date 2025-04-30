@@ -32,7 +32,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     final response = await _authService.login(username, password);
-    print('Login response value : $response');
     setState(() {
       _isLoading = false;
     });

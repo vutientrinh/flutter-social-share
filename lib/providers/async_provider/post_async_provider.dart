@@ -4,7 +4,8 @@ import 'package:flutter_social_share/model/social/post_request.dart';
 import '../../model/social/post.dart';
 import '../state_provider/post_provider.dart';
 
-final postAsyncNotifierProvider = AsyncNotifierProvider<PostNotifier, List<Post>>(PostNotifier.new);
+final postAsyncNotifierProvider =
+    AsyncNotifierProvider<PostNotifier, List<Post>>(PostNotifier.new);
 
 class PostNotifier extends AsyncNotifier<List<Post>> {
   int _currentPage = 1;
@@ -17,7 +18,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     return await _fetchPosts(reset: true);
   }
 
-  Future<List<Post>> _fetchPosts({bool reset = false}) async {
+  Future<List<Post>> _fetchPosts({bool reset = false, String? authorId}) async {
     final postService = ref.watch(postServiceProvider);
 
     if (reset) {
@@ -28,6 +29,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     final fetchedPosts = await postService.getAllPosts(
       page: _currentPage,
       size: _pageSize,
+      authorId: authorId,
     );
 
     if (fetchedPosts.length < _pageSize) {
@@ -37,7 +39,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     return fetchedPosts;
   }
 
-  Future<void> fetchNextPage() async {
+  Future<void> fetchNextPage([String? authorId]) async {
     if (_isFetchingMore || !_hasNextPage) return;
 
     _isFetchingMore = true;
@@ -48,6 +50,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
       final newPosts = await postService.getAllPosts(
         page: _currentPage,
         size: _pageSize,
+        authorId: authorId
       );
 
       if (newPosts.length < _pageSize) {
@@ -102,5 +105,4 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     final postService = ref.read(postServiceProvider);
     await postService.unSavePost(authorId, postId);
   }
-
 }

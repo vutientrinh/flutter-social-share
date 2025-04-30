@@ -3,6 +3,8 @@ import 'package:flutter_social_share/model/ecommerce/order_request.dart';
 import 'package:flutter_social_share/model/ecommerce/order_response.dart';
 import 'package:flutter_social_share/providers/state_provider/order_provider.dart';
 
+import '../../model/ecommerce/order_detail_response.dart';
+
 final orderAsyncNotifierProvider =
     AsyncNotifierProvider<OrderNotifier, List<OrderResponse>>(
         OrderNotifier.new);
@@ -25,9 +27,4 @@ class OrderNotifier extends AsyncNotifier<List<OrderResponse>> {
     return order;
   }
 
-  Future<OrderResponse> getOrderById(String userId) async {
-    final orderService = ref.watch(orderServiceProvider);
-    final order = await orderService.getOrderById(userId);
-    return order;
-  }
 }

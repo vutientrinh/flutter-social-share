@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_social_share/model/ecommerce/order_request.dart';
 import 'package:flutter_social_share/model/ecommerce/order_response.dart';
 
+import '../../model/ecommerce/order_detail_response.dart';
+
 class OrderService {
   final Dio _dio;
 
@@ -59,12 +61,12 @@ class OrderService {
   }
 
   // Get a single order by ID
-  Future<OrderResponse> getOrderById(String id) async {
+  Future<OrderDetailResponse> getOrderById(String id) async {
     try {
       final response = await _dio.get('/api/orders/$id');
 
       if (response.statusCode == 200) {
-        return OrderResponse.fromJson(response.data);
+        return OrderDetailResponse.fromJson(response.data);
       } else {
         throw Exception('Failed to fetch order');
       }

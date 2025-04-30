@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/model/ecommerce/order_detail_response.dart';
+import 'package:flutter_social_share/providers/state_provider/order_provider.dart';
 
 class OrderDetailScreen extends ConsumerStatefulWidget {
-  final String orderId; // Accept orderId as a parameter
+  final String orderId;
 
   const OrderDetailScreen({super.key, required this.orderId});
 
@@ -13,6 +13,10 @@ class OrderDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
+  OrderDetailResponse? orderDetail;
+  bool isLoading = true;
+  String? errorMessage;
+
   @override
   void initState() {
     super.initState();
@@ -20,45 +24,42 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
   }
 
   Future<void> _loadOrderDetails() async {
-    final response = await ref.read(authServiceProvider).getSavedData();
-    ref.read(orderAsyncNotifierProvider.notifier).getOrderById(widget.orderId);
+    try {
+      final response =
+          await ref.read(orderServiceProvider).getOrderById(widget.orderId);
+      setState(() {
+        orderDetail = response;
+        print(orderDetail?.id);
+      });
+    } catch (e) {
+      throw Exception('Failed to fetch order by id');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final orderAsyncValue = ref.watch(orderAsyncNotifierProvider);
+    final order = orderDetail!;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Order Details')),
-      body: orderAsyncValue.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Error: $e')),
-        data: (order) {
-          if (order == null) {
-            return const Center(child: Text('Order not found.'));
-          }
-          print(order);
-
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Text('Order Code: ${order.}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                // SizedBox(height: 10),
-                // Text('Status: ${order.status}'),
-                // SizedBox(height: 10),
-                // Text('Total Amount: \$${order.totalAmount.toStringAsFixed(2)}'),
-                // SizedBox(height: 10),
-                // Text('Shipping Address: ${order.shippingAddress}'),
-                // SizedBox(height: 10),
-                // Text('Created At: ${order.createAt}'),
-                SizedBox(height: 10),
-                // Add more details as necessary
-              ],
-            ),
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Text('Order Code: ${order.orderCode ?? 'N/A'}',
+            //     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            // const SizedBox(height: 10),
+            // Text('Status: ${order.status ?? 'N/A'}'),
+            // const SizedBox(height: 10),
+            // Text('Total Amount: \$${order.}'),
+            // const SizedBox(height: 10),
+            // Text('Shipping Address: ${order.shippingAddress ?? 'N/A'}'),
+            // const SizedBox(height: 10),
+            // Text('Created At: ${order.createAt != null ? DateTime.tryParse(order.createAt!)?.toLocal().toString() ?? 'Invalid date' : 'N/A'}'),
+            // const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }

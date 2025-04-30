@@ -348,7 +348,42 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              ))
+              )),
+              const SizedBox(width: 10,),
+              Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      final data =
+                      await ref.read(authServiceProvider).getSavedData();
+                      ref.read(cartAsyncNotifierProvider.notifier).addToCart(
+                          data['userId'], product!.id, product!.price, 1);
+
+                      await Flushbar(
+                        title: 'Success',
+                        message: 'Product added to cart successfully!',
+                        backgroundColor: Colors.green,
+                        flushbarPosition: FlushbarPosition.TOP,
+                        duration: const Duration(seconds: 1),
+                        margin: const EdgeInsets.all(8),
+                        borderRadius: BorderRadius.circular(8),
+                        animationDuration: const Duration(milliseconds: 500),
+                      ).show(context);
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.shopping_cart_outlined,
+                        size: 18, color: Colors.white),
+                    label: const Text(
+                      "Buy now",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ))
             ],
           ),
         ),

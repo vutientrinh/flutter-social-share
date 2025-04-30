@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/screens/ecommerce_screen/order_history.dart';
 
 // Define your enum
 const List<String> shippingStatuses = [
@@ -70,7 +71,7 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const TrackingShippingScreen()),
+                      builder: (context) => const OrderHistory()),
                 );
               },
               child: Text("Order history"))

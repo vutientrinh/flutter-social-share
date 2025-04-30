@@ -13,8 +13,8 @@ class OrderResponse {
   final List<LineItemResponse> items;
   final ShippingInfoResponse? shippingInfo;
   final PaymentResponse? payment;
-  final String createAt;
-  final String updateAt;
+  final String createdAt;
+  final String updatedAt;
 
   OrderResponse({
     required this.id,
@@ -26,8 +26,8 @@ class OrderResponse {
     required this.items,
     this.shippingInfo,
     this.payment,
-    required this.createAt,
-    required this.updateAt,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory OrderResponse.fromJson(Map<String, dynamic> json) {
@@ -47,8 +47,8 @@ class OrderResponse {
       payment: json['payment'] != null
           ? PaymentResponse.fromJson(json['payment'])
           : null,
-      createAt: json['createAt'] ?? '',
-      updateAt: json['updateAt'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      updatedAt: json['updatedAt'] ?? '',
     );
   }
 }

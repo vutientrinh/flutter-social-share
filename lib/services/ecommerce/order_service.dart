@@ -64,7 +64,7 @@ class OrderService {
       final response = await _dio.get('/api/orders/$id');
 
       if (response.statusCode == 200) {
-        return OrderResponse.fromJson(response.data['data']);
+        return OrderResponse.fromJson(response.data);
       } else {
         throw Exception('Failed to fetch order');
       }
@@ -72,4 +72,5 @@ class OrderService {
       throw Exception('Error fetching order: $e');
     }
   }
+
 }

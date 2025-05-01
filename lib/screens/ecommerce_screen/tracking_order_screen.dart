@@ -48,7 +48,7 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
     final response = await ref.read(authServiceProvider).getSavedData();
     ref
         .read(orderAsyncNotifierProvider.notifier)
-        .getAllOrders(response['userId']);
+        .getAllOrders(response['userId'],);
   }
 
   @override
@@ -70,16 +70,16 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
         title: const Text('Track Your Orders'),
         bottom: TabBar(
           controller: _tabController,
-          isScrollable: true,
+          // isScrollable: true,
           indicatorColor: Theme.of(context).colorScheme.primary,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          padding: EdgeInsets.zero, // Remove default outer padding
-          labelPadding: const EdgeInsets.symmetric(horizontal: 12), // Optional spacing between tabs
+          // padding: EdgeInsets.zero, // Remove default outer padding
+          labelPadding: const EdgeInsets.symmetric(horizontal: 12),
+          // Optional spacing between tabs
           tabs: shippingStatuses.map((status) {
             return Tab(text: _getStatusLabel(status));
           }).toList(),
         ),
-
         actions: [
           TextButton(
             onPressed: () {
@@ -89,7 +89,7 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
                       builder: (context) => const OrderHistory()));
             },
             child: const Text("Order History",
-                style: TextStyle(color: Colors.white)),
+                style: TextStyle(color: Colors.black)),
           ),
         ],
       ),
@@ -146,11 +146,22 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "x ${firstItem?.quantity}",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "x ${firstItem?.quantity}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                order!.payment!.method,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4,),
+                          const SizedBox(
+                            height: 4,
+                          ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

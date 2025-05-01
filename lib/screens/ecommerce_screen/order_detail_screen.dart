@@ -25,6 +25,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
 
   Future<void> _loadOrderDetails() async {
     try {
+      print("beforeeeeeeeeeee");
       final response =
           await ref.read(orderServiceProvider).getOrderById(widget.orderId);
       setState(() {
@@ -38,7 +39,9 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final order = orderDetail!;
+    if (orderDetail == null) {
+      return const Center(child: Text("Can't get order detail"));
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Order Details')),
@@ -47,8 +50,8 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Text('Order Code: ${order.orderCode ?? 'N/A'}',
-            //     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('Order Code: ${orderDetail?.orderCode ?? 'N/A'}',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             // const SizedBox(height: 10),
             // Text('Status: ${order.status ?? 'N/A'}'),
             // const SizedBox(height: 10),

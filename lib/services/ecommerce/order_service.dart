@@ -10,14 +10,11 @@ class OrderService {
   OrderService(this._dio);
 
   // Create an order
-  Future<String> createOrder({
-    required OrderRequest orderRequest
-
-  }) async {
+  Future<String> createOrder({required OrderRequest orderRequest}) async {
     try {
       final response = await _dio.post(
         '/api/orders/create',
-        data:orderRequest.toJson(),
+        data: orderRequest.toJson(),
       );
 
       if (response.statusCode == 200) {
@@ -35,20 +32,20 @@ class OrderService {
     int? page = 1,
     int? size = 10,
     String? status,
-     String? customerId,
+    String? customerId,
   }) async {
     try {
       final response = await _dio.get(
         '/api/orders/all',
         queryParameters: {
           'customerId': customerId,
+          'status': status,
         },
       );
 
       if (response.statusCode == 200) {
         print(response.data['data']);
-        List<OrderResponse> orders = (response.data['data']
-        as List)
+        List<OrderResponse> orders = (response.data['data'] as List)
             .map((productJson) => OrderResponse.fromJson(productJson))
             .toList();
         return orders;
@@ -64,7 +61,7 @@ class OrderService {
   Future<OrderDetailResponse> getOrderById(String id) async {
     try {
       final response = await _dio.get('/api/orders/$id');
-
+      print("Order detail ne : ${response.data}");
       if (response.statusCode == 200) {
         return OrderDetailResponse.fromJson(response.data);
       } else {
@@ -74,5 +71,4 @@ class OrderService {
       throw Exception('Error fetching order: $e');
     }
   }
-
 }

@@ -6,6 +6,7 @@ import 'package:flutter_social_share/screens/ecommerce_screen/order_history.dart
 import 'package:intl/intl.dart';
 
 import '../../utils/uidata.dart';
+import 'order_detail_screen.dart';
 
 const List<String> shippingStatuses = [
   'PENDING',
@@ -181,7 +182,13 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
                         ],
                       ),
                       onTap: () {
-                        // Navigate to order detail page if implemented
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                OrderDetailScreen(orderId: order.id),
+                          ),
+                        );
                       },
                     ),
                   );

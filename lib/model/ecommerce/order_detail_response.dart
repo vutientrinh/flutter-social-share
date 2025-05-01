@@ -10,6 +10,7 @@ class OrderDetailResponse {
   final String updatedAt;
   final Customer customer;
   final List<Item> items;
+  final String status;
   final ShippingInfoResponse shippingInfo;
   final PaymentResponse payment;
   final double totalAmount;
@@ -22,6 +23,7 @@ class OrderDetailResponse {
     required this.updatedAt,
     required this.customer,
     required this.items,
+    required this.status,
     required this.shippingInfo,
     required this.payment,
     required this.totalAmount,
@@ -38,6 +40,7 @@ class OrderDetailResponse {
       items: (json['items'] as List<dynamic>)
           .map((item) => Item.fromJson(item))
           .toList(),
+      status: json['status'],
       shippingInfo: ShippingInfoResponse.fromJson(json['shippingInfo']),
       payment: PaymentResponse.fromJson(json['payment']),
       totalAmount: json['totalAmount'],

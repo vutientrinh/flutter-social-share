@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_share/screens/posts/views/post_screen/create_post_screen.dart';
+import 'package:flutter_social_share/screens/posts/views/create_post_screen.dart';
 
 import '../utils/uidata.dart';
 

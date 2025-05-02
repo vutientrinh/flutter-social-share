@@ -105,8 +105,12 @@ class PostService {
 
 
   Future<Response> savePost(String authorId, String postId) async {
+    final request = {
+      'authorId':authorId,
+      'postId':postId
+    };
     try {
-      return await _dio.post('/api/posts/save');
+      return await _dio.post('/api/posts/save',data: request);
     } catch (e) {
       throw Exception('Failed to save post : $e');
     }
@@ -118,9 +122,12 @@ class PostService {
       throw Exception('Failed to unSave post : $e');
     }
   }
-  Future<Response> getSavedPosts() async {
+  Future<List<Post>> getSavedPosts() async {
     try {
-      return await _dio.get('/api/posts/saved');
+      final response =  await _dio.get('/api/posts/saved');
+      final postListJson = response.data['data']['data'] as List;
+
+      return postListJson.map((json) => Post.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to unSave post : $e');
     }

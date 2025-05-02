@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
 
-import '../../../../providers/async_provider/post_async_provider.dart';
+import '../../../providers/async_provider/post_async_provider.dart';
 
 
 class CommentInput extends ConsumerStatefulWidget {

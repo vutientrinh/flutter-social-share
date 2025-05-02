@@ -18,6 +18,16 @@ class ShowSettingBottomSheet extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
+            leading: const Icon(Icons.save_outlined, color: Colors.black),
+            title: const Text('Save posts'),
+            onTap: () async {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AddressScreen()),
+              );
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.home_work_outlined, color: Colors.black),
             title: const Text('Your address'),
             onTap: () async {

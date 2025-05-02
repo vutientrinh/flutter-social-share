@@ -8,8 +8,8 @@ import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../model/social/post_request.dart';
-import '../../../../providers/async_provider/post_async_provider.dart';
+import '../../../model/social/post_request.dart';
+import '../../../providers/async_provider/post_async_provider.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   final String? avatar;

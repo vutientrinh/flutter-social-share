@@ -99,10 +99,15 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
   Future<void> savePost(String authorId, String postId) async {
     final postService = ref.read(postServiceProvider);
     await postService.savePost(authorId, postId);
+    final updatedPosts = await _fetchPosts(reset: true);
+    state = AsyncData(updatedPosts);
   }
 
   Future<void> unSavePost(String authorId, String postId) async {
     final postService = ref.read(postServiceProvider);
     await postService.unSavePost(authorId, postId);
+    final updatedPosts = await _fetchPosts(reset: true);
+    state = AsyncData(updatedPosts);
   }
+
 }

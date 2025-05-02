@@ -4,9 +4,9 @@ import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/posts/widgets/post_item_remake.dart';
-import '../../../../model/user.dart';
-import '../../../../providers/async_provider/post_async_provider.dart';
-import '../../../messages_screen/messages_screen.dart';
+import '../../../model/user.dart';
+import '../../../providers/async_provider/post_async_provider.dart';
+import '../../messages_screen/messages_screen.dart';
 
 class ListPostsScreen extends ConsumerStatefulWidget {
   const ListPostsScreen({Key? key}) : super(key: key);

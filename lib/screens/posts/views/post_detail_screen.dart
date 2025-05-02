@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/comment_provider.dart';
 import 'package:flutter_social_share/screens/comment/widgets/list_comment.dart';
-import 'package:flutter_social_share/screens/posts/views/post_screen/comment_input.dart';
+import 'package:flutter_social_share/screens/posts/views/comment_input.dart';
 import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
 
-import '../../../../model/social/post.dart';
-import '../../../../providers/async_provider/comment_async_provider.dart';
-import '../../../../providers/async_provider/post_async_provider.dart';
-import '../../../../utils/uidata.dart';
+import '../../../model/social/post.dart';
+import '../../../providers/async_provider/comment_async_provider.dart';
+import '../../../providers/async_provider/post_async_provider.dart';
+import '../../../utils/uidata.dart';
 
 class PostDetailScreen extends ConsumerStatefulWidget {
   final Post post;
@@ -102,11 +102,12 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                           icon: const Icon(Icons.more_horiz),
                         )
                             : PopupMenuButton<String>(
-                          onSelected: (String value) {
+                          onSelected: (String value) async {
                             switch (value) {
                               case 'save':
-                                print(
-                                    'Save tapped for post: ${widget.post.id}');
+                                await ref
+                                    .read(postAsyncNotifierProvider.notifier)
+                                    .savePost(widget.authorId,widget.post.id);
                                 break;
                             }
                           },

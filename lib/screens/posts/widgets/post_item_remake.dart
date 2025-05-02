@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
-import 'package:flutter_social_share/screens/posts/views/post_screen/post_detail_screen.dart';
+import 'package:flutter_social_share/screens/posts/views/post_detail_screen.dart';
 import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
@@ -45,55 +45,79 @@ class _PostItemState extends ConsumerState<PostItem> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                   child: ItemRow(
-                    avatarUrl:
-                        LINK_IMAGE.publicImage(widget.post.author.avatar),
-                    title: widget.post.author.username,
-                    subtitle: widget.post.createdAt,
-                    rightWidget: widget.authorId == widget.post.author.id
-                        ? PopupMenuButton<String>(
-                            onSelected: (String value) {
-                              switch (value) {
-                                case 'update':
-                                  print(
-                                      'Update tapped for post: ${widget.post.id}');
-                                  break;
-                                case 'delete':
-                                  _showDeleteDialog(context);
-                                  break;
-                              }
-                            },
-                            itemBuilder: (BuildContext context) =>
-                                <PopupMenuEntry<String>>[
-                              const PopupMenuItem<String>(
-                                value: 'update',
-                                child: Text('Update'),
-                              ),
-                              const PopupMenuItem<String>(
-                                value: 'delete',
-                                child: Text('Delete'),
-                              ),
-                            ],
-                            icon: const Icon(Icons.more_horiz),
-                          )
-                        : PopupMenuButton<String>(
-                            onSelected: (String value) {
-                              switch (value) {
-                                case 'save':
-                                  print(
-                                      'Save tapped for post: ${widget.post.id}');
-                                  break;
-                              }
-                            },
-                            itemBuilder: (BuildContext context) =>
-                                <PopupMenuEntry<String>>[
-                              const PopupMenuItem<String>(
-                                value: 'save',
-                                child: Text('Save'),
-                              ),
-                            ],
-                            icon: const Icon(Icons.more_horiz),
-                          ),
-                  ),
+                      avatarUrl:
+                          LINK_IMAGE.publicImage(widget.post.author.avatar),
+                      title: widget.post.author.username,
+                      subtitle: widget.post.createdAt,
+                      rightWidget: widget.authorId == widget.post.author.id
+                          ? PopupMenuButton<String>(
+                              onSelected: (String value) {
+                                switch (value) {
+                                  case 'update':
+                                    print(
+                                        'Update tapped for post: ${widget.post.id}');
+                                    break;
+                                  case 'delete':
+                                    _showDeleteDialog(context);
+                                    break;
+                                }
+                              },
+                              itemBuilder: (BuildContext context) =>
+                                  <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'update',
+                                  child: Text('Update'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'delete',
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                              icon: const Icon(Icons.more_horiz),
+                            )
+                          : (widget.post.hasSaved == false
+                              ? PopupMenuButton<String>(
+                                  onSelected: (String value) async {
+                                    switch (value) {
+                                      case 'save':
+                                        await ref
+                                            .read(postAsyncNotifierProvider
+                                                .notifier)
+                                            .savePost(widget.authorId,
+                                                widget.post.id);
+                                        break;
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry<String>>[
+                                    const PopupMenuItem<String>(
+                                      value: 'save',
+                                      child: Text('Save'),
+                                    ),
+                                  ],
+                                  icon: const Icon(Icons.more_horiz),
+                                )
+                              : PopupMenuButton<String>(
+                                  onSelected: (String value) async {
+                                    switch (value) {
+                                      case 'Unsave':
+                                        await ref
+                                            .read(postAsyncNotifierProvider
+                                                .notifier)
+                                            .unSavePost(widget.authorId,
+                                                widget.post.id);
+                                        break;
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry<String>>[
+                                    const PopupMenuItem<String>(
+                                      value: 'Unsave',
+                                      child: Text('Unsave'),
+                                    ),
+                                  ],
+                                  icon: const Icon(Icons.more_horiz),
+                                ))),
                 ),
                 GridImage(photos: widget.post.images),
                 ActionPost(post: widget.post),
@@ -109,7 +133,8 @@ class _PostItemState extends ConsumerState<PostItem> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PostDetailScreen(post: widget.post,authorId:widget.authorId),
+        builder: (context) =>
+            PostDetailScreen(post: widget.post, authorId: widget.authorId),
       ),
     );
   }

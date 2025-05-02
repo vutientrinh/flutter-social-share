@@ -6,7 +6,7 @@ import 'package:flutter_social_share/screens/notification_screen/notification_sc
 import 'package:flutter_social_share/screens/profile_screen/profile_screen.dart';
 
 import '../../providers/state_provider/auth_provider.dart';
-import '../posts/views/post_screen/post_screen.dart';
+import '../posts/views/post_screen.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});

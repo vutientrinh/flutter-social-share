@@ -162,7 +162,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text("Method :"),
-                Text('${order.payment.method}'),
+                Text(order.payment.method),
               ],
             ),
             Row(

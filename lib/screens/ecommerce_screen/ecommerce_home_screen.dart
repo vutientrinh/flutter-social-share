@@ -27,6 +27,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
   ];
   final TextEditingController minPriceController = TextEditingController();
   final TextEditingController maxPriceController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   List<Category> categories = [];
   String? search;
@@ -95,9 +96,10 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
       minPrice = '';
       maxPrice = '';
       rating = null;
-
+      search = '';
       minPriceController.clear();
       maxPriceController.clear();
+      searchController.clear();
     });
     _fetchProducts();
   }
@@ -113,6 +115,14 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
           title: SizedBox(
             height: 40,
             child: TextField(
+              controller: searchController, // ✅ Set controller
+              onChanged: (value) {
+                // ✅ Trigger search
+                setState(() {
+                  search = value;
+                });
+                _fetchProducts();
+              },
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(vertical: 8),
                 hintText: "Search...",

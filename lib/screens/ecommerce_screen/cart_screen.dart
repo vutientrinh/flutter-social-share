@@ -13,6 +13,7 @@ import 'package:flutter_social_share/screens/ecommerce_screen/create_address_scr
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -196,10 +197,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
     };
 
-
     final orderRequest = OrderRequest.fromJson(request);
     print("Order request ne : $orderRequest");
-    ref.read(orderAsyncNotifierProvider.notifier).createOrder(orderRequest);
+    final resposne = await ref
+        .read(orderAsyncNotifierProvider.notifier)
+        .createOrder(orderRequest);
     ref.read(cartAsyncNotifierProvider.notifier).clearCart(userId!);
     await Flushbar(
       title: 'Success',
@@ -211,7 +213,16 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       borderRadius: BorderRadius.circular(8),
       animationDuration: const Duration(milliseconds: 300),
     ).show(context);
-    Navigator.pop(context);
+    if (_paymentMethod == "COD") {
+      Navigator.pop(context);
+    } else {
+      final uri = Uri.parse(resposne as String);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        throw Exception('Could not launch $uri');
+      }
+    }
   }
 
   @override

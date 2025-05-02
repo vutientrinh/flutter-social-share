@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/screens/authentication/update_profile.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/address_screen.dart';
+import 'package:flutter_social_share/screens/posts/views/saved_posts_screen.dart';
 
 import '../../../providers/auth_token_provider.dart';
 import '../../authentication/login_screen.dart';
@@ -23,7 +24,7 @@ class ShowSettingBottomSheet extends ConsumerWidget {
             onTap: () async {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const AddressScreen()),
+                MaterialPageRoute(builder: (context) => const SavedPostsScreen()),
               );
             },
           ),

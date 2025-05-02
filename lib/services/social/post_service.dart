@@ -125,7 +125,7 @@ class PostService {
   Future<List<Post>> getSavedPosts() async {
     try {
       final response =  await _dio.get('/api/posts/saved');
-      final postListJson = response.data['data']['data'] as List;
+      final postListJson = response.data['data'] as List;
 
       return postListJson.map((json) => Post.fromJson(json)).toList();
     } catch (e) {

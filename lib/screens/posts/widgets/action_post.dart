@@ -66,12 +66,12 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                   padding: const EdgeInsets.only(right: 0, left: 4),
                   child: GestureDetector(
                     onTap: () async {
-                      final likedService = ref.read(likedPostServiceProvider);
+                      final likedService = await ref.read(likedPostServiceProvider);
                       setState(() {
                         isLiked = !isLiked;
                         likeCount = isLiked ? likeCount + 1 : likeCount - 1;
                         if (isLiked) {
-                          likedService.like(post.id);
+                           likedService.like(post.id);
 
                         } else {
                           likedService.unlike(post.id);

@@ -179,18 +179,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                   ],
                 ),
                 postAsyncValue.when(
-                  data: (posts) => ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) =>
-                        PostItem(post: posts[index]),
-                  ),
+                  data: (posts) {
+                    final userPosts = posts
+                        .where((post) => post.authorId == user?.id)
+                        .toList();
+                    return userPosts.isEmpty
+                        ? const Center(child: Text('No posts available'))
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: userPosts.length,
+                            itemBuilder: (context, index) =>
+                                PostItem(post: userPosts[index], authorId: user!.id,),
+                          );
+                  },
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (e, st) => Center(child: Text('Error: $e')),
-                ),
-
+                )
               ],
             ),
     );

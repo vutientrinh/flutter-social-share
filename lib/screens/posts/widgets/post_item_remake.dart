@@ -13,8 +13,10 @@ import '../../../utils/uidata.dart';
 
 class PostItem extends ConsumerStatefulWidget {
   final Post post;
+  final String authorId;
 
-  const PostItem({Key? key, required this.post}) : super(key: key);
+  const PostItem({Key? key, required this.post, required this.authorId})
+      : super(key: key);
 
   @override
   ConsumerState<PostItem> createState() => _PostItemState();
@@ -43,47 +45,58 @@ class _PostItemState extends ConsumerState<PostItem> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                   child: ItemRow(
-                    avatarUrl:  LINK_IMAGE.publicImage(widget.post.author.avatar),
+                    avatarUrl:
+                        LINK_IMAGE.publicImage(widget.post.author.avatar),
                     title: widget.post.author.username,
-                    subtitle:widget.post.createdAt,
-                    rightWidget: PopupMenuButton<String>(
-                      onSelected: (String value) {
-                        switch (value) {
-                          case 'update':
-                          // TODO: Implement update logic
-                            print('Update tapped for post: ${widget.post.id}');
-                            break;
-                          case 'delete':
-                            _showDeleteDialog(context);
-                            break;
-                          case 'save':
-                          // TODO: Save the post to bookmarks or similar
-                            print('Save tapped for post: ${widget.post.id}');
-                            break;
-                        }
-                      },
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                        const PopupMenuItem<String>(
-                          value: 'update',
-                          child: Text('Update'),
-                        ),
-                        const PopupMenuItem<String>(
-                          value: 'delete',
-                          child: Text('Delete'),
-                        ),
-                        const PopupMenuItem<String>(
-                          value: 'save',
-                          child: Text('Save'),
-                        ),
-                      ],
-                      icon: const Icon(Icons.more_horiz),
-                    ),
-
+                    subtitle: widget.post.createdAt,
+                    rightWidget: widget.authorId == widget.post.author.id
+                        ? PopupMenuButton<String>(
+                            onSelected: (String value) {
+                              switch (value) {
+                                case 'update':
+                                  print(
+                                      'Update tapped for post: ${widget.post.id}');
+                                  break;
+                                case 'delete':
+                                  _showDeleteDialog(context);
+                                  break;
+                              }
+                            },
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<String>>[
+                              const PopupMenuItem<String>(
+                                value: 'update',
+                                child: Text('Update'),
+                              ),
+                              const PopupMenuItem<String>(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              ),
+                            ],
+                            icon: const Icon(Icons.more_horiz),
+                          )
+                        : PopupMenuButton<String>(
+                            onSelected: (String value) {
+                              switch (value) {
+                                case 'save':
+                                  print(
+                                      'Save tapped for post: ${widget.post.id}');
+                                  break;
+                              }
+                            },
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<String>>[
+                              const PopupMenuItem<String>(
+                                value: 'save',
+                                child: Text('Save'),
+                              ),
+                            ],
+                            icon: const Icon(Icons.more_horiz),
+                          ),
                   ),
                 ),
                 GridImage(photos: widget.post.images),
                 ActionPost(post: widget.post),
-
               ],
             ),
           ),
@@ -96,10 +109,11 @@ class _PostItemState extends ConsumerState<PostItem> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PostDetailScreen(post: widget.post),
+        builder: (context) => PostDetailScreen(post: widget.post,authorId:widget.authorId),
       ),
     );
   }
+
   void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -112,8 +126,10 @@ class _PostItemState extends ConsumerState<PostItem> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () async{
-              await ref.read(postAsyncNotifierProvider.notifier).deletePost(widget.post.id);
+            onPressed: () async {
+              await ref
+                  .read(postAsyncNotifierProvider.notifier)
+                  .deletePost(widget.post.id);
               Navigator.pop(context);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
@@ -122,5 +138,4 @@ class _PostItemState extends ConsumerState<PostItem> {
       ),
     );
   }
-
 }

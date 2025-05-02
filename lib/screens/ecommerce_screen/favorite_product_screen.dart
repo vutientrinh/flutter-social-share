@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/product_liked_async_provider.dart';
+import '../../providers/async_provider/product_async_provider.dart';
 import 'cart_screen.dart';
 import 'widget/grid_product_list.dart';
 
@@ -14,6 +15,9 @@ class FavoriteProductScreen extends ConsumerStatefulWidget {
 }
 
 class _FavoriteProductScreenState extends ConsumerState<FavoriteProductScreen> {
+  String? search;
+  final TextEditingController searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -25,28 +29,11 @@ class _FavoriteProductScreenState extends ConsumerState<FavoriteProductScreen> {
   @override
   Widget build(BuildContext context) {
     final productLikedState = ref.watch(productLikedAsyncNotifierProvider);
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          title: SizedBox(
-            height: 40,
-            child: TextField(
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                hintText: "Search...",
-                hintStyle: const TextStyle(color: Colors.grey),
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
+          title: const Text("Favorite product"),
           actions: [
             IconButton(
               icon: const Icon(CupertinoIcons.cart, color: Colors.black),

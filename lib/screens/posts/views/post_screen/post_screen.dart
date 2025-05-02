@@ -94,23 +94,30 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
               child: Center(child: Text('Error: $error')),
             ),
 
-            data: (posts) {
-              if (posts.isEmpty) {
-                return const SliverFillRemaining(
-                  child: Center(child: Text('No posts yet')),
+              data: (posts) {
+                if (posts.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(child: Text('No posts yet')),
+                  );
+                }
+
+                if (author == null) {
+                  return const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      final post = posts[index];
+                      return PostItem(post: post, authorId: author!.id);
+                    },
+                    childCount: posts.length,
+                  ),
                 );
               }
 
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final post = posts[index];
-                    return PostItem(post: post); // PostItemRemake if you prefer
-                  },
-                  childCount: posts.length,
-                ),
-              );
-            },
           ),
           const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
         ],

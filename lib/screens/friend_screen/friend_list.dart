@@ -49,18 +49,7 @@ class _FriendListState extends ConsumerState<FriendList> {
               padding: const EdgeInsets.all(8), // 👈 Add padding here
               child: Column(
                 children: [
-                  TextField(
-                    controller: null,
-                    decoration: InputDecoration(
-                      hintText: 'Search users...',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onChanged: (_) => {},
-                  ),
-                  const SizedBox(height: 16),
+                  
                   Expanded(
                       child: ListView.builder(
                     itemCount: friends.length,

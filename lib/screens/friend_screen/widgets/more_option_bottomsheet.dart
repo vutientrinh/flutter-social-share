@@ -8,6 +8,7 @@ import 'package:flutter_social_share/providers/state_provider/friend_provider.da
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../../model/social/friend_connection.dart';
 import '../../messages_screen/chat_detail.dart';
 import '../../messages_screen/messages_screen.dart';
 
@@ -91,8 +92,7 @@ class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
               //   MaterialPageRoute(
               //     builder: (context) =>
               //         ChatDetail(
-              //             receiverId: widget.id ,
-              //             receiverUsername: widget.username),
+              //             friend: ,),
               //   ),
               // )
             },

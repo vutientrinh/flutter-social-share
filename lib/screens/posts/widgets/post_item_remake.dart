@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
 import 'package:flutter_social_share/screens/posts/views/post_screen/post_detail_screen.dart';
 import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
 import 'package:flutter_social_share/screens/posts/widgets/item_row.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import '../../../model/social/post.dart';
 import '../../../providers/async_provider/comment_async_provider.dart';
@@ -110,9 +112,8 @@ class _PostItemState extends ConsumerState<PostItem> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              // TODO: Implement actual delete logic using provider or service
-              print('Deleted post: ${widget.post.id}');
+            onPressed: () async{
+              await ref.read(postAsyncNotifierProvider.notifier).deletePost(widget.post.id);
               Navigator.pop(context);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),

@@ -29,7 +29,6 @@ class _HorizontalUserListState extends ConsumerState<HorizontalUserList> {
 
   Future<void> fetchFriend() async {
     final response = await ref.read(chatServiceProvider).getFriends();
-    print("Friend ne : $response}");
     setState(() {
       users = response;
     });

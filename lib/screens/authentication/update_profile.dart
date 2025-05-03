@@ -50,15 +50,16 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
     final userData = await ref.read(authServiceProvider).getSavedData();
     final response =
     await ref.read(userServiceProvider).getProfileById(userData['userId']);
-    setState(() {
-      user = response;
-      _firstName.text = user?.firstName ?? '';
-      _lastName.text = user?.lastName ?? '';
-      _bio.text = user?.bio ?? '';
-      _websiteUrl.text = user?.websiteUrl ?? '';
-      avatar = user?.avatar ?? '';
-      cover = user?.cover ?? '';
-    });
+      setState(() {
+        user = response;
+        _firstName.text = user?.firstName ?? '';
+        _lastName.text = user?.lastName ?? '';
+        _bio.text = user?.bio ?? '';
+        _websiteUrl.text = user?.websiteUrl ?? '';
+        avatar = user?.avatar ?? '';
+        cover = user?.cover ?? '';
+      });
+
   }
 
   @override
@@ -112,6 +113,14 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
     );
   }
 
+  @override
+  void dispose() {
+    _firstName.dispose();
+    _lastName.dispose();
+    _bio.dispose();
+    _websiteUrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,9 +184,11 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
                   CircleAvatar(
                     radius: 50,
                     backgroundImage:
-                        _avatarImage != null ? FileImage(_avatarImage!) : (NetworkImage(LINK_IMAGE.publicImage(user!.avatar))),
-                    child: _avatarImage == null
-                        ? const Icon(Icons.person, size: 50)
+                        _avatarImage != null ? FileImage(_avatarImage!) : ((user?.avatar != null && user!.avatar!.isNotEmpty
+                            ? NetworkImage(LINK_IMAGE.publicImage(user!.avatar!))
+                            : null)),
+                    child: (_avatarImage == null && avatar.isEmpty)
+                        ? const Icon(Icons.person, size: 40, color: Colors.white)
                         : null,
                   ),
                   Positioned(

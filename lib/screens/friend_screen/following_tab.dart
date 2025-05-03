@@ -4,6 +4,7 @@ import 'package:flutter_social_share/screens/friend_screen/widgets/more_option_b
 import 'package:flutter_social_share/model/social/follow_response.dart';
 import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import '../../providers/state_provider/follow_provider.dart';
 import 'widgets/list_user.dart';
 
 class FollowingTab extends ConsumerStatefulWidget {
@@ -53,10 +54,10 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
               avatar: following.avatar ?? "",
               trailing: IconButton(
                 icon: const Icon(Icons.more_horiz),
-                onPressed: () {
+                onPressed: () async {
                   showModalBottomSheet(
                     context: context,
-                    builder: (context) => MoreOptionBottomsheet(
+                    builder: (context) => MoreOptionWidget(
                       username: following.username,
                       avatar: following.avatar??"",
                       followAt: following.followAt,
@@ -64,6 +65,7 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
                       id: following.id,
                     ),
                   );
+                  fetchUserAndLoadFollowings();
                 },
               ),
             );

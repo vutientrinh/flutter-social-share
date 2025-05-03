@@ -66,7 +66,7 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
-                        builder: (context) => MoreOptionBottomsheet(
+                        builder: (context) => MoreOptionWidget(
                           username: follower.username,
                           avatar: follower.avatar??"",
                           followAt: follower.followAt,

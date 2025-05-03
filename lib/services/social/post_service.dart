@@ -27,7 +27,8 @@ class PostService {
         if (authorId != null && authorId.isNotEmpty) 'authorId': authorId,
       };
 
-      final response = await _dio.get('/api/posts', queryParameters: queryParams);
+      final response =
+          await _dio.get('/api/posts', queryParameters: queryParams);
 
       // ✅ Extract the nested list
       final postListJson = response.data['data']['data'] as List;
@@ -39,11 +40,10 @@ class PostService {
     }
   }
 
-
   /// Get a single post by UUID
   Future<List<Post>> getPostById(String uuid) async {
     try {
-      final response =  await _dio.get('/api/posts/$uuid');
+      final response = await _dio.get('/api/posts/$uuid');
       final postListJson = response.data['data']['data'] as List;
       print('Post in service : $postListJson');
 
@@ -103,28 +103,27 @@ class PostService {
     }
   }
 
-
   Future<Response> savePost(String authorId, String postId) async {
-    final request = {
-      'authorId':authorId,
-      'postId':postId
-    };
+    final request = {'authorId': authorId, 'postId': postId};
     try {
-      return await _dio.post('/api/posts/save',data: request);
+      return await _dio.post('/api/posts/save', data: request);
     } catch (e) {
       throw Exception('Failed to save post : $e');
     }
   }
+
   Future<Response> unSavePost(String authorId, String postId) async {
+    final request = {'authorId': authorId, 'postId': postId};
     try {
-      return await _dio.post('/api/posts/unsaved');
+      return await _dio.delete('/api/posts/unsaved', data: request);
     } catch (e) {
       throw Exception('Failed to unSave post : $e');
     }
   }
+
   Future<List<Post>> getSavedPosts() async {
     try {
-      final response =  await _dio.get('/api/posts/saved');
+      final response = await _dio.get('/api/posts/saved');
       final postListJson = response.data['data'] as List;
 
       return postListJson.map((json) => Post.fromJson(json)).toList();
@@ -132,7 +131,4 @@ class PostService {
       throw Exception('Failed to unSave post : $e');
     }
   }
-
-
-
 }

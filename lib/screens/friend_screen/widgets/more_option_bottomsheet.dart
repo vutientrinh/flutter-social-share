@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/social/follow_response.dart';
 import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/follow_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/friend_provider.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-import '../../../model/social/friend_connection.dart';
-import '../../messages_screen/chat_detail.dart';
-import '../../messages_screen/messages_screen.dart';
+import '../../../providers/state_provider/follow_provider.dart';
+import '../../../providers/state_provider/friend_provider.dart';
 
-class MoreOptionBottomsheet extends ConsumerStatefulWidget {
+class MoreOptionWidget extends ConsumerWidget {
   final String username;
   final String avatar;
   final String followAt;
   final String option;
   final String id;
 
-  const MoreOptionBottomsheet({super.key,
+  const MoreOptionWidget({
+    super.key,
     required this.username,
     required this.avatar,
     required this.followAt,
@@ -28,99 +25,77 @@ class MoreOptionBottomsheet extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MoreOptionBottomsheet> createState() =>
-      _MoreOptionBottomsheetState();
-}
-
-class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User Info
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundImage: widget.avatar != null
-                    ? NetworkImage(LINK_IMAGE.publicImage(widget.avatar))
-                    : null,
-                child: widget.avatar == null ? const Icon(Icons.person) : null,
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.username ?? "Unknown",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  if (widget.followAt.isNotEmpty)
-                    Text(
-                      "${widget.option} since ${timeago.format(
-                          DateTime.parse(widget.followAt),
-                          locale: 'en_short')}",
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
+          _buildUserInfo(),
           const SizedBox(height: 20),
-
-          /// Message
-
           _buildListTile(
             icon: Icons.message,
-            title: "Message ${widget.username }",
+            title: "Message $username",
             subtitle: "Send message",
-            onTap: () =>
-            {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) =>
-              //         ChatDetail(
-              //             friend: ,),
-              //   ),
-              // )
+            onTap: () {
+              // Implement navigation to ChatDetail here
             },
           ),
-
-          if (widget.option == "Following")
+          if (option == "Following")
             _buildListTile(
               icon: Icons.person_remove_alt_1,
-              title: "Unfollow ${widget.username }",
+              title: "Unfollow $username",
               subtitle: "Stop seeing posts but stay friends",
               onTap: () async {
-                await ref.read(followServiceProvider).unfollow(widget.id);
-                ref.invalidate(followAsyncNotifierProvider);
+                await ref.read(followServiceProvider).unfollow(id);
               },
             ),
-
-          if (widget.option == "Friend")
+          if (option == "Friend")
             _buildListTile(
               icon: Icons.person_off,
-              title: "Unfriend ${widget.username }",
-              subtitle: "Remove ${widget.username } as a friend",
+              title: "Unfriend $username",
+              subtitle: "Remove $username as a friend",
               onTap: () async {
-                await ref.read(friendServiceProvider).deleteFriend(widget.id);
+                await ref.read(friendServiceProvider).deleteFriend(id);
                 ref.invalidate(friendAsyncNotifierProvider);
               },
             ),
         ],
       ),
+    );
+  }
+
+  Widget _buildUserInfo() {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 24,
+          backgroundImage: avatar.isNotEmpty
+              ? NetworkImage(LINK_IMAGE.publicImage(avatar))
+              : null,
+          child: avatar.isEmpty ? const Icon(Icons.person) : null,
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              username,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            if (followAt.isNotEmpty)
+              Text(
+                "$option since ${timeago.format(DateTime.parse(followAt), locale: 'en_short')}",
+                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -131,6 +106,7 @@ class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
     required VoidCallback onTap,
   }) {
     return ListTile(
+      onTap: onTap,
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -141,15 +117,9 @@ class _MoreOptionBottomsheetState extends ConsumerState<MoreOptionBottomsheet> {
       ),
       title: Text(
         title,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
       ),
-      subtitle: subtitle != null
-          ? Text(
-        subtitle,
-        style: const TextStyle(fontSize: 12, color: Colors.grey),
-      )
-          : null,
-      onTap: onTap,
+      subtitle: subtitle != null ? Text(subtitle) : null,
     );
   }
 }

@@ -34,21 +34,17 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
     requesterId = data['userId'];
     await ref
         .read(friendAsyncNotifierProvider.notifier)
-        .addFriend(userId, requesterId!);
-    ref.invalidate(userAsyncNotifierProvider);
-
+        .addFriend(requesterId!, userId);
+    fetchAllUser();
   }
 
   void followRequest(String userId) async {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     requesterId = data['userId'];
-    await ref
-        .read(followAsyncNotifierProvider.notifier)
-        .follow(userId);
-    ref.invalidate(userAsyncNotifierProvider);
+    await ref.read(followAsyncNotifierProvider.notifier).follow(userId);
+    fetchAllUser();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +88,9 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      const SizedBox(width: 10,),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       ElevatedButton(
                         onPressed: () => followRequest(user.id),
                         style: ElevatedButton.styleFrom(

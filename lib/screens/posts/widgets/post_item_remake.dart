@@ -101,6 +101,8 @@ class _PostItemState extends ConsumerState<PostItem> {
                                   onSelected: (String value) async {
                                     switch (value) {
                                       case 'Unsave':
+                                        print(
+                                            'Unsave tapped for post: ${widget.post.id}');
                                         await ref
                                             .read(postAsyncNotifierProvider
                                                 .notifier)

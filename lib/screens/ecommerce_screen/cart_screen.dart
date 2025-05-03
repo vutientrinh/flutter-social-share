@@ -118,6 +118,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
     });
     final selectedOption = shippingOptions.firstWhere((e) => e['selected']);
+    print("before calculate");
     calculateShippingFee(selectedOption, cartItems, defaultAddress);
   }
 
@@ -133,12 +134,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       'to_district_id': defaultAddress.districtId,
       'weight': calculateWeightItems(items).toInt(),
     };
-
+    print("request ne ");
     try {
       final response = await ref.read(shippingProvider).getShippingFee(request);
       final data = response.data['data']; // ✅ parse correctly
       final fee = data['total'] ?? 0;
-
+      print("shipping feeeee ne : $fee");
       setState(() {
         shippingFee = fee.toDouble();
         print("SHipping fee ne : $shippingFee");
@@ -202,7 +203,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final resposne = await ref
         .read(orderAsyncNotifierProvider.notifier)
         .createOrder(orderRequest);
-    ref.read(cartAsyncNotifierProvider.notifier).clearCart(userId!);
+
     await Flushbar(
       title: 'Success',
       message: 'Order successfully!',
@@ -216,13 +217,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     if (_paymentMethod == "COD") {
       Navigator.pop(context);
     } else {
-      final uri = Uri.parse(resposne as String);
+      final uri = Uri.parse(resposne);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         throw Exception('Could not launch $uri');
       }
     }
+    ref.read(cartAsyncNotifierProvider.notifier).clearCart(userId!);
   }
 
   @override

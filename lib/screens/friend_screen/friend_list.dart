@@ -67,7 +67,7 @@ class _FriendListState extends ConsumerState<FriendList> {
                               onPressed: () {
                                 showModalBottomSheet(
                                   context: context,
-                                  builder: (context) => MoreOptionBottomsheet(
+                                  builder: (context) => MoreOptionWidget(
                                     username: friend.username,
                                     avatar: friend.avatar,
                                     followAt: "",

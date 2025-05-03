@@ -157,9 +157,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                'Your order',
-                                style: TextStyle(
+                              Text(
+                                'Post : ${user!.postCount}',
+                                style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.white,
                                   shadows: [
@@ -189,8 +189,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: userPosts.length,
-                            itemBuilder: (context, index) =>
-                                PostItem(post: userPosts[index], authorId: user!.id,),
+                            itemBuilder: (context, index) => PostItem(
+                              post: userPosts[index],
+                              authorId: user!.id,
+                            ),
                           );
                   },
                   loading: () =>

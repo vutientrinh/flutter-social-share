@@ -8,15 +8,19 @@ final productAsyncNotifierProvider =
     AsyncNotifierProvider<ProductNotifier, List<Product>>(ProductNotifier.new);
 
 class ProductNotifier extends AsyncNotifier<List<Product>> {
+  int _currentPage = 1;
+  final int _pageSize = 10;
+  bool _isFetchingMore = false;
+  bool _hasNextPage = true;
+
   @override
   Future<List<Product>> build() async {
-    final productService = ref.watch(productServiceProvider);
-    final products = await productService.getAllProduct();
-    return products;
+    return await getProducts(reset: true);
   }
 
-  Future<void> getProducts(
-      {String? search,
+  Future<List<Product>> getProducts(
+      {bool reset = false,
+      String? search,
       String? category,
       String? minPrice,
       String? maxPrice,
@@ -25,7 +29,14 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
       String? field,
       String? direction}) async {
     final productService = ref.watch(productServiceProvider);
+    if (reset) {
+      _currentPage = 1;
+      _hasNextPage = true;
+    }
+
     final products = await productService.getAllProduct(
+      page: _currentPage,
+      size: _pageSize,
       search: search,
       category: category,
       minPrice: minPrice,
@@ -35,7 +46,48 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
       field: field,
       direction: direction,
     );
-    state = AsyncData(products);
+    if (products.length < _pageSize) {
+      _hasNextPage = false;
+    }
+    return products;
+  }
+
+  Future<void> getNextProductPage(
+      {String? search,
+      String? category,
+      String? minPrice,
+      String? maxPrice,
+      num? rating,
+      String? inStock,
+      String? field,
+      String? direction}) async {
+    if (_isFetchingMore || !_hasNextPage) return;
+    _isFetchingMore = true;
+    _currentPage++;
+    try {
+      final productService = ref.watch(productServiceProvider);
+      final newProducts = await productService.getAllProduct(
+        page: _currentPage,
+        size: _pageSize,
+        search: search,
+        category: category,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        rating: rating,
+        inStock: inStock,
+        field: field,
+        direction: direction,
+      );
+      if (newProducts.length < _pageSize) {
+        _hasNextPage = false;
+      }
+      final currentProducts = state.value ?? [];
+      state = AsyncData([...currentProducts, ...newProducts]);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    } finally {
+      _isFetchingMore = false;
+    }
   }
 
   Future<Product> getProductById(String productId) async {

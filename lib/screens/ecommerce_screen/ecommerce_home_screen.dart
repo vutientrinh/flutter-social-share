@@ -29,6 +29,8 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
   final TextEditingController maxPriceController = TextEditingController();
   final TextEditingController searchController = TextEditingController();
 
+  final ScrollController _scrollController = ScrollController();
+
   List<Category> categories = [];
   String? search;
   String? selectedCategory = "All";
@@ -63,6 +65,12 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
           direction: direction,
         );
   }
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      ref.read(productAsyncNotifierProvider.notifier).getNextProductPage();
+    }
+  }
 
   int _currentIndex = 0;
 
@@ -73,13 +81,14 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
 
     // 👇 Fetch default products when screen opens (without any filter)
     Future.microtask(() {
-      ref.read(productAsyncNotifierProvider.notifier).getProducts();
+      ref.invalidate(productAsyncNotifierProvider);
     });
 
     // 👇 Fetch categories when screen opens
     Future.microtask(() {
       ref.read(categoryAsyncNotifierProvider.notifier);
     });
+    _scrollController.addListener(_onScroll);
   }
 
   void _autoSlide() {

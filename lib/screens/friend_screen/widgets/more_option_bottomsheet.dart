@@ -34,14 +34,15 @@ class MoreOptionWidget extends ConsumerWidget {
         children: [
           _buildUserInfo(),
           const SizedBox(height: 20),
-          _buildListTile(
-            icon: Icons.message,
-            title: "Message $username",
-            subtitle: "Send message",
-            onTap: () {
-              // Implement navigation to ChatDetail here
-            },
-          ),
+          if (option == "Friend")
+            _buildListTile(
+              icon: Icons.message,
+              title: "Message $username",
+              subtitle: "Send message",
+              onTap: () {
+                // Implement navigation to ChatDetail here
+              },
+            ),
           if (option == "Following")
             _buildListTile(
               icon: Icons.person_remove_alt_1,

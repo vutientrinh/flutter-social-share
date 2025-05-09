@@ -47,14 +47,11 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
       selectedCategory = newCategory;
     });
 
-    print(selectedCategory);
-    ref.read(productAsyncNotifierProvider.notifier).getProducts(
-          category: selectedCategory == "All" ? null : selectedCategory,
-        );
+    _fetchProducts();
   }
 
   void _fetchProducts() {
-    ref.read(productAsyncNotifierProvider.notifier).getProducts(
+    ref.read(productAsyncNotifierProvider.notifier).getNextProductPage(
           search: search,
           category: selectedCategory == 'All' ? null : selectedCategory,
           minPrice: minPrice?.isEmpty ?? true ? null : minPrice,
@@ -63,6 +60,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
           inStock: inStock,
           field: field,
           direction: direction,
+          reset: true,
         );
   }
 
@@ -109,7 +107,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
     Future.delayed(const Duration(seconds: 3), _autoSlide);
   }
 
-  void clearFilters() {
+  void clearFilters() async {
     setState(() {
       selectedCategory = 'All';
       minPrice = '';
@@ -141,7 +139,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
             height: 40,
             child: TextField(
               controller: searchController, // ✅ Set controller
-              onChanged: (value) {
+              onChanged: (value) async {
                 // ✅ Trigger search
                 setState(() {
                   search = value;
@@ -325,7 +323,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                                   _buildSmallInput(
                                     hintText: 'Min Price',
                                     controller: minPriceController,
-                                    onChanged: (value) {
+                                    onChanged: (value) async {
                                       setState(() {
                                         minPrice = value;
                                       });
@@ -335,7 +333,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                                   _buildSmallInput(
                                     hintText: 'Max Price',
                                     controller: maxPriceController,
-                                    onChanged: (value) {
+                                    onChanged: (value) async {
                                       setState(() {
                                         maxPrice = value;
                                       });
@@ -421,7 +419,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
               color: Colors.amber,
               size: 24,
             ),
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 rating = starIndex;
               });

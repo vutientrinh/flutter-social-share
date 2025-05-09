@@ -52,18 +52,28 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
     return products;
   }
 
-  Future<void> getNextProductPage(
-      {String? search,
-      String? category,
-      String? minPrice,
-      String? maxPrice,
-      num? rating,
-      String? inStock,
-      String? field,
-      String? direction}) async {
-    if (_isFetchingMore || !_hasNextPage) return;
+  Future<void> getNextProductPage({
+    String? search,
+    String? category,
+    String? minPrice,
+    String? maxPrice,
+    num? rating,
+    String? inStock,
+    String? field,
+    String? direction,
+    bool reset = false, // Add reset parameter
+  }) async {
+    if (_isFetchingMore || (!reset && !_hasNextPage)) return;
     _isFetchingMore = true;
-    _currentPage++;
+
+    if (reset) {
+      _currentPage = 1; // Reset pagination
+      _hasNextPage = true;
+      state = const AsyncData([]); // Clear current products
+    } else {
+      _currentPage++;
+    }
+
     try {
       final productService = ref.watch(productServiceProvider);
       final newProducts = await productService.getAllProduct(
@@ -78,10 +88,12 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
         field: field,
         direction: direction,
       );
+
       if (newProducts.length < _pageSize) {
         _hasNextPage = false;
       }
-      final currentProducts = state.value ?? [];
+
+      final currentProducts = reset ? [] : (state.value ?? []);
       state = AsyncData([...currentProducts, ...newProducts]);
     } catch (e, st) {
       state = AsyncError(e, st);

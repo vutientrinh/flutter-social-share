@@ -65,10 +65,20 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
           direction: direction,
         );
   }
+
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      ref.read(productAsyncNotifierProvider.notifier).getNextProductPage();
+        _scrollController.position.maxScrollExtent - 500) {
+      ref.read(productAsyncNotifierProvider.notifier).getNextProductPage(
+            search: search,
+            category: selectedCategory == 'All' ? null : selectedCategory,
+            minPrice: minPrice?.isEmpty ?? true ? null : minPrice,
+            maxPrice: maxPrice?.isEmpty ?? true ? null : maxPrice,
+            rating: rating,
+            inStock: inStock,
+            field: field,
+            direction: direction,
+          );
     }
   }
 
@@ -111,6 +121,12 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
       searchController.clear();
     });
     _fetchProducts();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -191,6 +207,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                 // Image Slider
                 Expanded(
                     child: SingleChildScrollView(
+                  controller: _scrollController,
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [

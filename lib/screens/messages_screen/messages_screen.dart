@@ -44,7 +44,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
           onPressed: () => Navigator.pop(context), // Navigate back to home
         ),
       ),
-      body: HorizontalUserList(),
+      body: const HorizontalUserList(),
 
     );
   }

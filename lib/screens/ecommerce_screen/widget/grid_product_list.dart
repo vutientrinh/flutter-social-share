@@ -12,7 +12,7 @@ import '../../../providers/state_provider/product_provider.dart';
 class GridProductList extends ConsumerStatefulWidget {
   final List<Product> products;
 
-  const GridProductList({super.key, required this.products});
+  const GridProductList({super.key, required this.products });
 
   @override
   ConsumerState<GridProductList> createState() => _GridProductListState();
@@ -30,7 +30,7 @@ class _GridProductListState extends ConsumerState<GridProductList> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       shrinkWrap: true,
       itemCount: widget.products.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

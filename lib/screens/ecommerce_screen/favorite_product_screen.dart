@@ -17,6 +17,7 @@ class FavoriteProductScreen extends ConsumerStatefulWidget {
 class _FavoriteProductScreenState extends ConsumerState<FavoriteProductScreen> {
   String? search;
   final TextEditingController searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -30,60 +31,39 @@ class _FavoriteProductScreenState extends ConsumerState<FavoriteProductScreen> {
   Widget build(BuildContext context) {
     final productLikedState = ref.watch(productLikedAsyncNotifierProvider);
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const Text("Favorite product"),
-          actions: [
-            IconButton(
-              icon: const Icon(CupertinoIcons.cart, color: Colors.black),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CartScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(12),
-          color: Colors.white,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: SafeArea(
-            child: Column(
-              children: [
-                // Search Bar
-                const SizedBox(height: 10),
-                // Image Slider
-                Expanded(
-                    child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      productLikedState.when(
-                        data: (products) {
-                          if (products.isEmpty) {
-                            return const Center(
-                                child: Text('No products found.'));
-                          }
-                          return GridProductList(products: products);
-                        },
-                        loading: () =>
-                            const Center(child: CircularProgressIndicator()),
-                        error: (error, _) =>
-                            Center(child: Text('Error: $error')),
-                      )
-                    ],
-                  ),
-                )),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text("Favorite product"),
+        actions: [
+          IconButton(
+            icon: const Icon(CupertinoIcons.cart, color: Colors.black),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CartScreen()),
+              );
+            },
           ),
-        ));
+        ],
+      ),
+      body: SafeArea(
+        child: productLikedState.when(
+          data: (products) {
+            if (products.isEmpty) {
+              return const Center(child: Text('No products found.'));
+            }
+            return Padding(
+              padding: const EdgeInsets.all(12),
+              child: GridProductList(
+                products: products,
+              ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, _) => Center(child: Text('Error: $error')),
+        ),
+      ),
+    );
   }
 }

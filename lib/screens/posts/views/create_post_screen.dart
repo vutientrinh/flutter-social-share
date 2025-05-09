@@ -201,12 +201,27 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 20),
+              padding: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
               child: Center(
                 child: ElevatedButton.icon(
                   onPressed: _pickImages,
-                  icon: const Icon(Icons.photo_library),
-                  label: const Text("Add Images"),
+                  icon: const Icon(Icons.photo_library, color: Colors.white),
+                  label: const Text(
+                    "Add Images",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6B46C1),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                  ),
                 ),
               ),
             ),

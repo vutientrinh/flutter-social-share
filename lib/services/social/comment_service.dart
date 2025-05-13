@@ -27,6 +27,23 @@ class CommentService {
       throw Exception('Failed to get comment by postId: $e');
     }
   }
+  Future<Map<String, dynamic>> updateComment(String commentId,String content) async {
+    try {
+      final response = await _dio.put('/api/comments/$commentId',data: {'content': content});
+      return response.data;
+    } catch (e) {
+      throw Exception('Failed to update comment by postId: $e');
+    }
+  }
+  Future<Map<String, dynamic>> deleteComment(String commentId) async {
+    try {
+      final response = await _dio.delete('/api/comments/$commentId',
+          data: {'uuid': commentId});
+      return response.data;
+    } catch (e) {
+      throw Exception('Failed to get comment by postId: $e');
+    }
+  }
 
   Future<Map<String, dynamic>> likeComment(String commentId) async {
     try {

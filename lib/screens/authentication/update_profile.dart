@@ -235,7 +235,7 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.save),
-                  label: const Text('Update Profile'),
+                  label: const Text('Saved Profile'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(

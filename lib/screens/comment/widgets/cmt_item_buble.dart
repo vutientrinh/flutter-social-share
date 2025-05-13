@@ -6,6 +6,7 @@ import 'package:flutter_social_share/common/widgets/stateful/react_button/reacti
 import 'package:flutter_social_share/common/widgets/stateful/react_button/reactive_icon_definition.dart';
 import 'package:flutter_social_share/model/user.dart';
 import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/comment_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
@@ -33,18 +34,13 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
   int likeCount = 0;
   bool isLiked = false;
   User? author;
-
+  String? userId;
   @override
   void initState() {
     super.initState();
     likeCount = widget.cmt.likedCount ?? 0;
     isLiked = widget.cmt.hasLiked;
     getAuthor(widget.cmt.authorId);
-    Future.microtask(() {
-      ref
-          .read(commentAsyncNotifierProvider.notifier)
-          .getCommentAPI(widget.cmt.postId);
-    });
   }
 
   @override
@@ -56,9 +52,13 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
   }
 
   void getAuthor(String userId) async {
-    final user = await ref.read(userServiceProvider).getProfileById(userId);
+    final user = await ref.read(authServiceProvider).getSavedData();
+
+    final commentAuthor = await ref.read(userServiceProvider).getProfileById(userId);
     setState(() {
-      author = user;
+      author = commentAuthor;
+      userId = user['userId'];
+      print(userId);
     });
   }
 
@@ -86,31 +86,79 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: const BorderRadius.all(Radius.circular(8))),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.cmt.author!.username,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium,
+              Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8))),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.cmt.author!.username,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          widget.cmt.content!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: Colors.grey[600]),
+                        )
+                      ],
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      widget.cmt.content!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: Colors.grey[600]),
-                    )
-                  ],
-                ),
+                  ),
+
+                  // PopupMenuButton<String>(
+                  //   onSelected: (value) async {
+                  //     if (value == 'edit') {
+                  //       // TODO: Navigate to edit screen or open edit dialog
+                  //       print("Edit selected for ${widget.cmt.id}");
+                  //     } else if (value == 'delete') {
+                  //       final commentService = ref.read(commentServiceProvider);
+                  //       await commentService.deleteComment(widget.cmt.id);
+                  //       ref.invalidate(commentAsyncNotifierProvider);
+                  //     }
+                  //   },
+                  //   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  //     const PopupMenuItem<String>(
+                  //       value: 'edit',
+                  //       child: Text('Edit'),
+                  //     ),
+                  //     const PopupMenuItem<String>(
+                  //       value: 'delete',
+                  //       child: Text('Delete'),
+                  //     ),
+                  //   ],
+                  //   icon: const Icon(Icons.more_vert),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 0, left: 4),
+                    child: GestureDetector(
+                      onTap: () async {
+                        final commentService = ref.read(commentServiceProvider);
+                        await commentService.deleteComment(widget.cmt.id);
+                        ref.invalidate(commentAsyncNotifierProvider);
+                      },
+                      child: Container(
+                        color: Colors.transparent,
+                        padding: const EdgeInsets.all(6),
+                        child: const Icon(
+                          CupertinoIcons.delete,
+                          color: Colors.black,
+                        ),
+                      )
+                    ),
+                  ),
+
+                ],
               ),
               const SizedBox(
                 height: 4,
@@ -121,18 +169,16 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                     padding: const EdgeInsets.only(right: 0, left: 4),
                     child: GestureDetector(
                       onTap: () async {
-                        print("like oke");
                         final commentService = ref.read(commentServiceProvider);
-                        setState(()  {
+                        setState(() {
                           isLiked = !isLiked;
                           likeCount = isLiked ? likeCount + 1 : likeCount - 1;
                           if (isLiked) {
-                             commentService.likeComment(widget.cmt.id);
+                            commentService.likeComment(widget.cmt.id);
                           } else {
-                             commentService.unlikeComment(widget.cmt.id);
+                            commentService.unlikeComment(widget.cmt.id);
                           }
                         });
-                        ref.invalidate(postAsyncNotifierProvider);
                       },
                       child: isLiked
                           ? Container(
@@ -168,126 +214,4 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
       ),
     );
   }
-
-// Widget buildReactButton() {
-//   late final Text textWidget;
-//   switch (yourReact) {
-//     case 1:
-//       textWidget = Text(
-//         'Like',
-//         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-//               color: Colors.blue,
-//               fontWeight: FontWeight.bold,
-//             ),
-//       );
-//       break;
-//     case 2:
-//       textWidget = Text(
-//         'Haha',
-//         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-//               color: Colors.yellow,
-//               fontWeight: FontWeight.bold,
-//             ),
-//       );
-//       break;
-//     case 3:
-//       textWidget = Text(
-//         'Heart',
-//         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-//               color: Colors.pink,
-//               fontWeight: FontWeight.bold,
-//             ),
-//       );
-//       break;
-//     case 4:
-//       textWidget = Text(
-//         'Sad',
-//         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-//               color: Colors.purple,
-//               fontWeight: FontWeight.bold,
-//             ),
-//       );
-//       break;
-//     case 5:
-//       textWidget = Text(
-//         'Wow',
-//         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-//               color: Colors.yellow,
-//               fontWeight: FontWeight.bold,
-//             ),
-//       );
-//       break;
-//     case 6:
-//       textWidget = Text(
-//         'Angry',
-//         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-//               color: Colors.red,
-//               fontWeight: FontWeight.bold,
-//             ),
-//       );
-//       break;
-//     default:
-//       textWidget = Text(
-//         'Like',
-//         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-//               fontWeight: FontWeight.bold,
-//             ),
-//       );
-//   }
-//   return ReactiveButton(
-//     icons: <ReactiveIconDefinition>[
-//       ReactiveIconDefinition(
-//         assetIcon: UIData.likeGif,
-//         code: '1',
-//       ),
-//       ReactiveIconDefinition(
-//         assetIcon: UIData.hahaGif,
-//         code: '2',
-//       ),
-//       ReactiveIconDefinition(
-//         assetIcon: UIData.loveGif,
-//         code: '3',
-//       ),
-//       ReactiveIconDefinition(
-//         assetIcon: UIData.sadGif,
-//         code: '4',
-//       ),
-//       ReactiveIconDefinition(
-//         assetIcon: UIData.wowGif,
-//         code: '5',
-//       ),
-//       ReactiveIconDefinition(
-//         assetIcon: UIData.angryGif,
-//         code: '6',
-//       ),
-//     ],
-//     //_flags,
-//     onTap: () {},
-//     onSelected: (ReactiveIconDefinition? value) {
-//       yourReact = int.parse(value!.code);
-//       setState(() {});
-//     },
-//     iconWidth: 35.0,
-//     iconGrowRatio: 1.1,
-//     decoration: BoxDecoration(
-//       borderRadius: BorderRadius.circular(50),
-//       border: Border.all(color: Colors.transparent),
-//       color: Colors.white,
-//       boxShadow: const [
-//         BoxShadow(
-//           color: Colors.blueGrey,
-//           blurRadius: 1.3,
-//         ),
-//       ],
-//     ),
-//     containerPadding: 4,
-//     iconPadding: 5,
-//     child: Container(
-//       color: Colors.transparent,
-//       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 5),
-//       margin: const EdgeInsets.symmetric(horizontal: 3),
-//       child: textWidget,
-//     ),
-//   );
-// }
 }

@@ -184,6 +184,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
                           child: _buildDeliveryIcon(
                               message.messageDeliveryStatusEnum),
                         ),
+                      // Text(message.)
                     ],
                   ),
                 );

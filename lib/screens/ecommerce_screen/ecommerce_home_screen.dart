@@ -272,31 +272,64 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              const SizedBox(height: 8),
                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  IntrinsicWidth(
+                                  Expanded(
                                     child: Container(
-                                      margin: const EdgeInsets.only(right: 8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            spreadRadius: 1,
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
                                       child: DropdownButtonFormField<String>(
                                         value: selectedCategory,
                                         decoration: InputDecoration(
                                           contentPadding:
                                               const EdgeInsets.symmetric(
-                                                  horizontal: 8, vertical: 4),
+                                            horizontal: 12,
+                                            vertical: 10,
+                                          ),
                                           filled: true,
-                                          fillColor: Colors.grey[200],
+                                          fillColor: Colors.transparent,
                                           border: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(10),
+                                                BorderRadius.circular(12),
                                             borderSide: BorderSide.none,
                                           ),
+                                          prefixIcon: const Icon(
+                                            Icons.category_outlined,
+                                            color: Colors.grey,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        dropdownColor: Colors.white,
+                                        icon: const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.grey,
                                         ),
                                         items: allCategories.map((category) {
                                           return DropdownMenuItem<String>(
                                             value: category.name,
                                             child: Text(
                                               category.name,
-                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           );
                                         }).toList(),
@@ -304,36 +337,52 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                                       ),
                                     ),
                                   ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: TextButton.icon(
-                                      onPressed: clearFilters,
-                                      icon: const Icon(Icons.clear),
-                                      label: const Text("Clear Filters"),
+                                  const SizedBox(width: 8),
+                                  TextButton.icon(
+                                    onPressed: clearFilters,
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.redAccent,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 8),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      backgroundColor: Colors.white,
+                                      elevation: 1,
+                                      shadowColor: Colors.grey.withOpacity(0.2),
+                                    ),
+                                    icon: const Icon(Icons.clear, size: 18),
+                                    label: const Text(
+                                      'Clear',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              // Min Price
+                              const SizedBox(height: 12),
+                              // Price Range
                               Row(
                                 children: [
                                   _buildSmallInput(
                                     hintText: 'Min Price',
                                     controller: minPriceController,
-                                    onChanged: (value) async {
+                                    icon: Icons.attach_money,
+                                    onChanged: (value) {
                                       setState(() {
                                         minPrice = value;
                                       });
                                       _fetchProducts();
                                     },
                                   ),
+                                  const SizedBox(width: 8),
                                   _buildSmallInput(
                                     hintText: 'Max Price',
                                     controller: maxPriceController,
-                                    onChanged: (value) async {
+                                    icon: Icons.attach_money,
+                                    onChanged: (value) {
                                       setState(() {
                                         maxPrice = value;
                                       });
@@ -342,8 +391,29 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 12),
                               // Rating Stars
-                              _buildRatingStars(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4, horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    _buildRatingStars(),
+                                  ],
+                                ),
+                              ),
                             ],
                           );
                         },
@@ -384,22 +454,54 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
     required String hintText,
     required Function(String) onChanged,
     required TextEditingController controller,
+    IconData? icon,
   }) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: TextField(
           controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
+            hintStyle: const TextStyle(
+              color: Colors.grey,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[200],
+            fillColor: Colors.transparent,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
+            prefixIcon: icon != null
+                ? Icon(
+                    icon,
+                    color: Colors.grey,
+                    size: 20,
+                  )
+                : null,
           ),
           keyboardType: TextInputType.number,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
           onChanged: onChanged,
         ),
       ),
@@ -409,7 +511,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
 // Rating Stars Widget
   Widget _buildRatingStars() {
     return Container(
-      margin: const EdgeInsets.only(right: 8),
+      margin: const EdgeInsets.only(right: 4),
       child: Row(
         children: List.generate(5, (index) {
           final starIndex = index + 1;
@@ -417,7 +519,7 @@ class _EcommerceHomeScreenState extends ConsumerState<EcommerceHomeScreen> {
             icon: Icon(
               starIndex <= (rating ?? 0) ? Icons.star : Icons.star_border,
               color: Colors.amber,
-              size: 24,
+              size: 20,
             ),
             onPressed: () async {
               setState(() {

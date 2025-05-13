@@ -14,7 +14,7 @@ class Post {
   final String status;
   final String createdAt;
   final String updatedAt;
-  final Topic topic;
+  final TopicResponse topic;
   final UserInfo author;
   final bool hasLiked;
   final bool hasSaved;
@@ -50,10 +50,33 @@ class Post {
       status: json['status'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
-      topic: Topic.fromJson(json['topic']),
+      topic: TopicResponse.fromJson(json['topic']),
       author: UserInfo.fromJson(json['author']),
       hasLiked: json['hasLiked'] as bool,
       hasSaved: json['hasSaved'] as bool,
+    );
+  }
+}
+
+class TopicResponse {
+  final String id;
+  final String name;
+  final int postCount;
+  final String color;
+
+  TopicResponse({
+    required this.id,
+    required this.name,
+    required this.postCount,
+    required this.color,
+  });
+
+  factory TopicResponse.fromJson(Map<String, dynamic> json) {
+    return TopicResponse(
+      id: json['id'],
+      name: json['name'],
+      postCount: json['postCount'],
+      color: json['color'],
     );
   }
 }

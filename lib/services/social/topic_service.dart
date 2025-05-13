@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 
+import '../../model/social/topic.dart';
+
 class TopicService {
   final Dio _dio;
 
@@ -20,16 +22,14 @@ class TopicService {
     }
   }
 
-  Future<Response> getAllTopics({int page = 1, int size = 10}) async {
+  Future<List<Topic>> getAllTopics() async {
     try {
-      final response = await _dio.get(
-        '/api/topic/all',
-        data: {
-          'page': page,
-          'size': size,
-        },
-      );
-      return response;
+      final response = await _dio.get('/api/topic/all');
+
+      // Correctly access the list of topics
+      final List<dynamic> listTopic = response.data['data'];
+      print("List topic in service : $listTopic");
+      return listTopic.map((json) => Topic.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to get all topic: $e');
     }

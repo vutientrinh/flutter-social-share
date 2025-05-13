@@ -513,7 +513,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       runSpacing: 10,
                       children: shippingOptions.map((option) {
                         final isSelected = option['selected'] == true;
-
                         return Container(
                           width: MediaQuery.of(context).size.width - 20,
                           padding: const EdgeInsets.all(12),

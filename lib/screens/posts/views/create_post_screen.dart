@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/social/topic.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/topic_provider.dart';
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +15,7 @@ import '../../../providers/async_provider/post_async_provider.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   final String? avatar;
+
   const CreatePostScreen({super.key, required this.avatar});
 
   @override
@@ -20,11 +23,13 @@ class CreatePostScreen extends ConsumerStatefulWidget {
 }
 
 class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _controllerContent = TextEditingController();
+  final TextEditingController _controllerTopic = TextEditingController();
   final List<File> _images = [];
   String? username;
   String? userId;
-
+  List<Topic> topics = [];
+  String? selectedTopicId;
 
   @override
   void initState() {
@@ -35,27 +40,42 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   void loadData() async {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
+    final listAllTopics = await ref.read(topicServiceProvider).getAllTopics();
     setState(() {
       username = data['username'];
       userId = data['userId'];
+      topics = listAllTopics;
     });
   }
 
+  int _hexToColor(String hex) {
+    hex = hex.replaceAll('#', '');
+    if (hex.length == 6) hex = 'FF$hex'; // add alpha if not present
+    return int.parse(hex, radix: 16);
+  }
+
   Future<void> _onPost() async {
-    if (_controller.text.isEmpty) {
+    if (_controllerContent.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Post content missing')),
       );
       return;
     }
+    if (selectedTopicId == null || selectedTopicId!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a topic')),
+      );
+      return;
+    }
+
     try {
       final createPost = ref.read(postAsyncNotifierProvider.notifier);
 
       final newPost = PostRequest(
-        content: _controller.text,
+        content: _controllerContent.text,
         images: _images,
         authorId: userId!,
-        topicId: "73c21f7f-3a4e-4a58-bac5-edd1f009666f",
+        topicId: selectedTopicId ?? "",
       );
 
       await createPost.addPost(newPost);
@@ -65,7 +85,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       );
 
       setState(() {
-        _controller.clear();
+        _controllerContent.clear();
         _images.clear();
       });
 
@@ -79,7 +99,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       );
     }
   }
-
 
   Future<void> _pickImages() async {
     final picker = ImagePicker();
@@ -140,20 +159,67 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundImage: NetworkImage(
-                      LINK_IMAGE.publicImage(widget.avatar!),
-                    ),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundImage: NetworkImage(
+                          LINK_IMAGE.publicImage(widget.avatar!),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        username ?? "Not found",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  Text(
-                    username ?? "Not found",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  const SizedBox(
+                    width: 100,
                   ),
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+
+                      value: selectedTopicId,
+                      isExpanded: true,
+                      // Allows better control of width
+                      decoration: const InputDecoration(
+                        labelText: 'Select Topic',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: topics
+                          .map((topic) => DropdownMenuItem<String>(
+                                value: topic.id,
+                                child: Row(
+                                  children: [
+                                    // Colored Dot
+                                    Container(
+                                      width: 10,
+                                      height: 10,
+                                      margin: const EdgeInsets.only(left: 8),
+                                      decoration: BoxDecoration(
+                                        color: Color(_hexToColor(topic.color)),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(topic.name),
+                                  ],
+                                ),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedTopicId = value;
+                        });
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
@@ -164,7 +230,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                   child: Column(
                     children: [
                       TextField(
-                        controller: _controller,
+                        controller: _controllerContent,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
@@ -188,7 +254,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                                     fit: BoxFit.cover,
                                     gaplessPlayback: true,
                                   ),
-
                                 );
                               }).toList(),
                             ),
@@ -216,7 +281,8 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6B46C1),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

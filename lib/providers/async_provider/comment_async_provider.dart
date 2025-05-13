@@ -27,4 +27,23 @@ class CommentNotifier extends AsyncNotifier<List<Comment>> {
     final comments = await commentService.getCommentsAPI(postId);
     state = AsyncData(comments);
   }
+  Future<void> like(String commentId,String postId) async {
+    final commentService = ref.watch(commentServiceProvider);
+
+    // Create the comment
+    await commentService.likeComment(commentId);
+
+    // Fetch updated list of comments
+    final comments = await commentService.getCommentsAPI(postId);
+    state = AsyncData(comments);
+  }
+  Future<void> unlike(String commentId,String postId) async {
+    final commentService = ref.watch(commentServiceProvider);
+
+    // Create the comment
+    await commentService.unlikeComment(commentId);
+    // Fetch updated list of comments
+    final comments = await commentService.getCommentsAPI(postId);
+    state = AsyncData(comments);
+  }
 }

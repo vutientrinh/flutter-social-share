@@ -27,4 +27,21 @@ class CommentService {
       throw Exception('Failed to get comment by postId: $e');
     }
   }
+
+  Future<Map<String, dynamic>> likeComment(String commentId) async {
+    try {
+      final response = await _dio.post('/api/comments/$commentId/like');
+      return response.data;
+    } catch (e) {
+      throw Exception('Failed to get comment by postId: $e');
+    }
+  }
+  Future<Map<String, dynamic>> unlikeComment(String commentId) async {
+    try {
+      final response = await _dio.post('/api/comments/$commentId/unlike');
+      return response.data;
+    } catch (e) {
+      throw Exception('Failed to get comment by postId: $e');
+    }
+  }
 }

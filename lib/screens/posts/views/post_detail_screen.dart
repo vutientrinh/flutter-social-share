@@ -31,11 +31,11 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref
-          .read(commentAsyncNotifierProvider.notifier)
-          .getCommentAPI(post.id);
-    });
+    // Future.microtask(() {
+    //   ref
+    //       .read(commentAsyncNotifierProvider.notifier)
+    //       .getCommentAPI(post.id);
+    // });
   }
 
   @override

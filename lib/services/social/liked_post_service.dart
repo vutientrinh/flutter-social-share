@@ -10,6 +10,7 @@ class LikedPostService {
   Future<Response> like(String postId) async {
     try {
       final response = await _dio.post('/api/posts/$postId/like');
+      print("Like ne");
       return response;
     } catch (e) {
       throw Exception('Failed to like post: $e');

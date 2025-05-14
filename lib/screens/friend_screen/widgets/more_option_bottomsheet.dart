@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
+import 'package:flutter_social_share/providers/async_provider/follower_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../../providers/async_provider/following_async_provider.dart';
 import '../../../providers/state_provider/follow_provider.dart';
 import '../../../providers/state_provider/friend_provider.dart';
 
@@ -14,6 +15,7 @@ class MoreOptionWidget extends ConsumerWidget {
   final String followAt;
   final String option;
   final String id;
+  final String author;
 
   const MoreOptionWidget({
     super.key,
@@ -22,6 +24,7 @@ class MoreOptionWidget extends ConsumerWidget {
     required this.followAt,
     required this.option,
     required this.id,
+    required this.author,
   });
 
   @override
@@ -49,7 +52,8 @@ class MoreOptionWidget extends ConsumerWidget {
               title: "Unfollow $username",
               subtitle: "Stop seeing posts but stay friends",
               onTap: () async {
-                await ref.read(followServiceProvider).unfollow(id);
+                await ref.read(followingAsyncNotifierProvider.notifier).unfollow(id);
+
               },
             ),
           if (option == "Friend")

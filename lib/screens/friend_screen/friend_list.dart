@@ -73,6 +73,7 @@ class _FriendListState extends ConsumerState<FriendList> {
                                     followAt: "",
                                     option: "Friend",
                                     id: friend.id,
+                                    author: userId!,
                                   ),
                                 );
                               },

@@ -47,13 +47,6 @@ class _HorizontalUserListState extends ConsumerState<HorizontalUserList> {
                   itemCount: users!.length,
                   itemBuilder: (context, index) {
                     final user = users![index];
-
-                    if (user == null ||
-                        user.connectionId == null ||
-                        user.connectionUsername == null) {
-                      return const SizedBox.shrink(); // Skip null user
-                    }
-
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(

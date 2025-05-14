@@ -23,7 +23,6 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
   @override
   void initState() {
     super.initState();
-    print(getFriendRequest());
     getFriendRequest();
   }
 
@@ -124,7 +123,6 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                                 .read(friendAsyncNotifierProvider.notifier)
                                 .acceptFriend(friendRequest.requestId),
                             getFriendRequest(),
-                            print(friendRequest.requestId),
                             ref.invalidate(friendRequestAsyncProvider)
                           },
                           style: ElevatedButton.styleFrom(

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
+import 'package:flutter_social_share/providers/async_provider/follower_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/user_async_provider.dart';
 import 'package:flutter_social_share/screens/friend_screen/widgets/list_user.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 
+import '../../providers/async_provider/following_async_provider.dart';
 import '../../providers/state_provider/auth_provider.dart';
 
 class SuggestionUser extends ConsumerStatefulWidget {
@@ -39,7 +40,7 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
   }
 
   void followRequest(String userId) async {
-    await ref.read(followAsyncNotifierProvider.notifier).follow(userId);
+    await ref.read(followingAsyncNotifierProvider.notifier).follow(userId);
     fetchAllUser();
   }
 
@@ -72,16 +73,20 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
                   avatar: user.avatar,
                   trailing: Row(
                     children: [
-                      ElevatedButton(
+                      FilledButton.icon(
                         onPressed: () => sendFriendRequest(user.id),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          "Request Friend",
+                        icon: const Icon(Icons.person_add_alt_1,
+                            color: Colors.white),
+                        label: const Text(
+                          "Add Friend",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

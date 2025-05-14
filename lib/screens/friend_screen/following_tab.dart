@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/following_async_provider.dart';
 import 'package:flutter_social_share/screens/friend_screen/widgets/more_option_bottomsheet.dart';
 import 'package:flutter_social_share/model/social/follow_response.dart';
-import 'package:flutter_social_share/providers/async_provider/follow_async_provider.dart';
+import 'package:flutter_social_share/providers/async_provider/follower_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import '../../providers/state_provider/follow_provider.dart';
 import 'widgets/list_user.dart';
@@ -27,17 +28,19 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     userId = data['userId'];
-
+    setState(() {
+      userId = userId;
+    });
     if (userId != null) {
       await ref
-          .read(followAsyncNotifierProvider.notifier)
+          .read(followingAsyncNotifierProvider.notifier)
           .getFollowings(userId!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final followingState = ref.watch(followAsyncNotifierProvider);
+    final followingState = ref.watch(followingAsyncNotifierProvider);
 
     return followingState.when(
       data: (followings) {
@@ -63,6 +66,7 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
                       followAt: following.followAt,
                       option: "Following",
                       id: following.id,
+                      author: userId!,
                     ),
                   );
                   fetchUserAndLoadFollowings();

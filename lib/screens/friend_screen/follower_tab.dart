@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/screens/friend_screen/widgets/more_option_bottomsheet.dart';
 
-import '../../providers/async_provider/follow_async_provider.dart';
+import '../../providers/async_provider/follower_async_provider.dart';
+import '../../providers/async_provider/following_async_provider.dart';
 import '../../providers/state_provider/auth_provider.dart';
 import 'widgets/list_user.dart';
 
@@ -30,19 +31,19 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
 
     if (userId != null) {
       await ref
-          .read(followAsyncNotifierProvider.notifier)
+          .read(followerAsyncNotifierProvider.notifier)
           .getFollowers(userId!);
     }
   }
 
   void followRequest(String userId) async {
-    await ref.read(followAsyncNotifierProvider.notifier).follow(userId);
+    await ref.read(followingAsyncNotifierProvider.notifier).follow(userId);
     fetchUserAndLoadFollowings();
   }
 
   @override
   Widget build(BuildContext context) {
-    final followerState = ref.watch(followAsyncNotifierProvider);
+    final followerState = ref.watch(followerAsyncNotifierProvider);
 
     return followerState.when(
       data: (followers) {
@@ -87,6 +88,7 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
                           followAt: follower.followAt,
                           option: "Follower",
                           id: follower.id,
+                          author: userId!,
                         ),
                       );
                     },

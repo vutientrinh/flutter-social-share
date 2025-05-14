@@ -8,7 +8,7 @@ final userAsyncNotifierProvider =
 class UserNotifier extends AsyncNotifier<List<User>> {
   @override
   Future<List<User>> build() async {
-    return []; // Nothing is fetched automatically
+    return [];
   }
 
   Future<void> getAllUsers() async {

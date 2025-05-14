@@ -39,9 +39,6 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
   }
 
   void followRequest(String userId) async {
-    final authService = ref.read(authServiceProvider);
-    final data = await authService.getSavedData();
-    requesterId = data['userId'];
     await ref.read(followAsyncNotifierProvider.notifier).follow(userId);
     fetchAllUser();
   }

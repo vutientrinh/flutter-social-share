@@ -19,8 +19,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _isObscure = true; // State to track password visibility
   bool _isLoading = false; // Track login state
 
-  // Function to handle login
-  // Function to handle login
   Future<void> _handleLogin() async {
     final _authService =
         ref.read(authServiceProvider); // Create instance of AuthService

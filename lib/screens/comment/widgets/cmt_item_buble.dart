@@ -115,30 +115,6 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                       ],
                     ),
                   ),
-
-                  // PopupMenuButton<String>(
-                  //   onSelected: (value) async {
-                  //     if (value == 'edit') {
-                  //       // TODO: Navigate to edit screen or open edit dialog
-                  //       print("Edit selected for ${widget.cmt.id}");
-                  //     } else if (value == 'delete') {
-                  //       final commentService = ref.read(commentServiceProvider);
-                  //       await commentService.deleteComment(widget.cmt.id);
-                  //       ref.invalidate(commentAsyncNotifierProvider);
-                  //     }
-                  //   },
-                  //   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                  //     const PopupMenuItem<String>(
-                  //       value: 'edit',
-                  //       child: Text('Edit'),
-                  //     ),
-                  //     const PopupMenuItem<String>(
-                  //       value: 'delete',
-                  //       child: Text('Delete'),
-                  //     ),
-                  //   ],
-                  //   icon: const Icon(Icons.more_vert),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.only(right: 0, left: 4),
                     child: GestureDetector(

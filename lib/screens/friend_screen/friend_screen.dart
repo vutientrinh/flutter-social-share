@@ -36,10 +36,3 @@ class FriendScreen extends StatelessWidget {
     );
   }
 }
-
-// Followers Tab
-
-// Following Tab
-
-
-// Requests Tab

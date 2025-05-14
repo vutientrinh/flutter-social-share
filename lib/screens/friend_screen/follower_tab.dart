@@ -15,6 +15,7 @@ class FollowerTab extends ConsumerStatefulWidget {
 
 class _FollowerTabState extends ConsumerState<FollowerTab> {
   String? userId;
+  String? requesterId;
 
   @override
   void initState() {
@@ -32,6 +33,11 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
           .read(followAsyncNotifierProvider.notifier)
           .getFollowers(userId!);
     }
+  }
+
+  void followRequest(String userId) async {
+    await ref.read(followAsyncNotifierProvider.notifier).follow(userId);
+    fetchUserAndLoadFollowings();
   }
 
   @override
@@ -55,11 +61,20 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (!follower.hasFollowedBack)
-                    ElevatedButton(
-                      onPressed: () {
-                        // TODO: Handle follow back action here
-                      },
-                      child: const Text("Follow Back"),
+                    FilledButton.icon(
+                      onPressed: () => followRequest(follower.id),
+                      icon: const Icon(Icons.person_add_alt_1,
+                          color: Colors.white),
+                      label: const Text("Follow Back",
+                          style: TextStyle(color: Colors.white)),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
                   IconButton(
                     icon: const Icon(Icons.more_horiz),
@@ -68,7 +83,7 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
                         context: context,
                         builder: (context) => MoreOptionWidget(
                           username: follower.username,
-                          avatar: follower.avatar??"",
+                          avatar: follower.avatar ?? "",
                           followAt: follower.followAt,
                           option: "Follower",
                           id: follower.id,

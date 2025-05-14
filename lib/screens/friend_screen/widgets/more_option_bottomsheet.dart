@@ -62,6 +62,7 @@ class MoreOptionWidget extends ConsumerWidget {
                 ref.invalidate(friendAsyncNotifierProvider);
               },
             ),
+          const SizedBox(height: 10),
         ],
       ),
     );

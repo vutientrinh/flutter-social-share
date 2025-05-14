@@ -18,16 +18,17 @@ class _FriendListState extends ConsumerState<FriendList> {
   @override
   void initState() {
     super.initState();
-    fetchUserAndLoadFollowings();
+    fetchFriend();
   }
 
-  Future<void> fetchUserAndLoadFollowings() async {
+  Future<void> fetchFriend() async {
     final authService = ref.read(authServiceProvider);
-    final data = await authService.getSavedData();
-    userId = data['userId'];
-
+    final user = await authService.getSavedData(); // Or your own logic
+    setState(() {
+      userId = user["userId"];
+    });
     if (userId != null) {
-      await ref.read(friendAsyncNotifierProvider.notifier).getFriend(userId!);
+      ref.read(friendAsyncNotifierProvider.notifier).getFriend(userId!);
     }
   }
 
@@ -46,10 +47,9 @@ class _FriendListState extends ConsumerState<FriendList> {
             return const Center(child: Text('No users found.'));
           }
           return Padding(
-              padding: const EdgeInsets.all(8), // 👈 Add padding here
+              padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
-                  
                   Expanded(
                       child: ListView.builder(
                     itemCount: friends.length,

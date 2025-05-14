@@ -19,11 +19,7 @@ class CommentNotifier extends AsyncNotifier<List<Comment>> {
 
   Future<void> createComment(String postId, String content) async {
     final commentService = ref.watch(commentServiceProvider);
-
-    // Create the comment
     await commentService.createComment(postId, content);
-
-    // Fetch updated list of comments
     final comments = await commentService.getCommentsAPI(postId);
     state = AsyncData(comments);
   }
@@ -31,21 +27,14 @@ class CommentNotifier extends AsyncNotifier<List<Comment>> {
   Future<void> updateComment(
       String commentId, String content, String postId) async {
     final commentService = ref.watch(commentServiceProvider);
-
-    // Create the comment
     await commentService.updateComment(commentId, content);
-
-    // Fetch updated list of comments
     final comments = await commentService.getCommentsAPI(postId);
     state = AsyncData(comments);
   }
 
   Future<void> deleteComment(String commentId, String postId) async {
     final commentService = ref.watch(commentServiceProvider);
-
-    // Create the comment
     await commentService.deleteComment(commentId);
-    // Fetch updated list of comments
     final comments = await commentService.getCommentsAPI(postId);
     state = AsyncData(comments);
   }

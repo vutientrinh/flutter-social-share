@@ -14,7 +14,6 @@ class NotificationNotifier extends AsyncNotifier<List<AppNotification>> {
   Future<List<AppNotification>> build() async {
     final notificationService = ref.watch(notificationServiceProvider);
     final response = await notificationService.getAllNotification();
-    print("notification in provider: $response");
     return response;
   }
 
@@ -28,7 +27,6 @@ class NotificationNotifier extends AsyncNotifier<List<AppNotification>> {
   Future<void> readNotification(String id) async {
     final notificationService = ref.watch(notificationServiceProvider);
     await notificationService.readNotification(id);
-    print("Done read");
     final updatedPosts = await notificationService.getAllNotification();
     state = AsyncData(updatedPosts);
   }

@@ -9,8 +9,8 @@ class PostService {
   PostService(this._dio);
 
   Future<List<Post>> getAllPosts({
-    int page = 1,
-    int size = 10,
+    int? page = 1,
+    int? size = 10,
     int? type,
     String? topicName,
     String? authorId,

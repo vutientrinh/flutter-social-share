@@ -18,6 +18,7 @@ class ListPostsScreen extends ConsumerStatefulWidget {
 class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
   User? author;
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -34,13 +35,16 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
       ref.read(postAsyncNotifierProvider.notifier).fetchNextPage();
     }
   }
+
   Future<void> fetchUser() async {
     final userId = await ref.read(authServiceProvider).getSavedData();
-    final user = await ref.read(userServiceProvider).getProfileById(userId['userId']);
+    final user =
+        await ref.read(userServiceProvider).getProfileById(userId['userId']);
     setState(() {
       author = user;
     });
   }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -83,17 +87,16 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
             child: author == null
                 ? const SizedBox.shrink()
                 : CreatePost(
-              avatar: author!.avatar,
-            ),
+                    avatar: author!.avatar,
+                  ),
           ),
           postsAsync.when(
-            loading: () => const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
-            ),
-            error: (error, _) => SliverFillRemaining(
-              child: Center(child: Text('Error: $error')),
-            ),
-
+              loading: () => const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+              error: (error, _) => SliverFillRemaining(
+                    child: Center(child: Text('Error: $error')),
+                  ),
               data: (posts) {
                 if (posts.isEmpty) {
                   return const SliverFillRemaining(
@@ -109,16 +112,14 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                        (context, index) {
+                    (context, index) {
                       final post = posts[index];
                       return PostItem(post: post, authorId: author!.id);
                     },
                     childCount: posts.length,
                   ),
                 );
-              }
-
-          ),
+              }),
           const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
         ],
       ),

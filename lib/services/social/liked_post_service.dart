@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_social_share/model/social/follow_response.dart';
-import 'package:flutter_social_share/model/user.dart';
 
 class LikedPostService {
   final Dio _dio;
@@ -10,7 +8,6 @@ class LikedPostService {
   Future<Response> like(String postId) async {
     try {
       final response = await _dio.post('/api/posts/$postId/like');
-      print("Like ne");
       return response;
     } catch (e) {
       throw Exception('Failed to like post: $e');

@@ -23,7 +23,6 @@ class _ActionPostState extends ConsumerState<ActionPost> {
   int likeCount = 0;
   bool isLiked = false;
 
-  // int get commentCount => post.commentCounts ?? 0;
 
   @override
   void initState() {

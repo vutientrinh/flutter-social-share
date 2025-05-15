@@ -60,7 +60,6 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
     setState(() {
       author = commentAuthor;
       userId = user['userId'];
-      print(userId);
     });
   }
 
@@ -85,107 +84,109 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
             ),
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8))),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.cmt.author.username,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          widget.cmt.content!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(color: Colors.grey[600]),
-                        )
-                      ],
-                    ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.cmt.author.username,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        widget.cmt.content!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: Colors.grey[600]),
+                      )
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 0, left: 4),
-                    child: GestureDetector(
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 0, left: 4),
+                      child: GestureDetector(
                         onTap: () async {
                           final commentService =
                               ref.read(commentServiceProvider);
-                          await commentService.deleteComment(widget.cmt.id);
-                          ref.invalidate(commentAsyncNotifierProvider);
+                          setState(() {
+                            isLiked = !isLiked;
+                            likeCount = isLiked ? likeCount + 1 : likeCount - 1;
+                            if (isLiked) {
+                              commentService.likeComment(widget.cmt.id);
+                            } else {
+                              commentService.unlikeComment(widget.cmt.id);
+                            }
+                          });
                         },
-                        child: Container(
-                          color: Colors.transparent,
-                          padding: const EdgeInsets.all(6),
-                          child: const Icon(
-                            CupertinoIcons.delete,
-                            color: Colors.black,
-                          ),
-                        )),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 0, left: 4),
-                    child: GestureDetector(
-                      onTap: () async {
-                        final commentService = ref.read(commentServiceProvider);
-                        setState(() {
-                          isLiked = !isLiked;
-                          likeCount = isLiked ? likeCount + 1 : likeCount - 1;
-                          if (isLiked) {
-                            commentService.likeComment(widget.cmt.id);
-                          } else {
-                            commentService.unlikeComment(widget.cmt.id);
-                          }
-                        });
-                      },
-                      child: isLiked
-                          ? Container(
-                              color: Colors.transparent,
-                              padding: const EdgeInsets.all(6),
-                              child: const Icon(
-                                CupertinoIcons.heart_solid,
-                                color: Colors.red,
+                        child: isLiked
+                            ? Container(
+                                color: Colors.transparent,
+                                padding: const EdgeInsets.all(6),
+                                child: const Icon(
+                                  CupertinoIcons.heart_solid,
+                                  color: Colors.red,
+                                ),
+                              )
+                            : Container(
+                                color: Colors.transparent,
+                                padding: const EdgeInsets.all(6),
+                                child: const Icon(CupertinoIcons.heart),
                               ),
-                            )
-                          : Container(
-                              color: Colors.transparent,
-                              padding: const EdgeInsets.all(6),
-                              child: const Icon(CupertinoIcons.heart),
-                            ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    "$likeCount likes",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      "$likeCount likes",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Colors.grey),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 0, left: 4),
+                      child: GestureDetector(
+                          onTap: () async {
+                            final commentService =
+                                ref.read(commentServiceProvider);
+                            await commentService.deleteComment(widget.cmt.id);
+                            ref.invalidate(commentAsyncNotifierProvider);
+                          },
+                          child: Container(
+                            color: Colors.transparent,
+                            padding: const EdgeInsets.all(6),
+                            child: const Icon(
+                              CupertinoIcons.delete,
+                              color: Colors.black,
+                              size: 18,
+                            ),
+                          )),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),

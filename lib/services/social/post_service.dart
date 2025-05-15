@@ -131,4 +131,21 @@ class PostService {
       throw Exception('Failed to unSave post : $e');
     }
   }
+
+  Future<List<String>> getPhotos(String userId) async {
+    try {
+      final response = await _dio.get('/api/posts/$userId/images');
+
+      if (response.statusCode == 200 &&
+          response.data is Map<String, dynamic> &&
+          response.data['data'] is List) {
+        return List<String>.from(response.data['data']);
+      } else {
+        throw Exception('Unexpected response format');
+      }
+    } catch (e) {
+      throw Exception('Failed to get photos: $e');
+    }
+  }
+
 }

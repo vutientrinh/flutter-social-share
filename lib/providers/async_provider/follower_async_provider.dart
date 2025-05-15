@@ -27,7 +27,7 @@ class FollowerNotifier extends AsyncNotifier<List<FollowUserResponse>> {
     await followService.follow(userId);
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
-    final followings =  await getFollowers(data['userId']);
-    state = AsyncData(followings);
+    final followers =  await getFollowers(data['userId']);
+    state = AsyncData(followers);
   }
 }

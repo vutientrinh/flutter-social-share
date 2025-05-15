@@ -35,6 +35,7 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
   bool isLiked = false;
   User? author;
   String? userId;
+
   @override
   void initState() {
     super.initState();
@@ -54,7 +55,8 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
   void getAuthor(String userId) async {
     final user = await ref.read(authServiceProvider).getSavedData();
 
-    final commentAuthor = await ref.read(userServiceProvider).getProfileById(userId);
+    final commentAuthor =
+        await ref.read(userServiceProvider).getProfileById(userId);
     setState(() {
       author = commentAuthor;
       userId = user['userId'];
@@ -99,7 +101,7 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.cmt.author!.username,
+                          widget.cmt.author.username,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.titleMedium,
@@ -118,22 +120,21 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                   Padding(
                     padding: const EdgeInsets.only(right: 0, left: 4),
                     child: GestureDetector(
-                      onTap: () async {
-                        final commentService = ref.read(commentServiceProvider);
-                        await commentService.deleteComment(widget.cmt.id);
-                        ref.invalidate(commentAsyncNotifierProvider);
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                        padding: const EdgeInsets.all(6),
-                        child: const Icon(
-                          CupertinoIcons.delete,
-                          color: Colors.black,
-                        ),
-                      )
-                    ),
+                        onTap: () async {
+                          final commentService =
+                              ref.read(commentServiceProvider);
+                          await commentService.deleteComment(widget.cmt.id);
+                          ref.invalidate(commentAsyncNotifierProvider);
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(
+                            CupertinoIcons.delete,
+                            color: Colors.black,
+                          ),
+                        )),
                   ),
-
                 ],
               ),
               const SizedBox(

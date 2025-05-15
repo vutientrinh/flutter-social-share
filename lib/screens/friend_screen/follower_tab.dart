@@ -21,10 +21,10 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
   @override
   void initState() {
     super.initState();
-    fetchUserAndLoadFollowings();
+    fetchUserAndLoadFollower();
   }
 
-  Future<void> fetchUserAndLoadFollowings() async {
+  Future<void> fetchUserAndLoadFollower() async {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     userId = data['userId'];
@@ -37,8 +37,8 @@ class _FollowerTabState extends ConsumerState<FollowerTab> {
   }
 
   void followRequest(String userId) async {
-    await ref.read(followingAsyncNotifierProvider.notifier).follow(userId);
-    fetchUserAndLoadFollowings();
+    await ref.read(followerAsyncNotifierProvider.notifier).follow(userId);
+    fetchUserAndLoadFollower();
   }
 
   @override

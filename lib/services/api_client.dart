@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

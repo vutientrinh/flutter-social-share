@@ -9,10 +9,10 @@ final postAsyncNotifierProvider =
 
 class PostNotifier extends AsyncNotifier<List<Post>> {
   int _currentPage = 1;
-  final int _pageSize = 10;
+  final int _pageSize = 3;
   bool _isFetchingMore = false;
   bool _hasNextPage = true;
-
+  String? _authorId;
   @override
   Future<List<Post>> build() async {
     return await _fetchPosts(reset: true);
@@ -39,12 +39,29 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     return fetchedPosts;
   }
 
-  Future<void> fetchNextPage([String? authorId]) async {
+  Future<void> loadInitialPosts(String authorId) async {
+    _authorId = authorId;
+    _currentPage = 1;
+    _hasNextPage = true;
+
+    try {
+      final posts = await _fetchPosts(reset: true,authorId: _authorId);
+      state = AsyncData(posts);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
+  }
+
+
+  Future<void> fetchNextPage({String? authorId}) async {
     if (_isFetchingMore || !_hasNextPage) return;
 
     _isFetchingMore = true;
-    _currentPage++;
+    if (authorId != null) {
+      _authorId = authorId; // save the authorId for future use
+    }
 
+    _currentPage++;
     try {
       final postService = ref.watch(postServiceProvider);
       final newPosts = await postService.getAllPosts(

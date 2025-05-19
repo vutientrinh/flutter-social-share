@@ -9,7 +9,7 @@ final postAsyncNotifierProvider =
 
 class PostNotifier extends AsyncNotifier<List<Post>> {
   int _currentPage = 1;
-  final int _pageSize = 3;
+  final int _pageSize = 10;
   bool _isFetchingMore = false;
   bool _hasNextPage = true;
   String? _authorId;
@@ -29,7 +29,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     final fetchedPosts = await postService.getAllPosts(
       page: _currentPage,
       size: _pageSize,
-      authorId: authorId,
+      // authorId: authorId,
     );
 
     if (fetchedPosts.length < _pageSize) {
@@ -39,7 +39,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     return fetchedPosts;
   }
 
-  Future<void> loadInitialPosts(String authorId) async {
+  Future<void> loadInitialPosts(String? authorId) async {
     _authorId = authorId;
     _currentPage = 1;
     _hasNextPage = true;

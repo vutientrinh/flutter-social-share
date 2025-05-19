@@ -34,7 +34,6 @@ class ChatService {
 
   Future<List<dynamic>> getUnSeenMessageCount() async {
     try {
-
       final response = await _dio.get('/api/conversation/unseenMessages');
       return response.data;
     } catch (e) {
@@ -43,11 +42,30 @@ class ChatService {
     }
   }
 
-
   Future<List<Conversation>> setReadMessages(
       List<Conversation> chatMessages) async {
     try {
       final response = await _dio.put('/api/conversation/setReadMessages');
+      return response.data;
+    } catch (e) {
+      print('Error get Read message: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Conversation>> getMessageBefore(
+      {String? messageId,
+      String? convId,
+      int? page = 1,
+      int? size = 100}) async {
+    try {
+      final queryParams = {
+        'page': page,
+        'size': size,
+        if (messageId != null) 'messageId': messageId,
+        if (convId != null && convId.isNotEmpty) 'convId': convId,
+      };
+      final response = await _dio.get('/api/conversation/getMessagesBefore', data: queryParams);
       return response.data;
     } catch (e) {
       print('Error get Read message: $e');

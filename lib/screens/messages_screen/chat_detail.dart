@@ -42,8 +42,9 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
       },
     );
     _webSocketService.connect();
-    _fetchUnSeenMessages();
-    // _fetchReadMessage();
+    _fetchReadMessage(widget.friend.connectionId, widget.friend.convId);
+
+    // _fetchUnSeenMessages();
   }
 
   @override
@@ -67,6 +68,19 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
       final data = await ref
           .read(chatServiceProvider)
           .getUnSeenMessage(widget.friend.connectionId);
+      setState(() {
+        messages = data;
+      });
+      await ref.read(chatServiceProvider).setReadMessages(messages);
+    } catch (e) {
+      print("Error fetching unseen messages: $e");
+    }
+  }
+  Future<void> _fetchReadMessage(String messageId, String convId) async {
+    try {
+      final data = await ref
+          .read(chatServiceProvider)
+          .getMessageBefore(messageId: messageId,convId: convId);
       setState(() {
         messages = data;
       });

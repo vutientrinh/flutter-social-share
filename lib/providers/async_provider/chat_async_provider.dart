@@ -24,5 +24,10 @@ class ChatNotifier extends AsyncNotifier<List<Conversation>> {
     final unSeenMessages = await chatService.getUnSeenMessage(fromUserId);
     state = AsyncData(unSeenMessages);
   }
+  Future<void> getMessageBefore({String? messageId, String? convId}) async{
+    final chatService = ref.watch(chatServiceProvider);
+    final messageBefore = await chatService.getMessageBefore(messageId: messageId, convId: convId);
+    state = AsyncData(messageBefore);
+  }
 
 }

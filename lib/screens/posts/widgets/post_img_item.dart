@@ -5,7 +5,6 @@ class PostImgItem extends StatelessWidget {
   final String url;
   final double width;
   final double height;
-  final int flex;
   final VoidCallback onTap;
 
   const PostImgItem({
@@ -13,19 +12,21 @@ class PostImgItem extends StatelessWidget {
     required this.url,
     required this.width,
     required this.height,
-    this.flex = 1,
     required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: flex,
+    return SizedBox(
+      width: width,
+      height: height,
       child: GestureDetector(
         onTap: onTap,
         child: CachedNetworkImage(
           imageUrl: url,
-          fit: BoxFit.cover,
+          fit: BoxFit.fitHeight,
+          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       ),
     );

@@ -25,6 +25,7 @@ class PostItem extends ConsumerStatefulWidget {
 class _PostItemState extends ConsumerState<PostItem> {
   @override
   Widget build(BuildContext context) {
+    final post = widget.post;
     return Container(
       padding: const EdgeInsets.only(top: 8),
       margin: const EdgeInsets.only(top: 12),
@@ -46,16 +47,16 @@ class _PostItemState extends ConsumerState<PostItem> {
                   padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                   child: ItemRow(
                       avatarUrl:
-                          LINK_IMAGE.publicImage(widget.post.author.avatar),
-                      title: widget.post.author.username,
-                      subtitle: widget.post.createdAt,
-                      rightWidget: widget.authorId == widget.post.author.id
+                          LINK_IMAGE.publicImage(post.author.avatar),
+                      title: post.author.username,
+                      subtitle: post.createdAt,
+                      rightWidget: widget.authorId == post.author.id
                           ? PopupMenuButton<String>(
                               onSelected: (String value) {
                                 switch (value) {
                                   case 'update':
                                     print(
-                                        'Update tapped for post: ${widget.post.id}');
+                                        'Update tapped for post: ${post.id}');
                                     break;
                                   case 'delete':
                                     _showDeleteDialog(context);
@@ -75,7 +76,7 @@ class _PostItemState extends ConsumerState<PostItem> {
                               ],
                               icon: const Icon(Icons.more_horiz),
                             )
-                          : (widget.post.hasSaved == false
+                          : (post.hasSaved == false
                               ? PopupMenuButton<String>(
                                   onSelected: (String value) async {
                                     switch (value) {
@@ -84,7 +85,7 @@ class _PostItemState extends ConsumerState<PostItem> {
                                             .read(postAsyncNotifierProvider
                                                 .notifier)
                                             .savePost(widget.authorId,
-                                                widget.post.id);
+                                                post.id);
                                         break;
                                     }
                                   },
@@ -102,12 +103,12 @@ class _PostItemState extends ConsumerState<PostItem> {
                                     switch (value) {
                                       case 'Unsave':
                                         print(
-                                            'Unsave tapped for post: ${widget.post.id}');
+                                            'Unsave tapped for post: ${post.id}');
                                         await ref
                                             .read(postAsyncNotifierProvider
                                                 .notifier)
                                             .unSavePost(widget.authorId,
-                                                widget.post.id);
+                                                post.id);
                                         break;
                                     }
                                   },
@@ -121,8 +122,8 @@ class _PostItemState extends ConsumerState<PostItem> {
                                   icon: const Icon(Icons.more_horiz),
                                 ))),
                 ),
-                GridImage(photos: widget.post.images),
-                ActionPost(post: widget.post),
+                GridImage(photos: post.images),
+                ActionPost(post: post),
               ],
             ),
           ),

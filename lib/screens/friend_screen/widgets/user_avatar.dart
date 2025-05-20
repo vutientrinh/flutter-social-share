@@ -26,15 +26,10 @@ class _UserAvatarState extends State<UserAvatar> {
         const SizedBox(width: 12),
         // Name & Subtitle
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.userName,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-            ],
+          child: Text(
+            widget.userName,
+            style:
+            const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
         ),
       ],

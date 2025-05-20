@@ -41,7 +41,15 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
     super.initState();
     likeCount = widget.cmt.likedCount ?? 0;
     isLiked = widget.cmt.hasLiked;
+    loadUser();
     getAuthor(widget.cmt.authorId);
+  }
+
+  void loadUser() async {
+    final user = await ref.read(authServiceProvider).getSavedData();
+    setState(() {
+      userId = user['userId'];
+    });
   }
 
   @override
@@ -53,18 +61,38 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
   }
 
   void getAuthor(String userId) async {
-    final user = await ref.read(authServiceProvider).getSavedData();
-
     final commentAuthor =
         await ref.read(userServiceProvider).getProfileById(userId);
     setState(() {
       author = commentAuthor;
-      userId = user['userId'];
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (author == null) {
+      // Show a placeholder while author is loading
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const CircleAvatar(radius: 16, backgroundColor: Colors.grey),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Container(
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
@@ -164,9 +192,10 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                     const SizedBox(
                       width: 4,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 0, left: 4),
-                      child: GestureDetector(
+                    if (author!.id == userId)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 0, left: 4),
+                        child: GestureDetector(
                           onTap: () async {
                             final commentService =
                                 ref.read(commentServiceProvider);
@@ -181,8 +210,9 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                               color: Colors.black,
                               size: 18,
                             ),
-                          )),
-                    ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ],

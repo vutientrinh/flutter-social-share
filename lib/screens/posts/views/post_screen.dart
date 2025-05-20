@@ -34,6 +34,7 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
         _scrollController.position.maxScrollExtent - 200) {
       ref.read(postAsyncNotifierProvider.notifier).fetchNextPage();
     }
+    ref.invalidate(postAsyncNotifierProvider);
   }
 
   Future<void> fetchUser() async {

@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/follower_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/user_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/follow_provider.dart';
 import 'package:flutter_social_share/screens/friend_screen/widgets/list_user.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 
+import '../../model/social/follow_response.dart';
 import '../../providers/async_provider/following_async_provider.dart';
 import '../../providers/state_provider/auth_provider.dart';
 
@@ -18,6 +20,7 @@ class SuggestionUser extends ConsumerStatefulWidget {
 
 class _SuggestionUserState extends ConsumerState<SuggestionUser> {
   String? requesterId;
+  List<FollowUserResponse>? listFollowings;
 
   @override
   void initState() {
@@ -27,6 +30,17 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
 
   Future<void> fetchAllUser() async {
     await ref.read(userAsyncNotifierProvider.notifier).getSuggestedUsers();
+    getFollowingList();
+  }
+
+  void getFollowingList() async {
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
+    final response =
+        await ref.read(followServiceProvider).getFollowings(data['userId']);
+    setState(() {
+      listFollowings = response;
+    });
   }
 
   void sendFriendRequest(String userId) async {
@@ -66,46 +80,86 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
               separatorBuilder: (_, __) => const Divider(height: 10),
               itemBuilder: (context, index) {
                 final user = users[index];
-
-                return ListUser(
-                  userId: user.id,
-                  username: user.username,
-                  avatar: user.avatar,
-                  trailing: Row(
+                final isFollowing =
+                    listFollowings?.any((f) => f.id == user.id) ?? false;
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FilledButton.icon(
-                        onPressed: () => sendFriendRequest(user.id),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        icon: const Icon(Icons.person_add_alt_1,
-                            color: Colors.white),
-                        label: const Text(
-                          "Add Friend",
-                          style: TextStyle(color: Colors.white),
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: NetworkImage(
+                          LINK_IMAGE.publicImage(user.avatar) ??
+                              "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
+
+                      const SizedBox(width: 12),
+
+                      // Phần còn lại: Column gồm username + button
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Username
+                            Text(
+                              user.username,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+
+                            // Row buttons
+                            Row(
+                              children: [
+                                FilledButton.icon(
+                                  onPressed: () => sendFriendRequest(user.id),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  icon: const Icon(Icons.person_add_alt_1,
+                                      color: Colors.white),
+                                  label: const Text(
+                                    "Add Friend",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                isFollowing
+                                    ? const Text(
+                                        "Following",
+                                        style: TextStyle(color: Colors.grey),
+                                      )
+                                    : ElevatedButton(
+                                        onPressed: () => followRequest(user.id),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blueAccent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Follow",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
-                      ElevatedButton(
-                        onPressed: () => followRequest(user.id),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          "Follow",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
                     ],
                   ),
                 );

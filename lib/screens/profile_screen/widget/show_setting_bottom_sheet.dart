@@ -53,8 +53,8 @@ class ShowSettingBottomSheet extends ConsumerWidget {
             title: const Text('Logout'),
             onTap: () async {
               Navigator.of(context).pop(); // close bottom sheet
-              await ref.read(authServiceProvider).logout();
               await ref.read(authTokenProvider.notifier).clearToken();
+              await ref.read(authServiceProvider).logout();
               if (context.mounted) {
                 Navigator.pushReplacement(
                   context,

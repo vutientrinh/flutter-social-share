@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/social/friend_connection.dart';
+import 'package:flutter_social_share/providers/async_provider/chat_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/chat_provider.dart';
 import '../../model/social/conversation.dart';
@@ -43,7 +44,6 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
     );
     _webSocketService.connect();
     _fetchReadMessage(widget.friend.connectionId, widget.friend.convId);
-
     // _fetchUnSeenMessages();
   }
 
@@ -76,15 +76,15 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
       print("Error fetching unseen messages: $e");
     }
   }
-  Future<void> _fetchReadMessage(String messageId, String convId) async {
+    Future<void> _fetchReadMessage(String messageId, String convId) async {
+    print("Get ne ba");
     try {
       final data = await ref
           .read(chatServiceProvider)
-          .getMessageBefore(messageId: messageId,convId: convId);
+          .getMessageBefore(convId: convId);
       setState(() {
         messages = data;
       });
-      // await ref.read(chatServiceProvider).setReadMessages(messages);
     } catch (e) {
       print("Error fetching unseen messages: $e");
     }

@@ -13,12 +13,13 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
   bool _isFetchingMore = false;
   bool _hasNextPage = true;
   String? _authorId;
+
   @override
   Future<List<Post>> build() async {
     return await _fetchPosts(reset: true);
   }
 
-  Future<List<Post>> _fetchPosts({bool reset = false, String? authorId}) async {
+  Future<List<Post>> _fetchPosts({bool reset = false}) async {
     final postService = ref.watch(postServiceProvider);
 
     if (reset) {
@@ -26,10 +27,9 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
       _hasNextPage = true;
     }
 
-    final fetchedPosts = await postService.getAllPosts(
+    final fetchedPosts = await postService.getRecPost(
       page: _currentPage,
       size: _pageSize,
-      // authorId: authorId,
     );
 
     if (fetchedPosts.length < _pageSize) {
@@ -39,35 +39,32 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     return fetchedPosts;
   }
 
-  Future<void> loadInitialPosts(String? authorId) async {
+  Future<List<Post>> loadInitialPosts(String? authorId) async {
+    final postService = ref.watch(postServiceProvider);
+
     _authorId = authorId;
     _currentPage = 1;
     _hasNextPage = true;
 
-    try {
-      final posts = await _fetchPosts(reset: true,authorId: _authorId);
-      state = AsyncData(posts);
-    } catch (e, st) {
-      state = AsyncError(e, st);
-    }
+    final posts = await postService.getAllPosts(
+      page: _currentPage,
+      size: _pageSize,
+      authorId: authorId
+    );
+    return posts;
   }
 
-
-  Future<void> fetchNextPage({String? authorId}) async {
+  Future<void> fetchNextPage() async {
     if (_isFetchingMore || !_hasNextPage) return;
 
     _isFetchingMore = true;
-    if (authorId != null) {
-      _authorId = authorId; // save the authorId for future use
-    }
 
     _currentPage++;
     try {
       final postService = ref.watch(postServiceProvider);
-      final newPosts = await postService.getAllPosts(
+      final newPosts = await postService.getRecPost(
         page: _currentPage,
         size: _pageSize,
-        authorId: authorId
       );
 
       if (newPosts.length < _pageSize) {
@@ -126,5 +123,4 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     final updatedPosts = await _fetchPosts(reset: true);
     state = AsyncData(updatedPosts);
   }
-
 }

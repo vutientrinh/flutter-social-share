@@ -15,20 +15,20 @@ class CommentInput extends ConsumerStatefulWidget {
 
 class _CommentInputState extends ConsumerState<CommentInput> {
   final TextEditingController _commentController = TextEditingController();
-  void _sendComment() async {
-    final content = _commentController.text.trim();
-    if (content.isNotEmpty) {
-      _commentController.clear();
-      FocusScope.of(context).unfocus(); // hide keyboard
-      final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
-      await commentNotifier.createComment(widget.postId, content);
-      // await commentNotifier.getCommentAPI(widget.postId);
-      ref.invalidate(postAsyncNotifierProvider);
+    void _sendComment() async {
+      final content = _commentController.text.trim();
+      if (content.isNotEmpty) {
+        _commentController.clear();
+        FocusScope.of(context).unfocus(); // hide keyboard
+        final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
+        await commentNotifier.createComment(widget.postId, content);
+        await commentNotifier.getCommentAPI(widget.postId);
+        ref.watch(postAsyncNotifierProvider);
+      }
+      else{
+        FocusScope.of(context).unfocus(); // hide keyboard
+      }
     }
-    else{
-      FocusScope.of(context).unfocus(); // hide keyboard
-    }
-  }
   @override
   Widget build(BuildContext context) {
 

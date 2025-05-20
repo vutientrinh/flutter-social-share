@@ -15,7 +15,6 @@ class ChatNotifier extends AsyncNotifier<List<Conversation>> {
   Future<List<dynamic>> getUnseenMessageCount() async{
     final chatService = ref.watch(chatServiceProvider);
     final count = await chatService.getUnSeenMessageCount();
-    print(count);
     return count;
   }
 

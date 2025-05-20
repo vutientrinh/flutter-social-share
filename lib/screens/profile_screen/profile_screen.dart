@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/social/post.dart';
 import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/post_provider.dart';
@@ -26,6 +27,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   User? user;
   final ScrollController _scrollController = ScrollController();
   List<String>? images;
+  List<Post>? posts;
 
   Future<void> loadData() async {
     final response =
@@ -38,9 +40,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     });
 
     if (user != null) {
-      await ref
+      final listPosts = await ref
           .read(postAsyncNotifierProvider.notifier)
           .loadInitialPosts(user!.id);
+      setState(() {
+        posts = listPosts;
+      });
       ref.read(orderAsyncNotifierProvider.notifier).getAllOrders(user!.id);
     }
   }
@@ -53,12 +58,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent -400) {
-      ref
-          .read(postAsyncNotifierProvider.notifier)
-          .fetchNextPage(authorId: user!.id);
-    }
+    // if (_scrollController.position.pixels >=
+    //     _scrollController.position.maxScrollExtent - 400) {
+    //   ref
+    //       .read(postAsyncNotifierProvider.notifier)
+    //       .fetchNextPage(authorId: user!.id);
+    // }
   }
 
   @override
@@ -119,24 +124,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                         physics:
                             const NeverScrollableScrollPhysics(), // optional
                         children: [
-                          // Posts tab
-                          postAsyncValue.when(
-                            data: (posts) => ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: posts.length,
-                              itemBuilder: (context, index) {
-                                return PostItem(
-                                  post: posts[index],
-                                  authorId: user!.id,
-                                );
-                              },
-                            ),
-                            loading: () => const Center(
-                                child: CircularProgressIndicator()),
-                            error: (err, stack) => const Center(
-                                child: Text('Error loading posts')),
+                          posts == null
+                              ? const Center(child: CircularProgressIndicator())
+                              : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: posts!.length,
+                            itemBuilder: (context, index) {
+                              return PostItem(
+                                post: posts![index],
+                                authorId: user!.id,
+                              );
+                            },
                           ),
+
+
                           // Images tab
                           images == null
                               ? const Center(child: CircularProgressIndicator())

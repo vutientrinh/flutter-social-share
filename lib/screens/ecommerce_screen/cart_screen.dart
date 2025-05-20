@@ -118,7 +118,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
     });
     final selectedOption = shippingOptions.firstWhere((e) => e['selected']);
-    print("before calculate");
     calculateShippingFee(selectedOption, cartItems, defaultAddress);
   }
 
@@ -134,15 +133,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       'to_district_id': defaultAddress.districtId,
       'weight': calculateWeightItems(items).toInt(),
     };
-    print("request ne ");
     try {
       final response = await ref.read(shippingProvider).getShippingFee(request);
       final data = response.data['data']; // ✅ parse correctly
       final fee = data['total'] ?? 0;
-      print("shipping feeeee ne : $fee");
       setState(() {
         shippingFee = fee.toDouble();
-        print("SHipping fee ne : $shippingFee");
         summary['shipping'] = shippingFee;
       });
     } catch (e) {

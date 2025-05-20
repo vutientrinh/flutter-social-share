@@ -105,6 +105,36 @@ class ProductService {
       return [];
     }
   }
+  Future<List<Product>> getRecProduct({
+    int? page = 1,
+    int? size = 10,
+
+  }) async {
+    try {
+      // ✅ Build query parameters
+      final queryParams = {
+        'page': page,
+        'size': size,
+      };
+
+      final response =
+      await _dio.get('/api/rec/rec-products', queryParameters: queryParams);
+
+      // ✅ Extract the nested list
+      if (response.statusCode == 200) {
+        // Access 'data' field and cast it as a List of user objects
+        List<Product> products = (response.data['data']
+        as List) // Ensure 'data' is treated as a List
+            .map((productJson) => Product.fromJson(productJson))
+            .toList();
+        return products;
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch posts: $e');
+    }
+  }
 
   Future<Product> getProductById(String id) async {
     try {

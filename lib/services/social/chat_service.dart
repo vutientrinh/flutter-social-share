@@ -14,6 +14,34 @@ class ChatService {
         .toList();
   }
 
+  Future<List<Conversation>> getMessageBefore({
+    String? messageId,
+    String? convId,
+    int page = 1,
+    int size = 100,
+  }) async {
+    try {
+      final queryParams = {
+        'page': page,
+        'size': size,
+        if (messageId != null && messageId.isNotEmpty) 'messageId': messageId,
+        if (convId != null && convId.isNotEmpty) 'convId': convId,
+      };
+
+      final response = await _dio.get(
+        '/api/conversation/getMessagesBefore',
+        queryParameters: queryParams,
+      );
+
+      final List<dynamic> dataList = response.data['data'] ?? [];
+
+      return dataList.map((json) => Conversation.fromJson(json)).toList();
+    } catch (e) {
+      print('Error get Read message: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Conversation>> getUnSeenMessage(String fromUserId) async {
     try {
       String url = '/api/conversation/unseenMessages';
@@ -53,23 +81,4 @@ class ChatService {
     }
   }
 
-  Future<List<Conversation>> getMessageBefore(
-      {String? messageId,
-      String? convId,
-      int? page = 1,
-      int? size = 100}) async {
-    try {
-      final queryParams = {
-        'page': page,
-        'size': size,
-        if (messageId != null) 'messageId': messageId,
-        if (convId != null && convId.isNotEmpty) 'convId': convId,
-      };
-      final response = await _dio.get('/api/conversation/getMessagesBefore', data: queryParams);
-      return response.data;
-    } catch (e) {
-      print('Error get Read message: $e');
-      rethrow;
-    }
-  }
 }

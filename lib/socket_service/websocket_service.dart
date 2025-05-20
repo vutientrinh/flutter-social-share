@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_social_share/model/social/conversation.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 import '../services/auth_service.dart';
@@ -21,7 +22,7 @@ class WebSocketService {
 
     _stompClient = StompClient(
       config: StompConfig(
-        url: 'ws://172.21.192.1:8080/ws',
+        url: dotenv.env['SOCKET_URL'] ?? 'ws://34.41.219.13.nip.io:8280/ws',
         beforeConnect: () async {
           print("Connecting...");
         },
@@ -29,6 +30,15 @@ class WebSocketService {
           'Authorization': 'Bearer $token',
         },
         onConnect: _onConnect,
+        onDisconnect: (frame) {
+          print("🔁 Reconnecting in 3 seconds...");
+          Future.delayed(Duration(seconds: 3), () {
+            if (!_stompClient.connected) {
+              print("🔄 Reconnecting now...");
+              _stompClient.activate();
+            }
+          });
+        },
         onWebSocketError: (dynamic error) => print("WebSocket Error: $error"),
       ),
     );
@@ -111,17 +121,23 @@ class WebSocketService {
 
   void sendMessage(String message, String convId, String connectionId,
       String connectionUsername) {
-    final body = json.encode({
-      "messageType": "CHAT",
-      "content": message,
-      "receiverId": connectionId,
-      "receiverUsername": connectionUsername,
-    });
-    print(body);
-    _stompClient.send(
-      destination: "/app/chat/sendMessage/$convId",
-      body: body,
-    );
+    if (_stompClient.connected) {
+      final body = json.encode({
+        "messageType": "CHAT",
+        "content": message,
+        "receiverId": connectionId,
+        "receiverUsername": connectionUsername,
+      });
+      print("Sending message: $body");
+
+      _stompClient.send(
+        destination: "/app/chat/sendMessage/$convId",
+        body: body,
+      );
+    } else {
+      print("❌ Cannot send message: WebSocket not connected");
+      // Optional: Reconnect logic or UI notification
+    }
   }
 
   void disconnect() {

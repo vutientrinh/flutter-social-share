@@ -10,7 +10,7 @@ import '../providers/auth_token_provider.dart';
 
 final apiClientProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080/',
+    baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://34.41.219.13.nip.io:8280/',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
     headers: {
@@ -73,7 +73,7 @@ final shippingApiClientProvider = Provider<Dio>((ref) {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    final tokenGHN = dotenv.env['GHN_TOKEN'] ?? '';
+    final tokenGHN = dotenv.env['GHN_TOKEN']??'fa84809c-0f92-11f0-95d0-0a92b8726859';
     final locale = prefs.getString('defaultLocale') ?? 'en-US';
 
     if (token != null && token.isNotEmpty) {

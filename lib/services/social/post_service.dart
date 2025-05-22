@@ -73,7 +73,11 @@ class PostService {
         'topicId': postRequest.topicId,
         'images': imageFiles, // important: must match backend param name
       });
-
+      final newPost = await _dio.post('/api/posts',
+          data: formData,
+          options: Options(
+            contentType: 'multipart/form-data',
+          ));
       return await _dio.post('/api/posts',
           data: formData,
           options: Options(

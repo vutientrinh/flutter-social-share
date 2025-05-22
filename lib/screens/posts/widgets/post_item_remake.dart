@@ -55,8 +55,7 @@ class _PostItemState extends ConsumerState<PostItem> {
                               onSelected: (String value) {
                                 switch (value) {
                                   case 'update':
-                                    print(
-                                        'Update tapped for post: ${post.id}');
+                                    print(post.id);
                                     break;
                                   case 'delete':
                                     _showDeleteDialog(context);
@@ -102,8 +101,6 @@ class _PostItemState extends ConsumerState<PostItem> {
                                   onSelected: (String value) async {
                                     switch (value) {
                                       case 'Unsave':
-                                        print(
-                                            'Unsave tapped for post: ${post.id}');
                                         await ref
                                             .read(postAsyncNotifierProvider
                                                 .notifier)

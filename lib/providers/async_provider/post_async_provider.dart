@@ -82,12 +82,8 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
 
   Future<void> addPost(PostRequest newPost) async {
     final postService = ref.watch(postServiceProvider);
-    await postService.createPost(newPost);
-
-    // Reset and fetch from first page again
-    state = const AsyncLoading();
-    final updatedPosts = await _fetchPosts(reset: true);
-    state = AsyncData(updatedPosts);
+    final post = await postService.createPost(newPost);
+    state = AsyncData([post, ...?state.value]);
   }
 
   Future<void> deletePost(String id) async {

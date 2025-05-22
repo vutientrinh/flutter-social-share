@@ -10,13 +10,15 @@ import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../model/social/post.dart';
 import '../../../model/social/post_request.dart';
 import '../../../providers/async_provider/post_async_provider.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   final String? avatar;
+  final Post? post;
 
-  const CreatePostScreen({super.key, required this.avatar});
+  const CreatePostScreen({super.key, this.avatar, this.post});
 
   @override
   ConsumerState<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -24,8 +26,7 @@ class CreatePostScreen extends ConsumerStatefulWidget {
 
 class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   final TextEditingController _controllerContent = TextEditingController();
-  final TextEditingController _controllerTopic = TextEditingController();
-  final List<File> _images = [];
+  List<File> _images = [];
   String? username;
   String? userId;
   List<Topic> topics = [];
@@ -41,6 +42,10 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     final authService = ref.read(authServiceProvider);
     final data = await authService.getSavedData();
     final listAllTopics = await ref.read(topicServiceProvider).getAllTopics();
+    if(widget.post!= null){
+      _controllerContent.text = widget.post!.content;
+      _images = List.from(widget.post!.images);
+    }
     setState(() {
       username = data['username'];
       userId = data['userId'];
@@ -100,6 +105,10 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     }
   }
 
+
+  Future<void> _updatePost() async {
+
+  }
   Future<void> _pickImages() async {
     final picker = ImagePicker();
 
@@ -132,22 +141,34 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Post', style: TextStyle(color: Colors.black)),
+        title: Text(widget.post == null ? 'Create Post' : 'Edit Post'),
         backgroundColor: Colors.white,
         elevation: 1,
         iconTheme: const IconThemeData(color: Colors.black),
         actions: [
-          TextButton(
-            onPressed: _onPost,
-            child: const Text(
-              'Post',
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          (widget.post == null)
+              ? TextButton(
+                  onPressed: _onPost,
+                  child: const Text(
+                    'Post',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              : TextButton(
+                  onPressed: _updatePost,
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
         ],
       ),
       backgroundColor: Colors.white,
@@ -182,7 +203,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                   ),
                   Expanded(
                     child: DropdownButtonFormField<String>(
-
                       value: selectedTopicId,
                       isExpanded: true,
                       // Allows better control of width
@@ -245,14 +265,51 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                             scrollDirection: Axis.vertical,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: _images.map((img) {
+                              children: _images.asMap().entries.map((entry) {
+                                final index = entry.key; // Get the index
+                                final img = entry.value; //
                                 return Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Image.file(
-                                    img,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    gaplessPlayback: true,
+                                  child: Stack(
+                                    alignment: Alignment.topRight,
+                                    children: [
+                                      Image.file(
+                                        img,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        gaplessPlayback: true,
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _images.removeAt(index);
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.3),
+                                                  blurRadius: 4,
+                                                  offset: const Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: const Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 );
                               }).toList(),
@@ -280,7 +337,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B46C1),
+                    backgroundColor: Colors.blueAccent,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 12),
                     shape: RoundedRectangleBorder(

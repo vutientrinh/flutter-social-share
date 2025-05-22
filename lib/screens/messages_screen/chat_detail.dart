@@ -6,6 +6,8 @@ import 'package:flutter_social_share/providers/state_provider/auth_provider.dart
 import 'package:flutter_social_share/providers/state_provider/chat_provider.dart';
 import '../../model/social/conversation.dart';
 import '../../socket_service/websocket_service.dart';
+import '../../utils/uidata.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ChatDetail extends ConsumerStatefulWidget {
   final FriendConnection friend;
@@ -76,12 +78,12 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
       print("Error fetching unseen messages: $e");
     }
   }
-    Future<void> _fetchReadMessage(String messageId, String convId) async {
+
+  Future<void> _fetchReadMessage(String messageId, String convId) async {
     print("Get ne ba");
     try {
-      final data = await ref
-          .read(chatServiceProvider)
-          .getMessageBefore(convId: convId);
+      final data =
+          await ref.read(chatServiceProvider).getMessageBefore(convId: convId);
       setState(() {
         messages = data;
       });
@@ -148,7 +150,37 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.friend.connectionUsername)),
+      appBar: AppBar(
+          title: Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundImage:
+                NetworkImage(LINK_IMAGE.publicImage(widget.friend.user.avatar)),
+          ),
+          if (widget.friend.isOnline == true)
+            Positioned(
+              bottom: 4,
+              right: 4,
+              child: Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+          const SizedBox(
+            width: 20,
+          ),
+          Text(widget.friend.connectionUsername)
+        ],
+      )),
       body: Column(
         children: [
           Expanded(
@@ -159,49 +191,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
                 final message = messages[index];
                 final bool isMe =
                     message.senderId != widget.friend.connectionId;
-
-                return Align(
-                  alignment:
-                      isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: isMe
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
-                    children: [
-                      // Message bubble
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 10),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isMe ? Colors.blue[300] : Colors.grey[300],
-                          borderRadius: BorderRadius.only(
-                            topLeft: const Radius.circular(12),
-                            topRight: const Radius.circular(12),
-                            bottomLeft:
-                                isMe ? const Radius.circular(12) : Radius.zero,
-                            bottomRight:
-                                isMe ? Radius.zero : const Radius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          message.content ?? "Not found",
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.black87),
-                        ),
-                      ),
-                      // Delivery status icon outside the message bubble
-                      if (isMe)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              right: 12, top: 2, bottom: 5),
-                          child: _buildDeliveryIcon(
-                              message.messageDeliveryStatusEnum),
-                        ),
-                      // Text(message.)
-                    ],
-                  ),
-                );
+                return _buildMessageItem(message, isMe);
               },
             ),
           ),
@@ -231,6 +221,67 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageItem(Conversation message, bool isMe) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isMe) ...[
+            CircleAvatar(
+              radius: 22,
+              backgroundImage: NetworkImage(
+                  LINK_IMAGE.publicImage(widget.friend.user.avatar)),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Column(
+              crossAxisAlignment:
+                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isMe ? Colors.blue[100] : Colors.grey[300],
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(12),
+                      topRight: const Radius.circular(12),
+                      bottomLeft: Radius.circular(isMe ? 12 : 0),
+                      bottomRight: Radius.circular(isMe ? 0 : 12),
+                    ),
+                  ),
+                  child: Text(
+                    message.content ?? "Not found",
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
+                ),
+                isMe
+                    ? Padding(
+                        padding:
+                            const EdgeInsets.only(right: 12, top: 2, bottom: 5),
+                        child: _buildDeliveryIcon(
+                            message.messageDeliveryStatusEnum),
+                      )
+                    : Column(
+                        children: [
+                          Text(
+                            timeago.format(DateTime.parse(message.time ?? "")),style: const TextStyle(fontSize: 12),
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          )
+                        ],
+                      )
+              ]),
+
+          // Text(message.) // spacing to align with avatar
         ],
       ),
     );

@@ -36,7 +36,6 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       ref
           .read(productAsyncNotifierProvider.notifier)
           .getProductById(widget.productId);
-      ;
       ref
           .read(reviewProductAsyncNotifierProvider.notifier)
           .getReviewProduct(widget.productId);
@@ -236,7 +235,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                       color: Colors.grey.withOpacity(0.3),
                                       spreadRadius: 2,
                                       blurRadius: 5,
-                                      offset: Offset(0, 3), // Shadow position
+                                      offset: const Offset(0, 3), // Shadow position
                                     ),
                                   ],
                                 ),

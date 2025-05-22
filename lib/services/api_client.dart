@@ -10,7 +10,7 @@ import '../providers/auth_token_provider.dart';
 
 final apiClientProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://34.41.219.13.nip.io:8280/',
+    baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://34.126.161.244.nip.io:8280/',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
     headers: {

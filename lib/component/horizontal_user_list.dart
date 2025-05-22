@@ -66,16 +66,7 @@ class _HorizontalUserListState extends ConsumerState<HorizontalUserList> {
                               children: [
                                 CircleAvatar(
                                   radius: 30,
-                                  backgroundColor: Colors.blue,
-                                  child: Text(
-                                    user.connectionUsername.isNotEmpty
-                                        ? user.connectionUsername[0].toUpperCase()
-                                        : '',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                    ),
-                                  ),
+                                  backgroundImage:NetworkImage(LINK_IMAGE.publicImage(user.user.avatar)),
                                 ),
                                 if (user.isOnline == true)
                                   Positioned(

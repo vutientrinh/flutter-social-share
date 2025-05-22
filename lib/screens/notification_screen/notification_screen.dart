@@ -21,6 +21,24 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
       ref.invalidate(notificationAsyncNotifierProvider);
     });
   }
+  Icon _getIcon(String type) {
+    switch (type) {
+      case 'LIKE_POST':
+        return const Icon(Icons.favorite, color: Colors.red);
+      case 'COMMENT_POST':
+        return const Icon(Icons.comment, color: Colors.blueGrey);
+      case 'COMMENT_LIKED':
+        return const Icon(Icons.thumb_up, color: Colors.indigo);
+      case 'FOLLOW_USER':
+        return const Icon(Icons.person_add_alt_1, color: Colors.purple);
+      case 'FRIEND_REQUEST':
+        return const Icon(Icons.person_add, color: Colors.green);
+      case 'FRIEND_REQUEST_ACCEPTED':
+        return const Icon(Icons.person, color: Colors.blue);
+      default:
+        return const Icon(Icons.notifications, color: Colors.grey);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +48,38 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
       appBar: AppBar(
         title: const Text("Notifications"),
         backgroundColor: Colors.white,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await ref
+                      .read(notificationServiceProvider)
+                      .readAllNotification();
+                  ref.invalidate(notificationAsyncNotifierProvider);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  // Make the button background transparent
+                  elevation: 0,
+                  // Remove shadow
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 6, horizontal: 12), // Minimal padding
+                ),
+                child: const Text(
+                  "Read All",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: notificationState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -41,61 +91,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
 
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await ref
-                          .read(notificationServiceProvider)
-                          .readAllNotification();
-                      ref.invalidate(notificationAsyncNotifierProvider);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      // Make the button background transparent
-                      elevation: 0,
-                      // Remove shadow
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 12), // Minimal padding
-                    ),
-                    child: const Text(
-                      "Read All",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: notifications.length,
                   itemBuilder: (context, index) {
                     final AppNotification notification = notifications[index];
 
-                    // Icon based on messageType
-                    Icon notificationIcon;
-                    if (notification.messageType == 'FRIEND_REQUEST_ACCEPTED') {
-                      notificationIcon = const Icon(
-                        Icons.person_add_alt_1,
-                        color: Colors.blue,
-                      );
-                    } else if (notification.messageType == 'FRIEND_REQUEST') {
-                      notificationIcon = const Icon(
-                        Icons.person_add,
-                        color: Colors.green,
-                      );
-                    } else {
-                      notificationIcon = const Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      );
-                    }
-
+                    final icon = _getIcon(notification.messageType);
                     // Whether the notification is read or unread
                     bool isUnread = notification.isRead == false;
 
@@ -108,7 +110,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                       color: isUnread ? Colors.blue.shade50 : Colors.white,
                       elevation: 4,
                       child: ListTile(
-                        leading: notificationIcon,
+                        leading: icon,
                         title: Text(
                           notification.content,
                           style: TextStyle(

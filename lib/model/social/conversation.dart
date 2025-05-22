@@ -9,6 +9,8 @@ class Conversation {
   final String? userConnection;
   final String? messageDeliveryStatusEnum;
   final String? messageDeliveryStatusUpdates;
+  final String? time;
+  final String? lastModified;
 
   Conversation({
     required this.id,
@@ -21,6 +23,8 @@ class Conversation {
     this.userConnection,
     this.messageDeliveryStatusEnum,
     this.messageDeliveryStatusUpdates,
+    this.time,
+    this.lastModified,
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,8 @@ class Conversation {
       userConnection: json['userConnection'],
       messageDeliveryStatusEnum: json['messageDeliveryStatusEnum'],
       messageDeliveryStatusUpdates: json['messageDeliveryStatusUpdates'],
+      time: json['time'],
+      lastModified: json['lastModified']
     );
   }
 }

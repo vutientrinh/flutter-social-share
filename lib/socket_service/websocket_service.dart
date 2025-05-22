@@ -22,7 +22,7 @@ class WebSocketService {
 
     _stompClient = StompClient(
       config: StompConfig(
-        url: dotenv.env['SOCKET_URL'] ?? 'ws://34.41.219.13.nip.io:8280/ws',
+        url: dotenv.env['SOCKET_URL'] ?? 'ws://34.126.161.244.nip.io:8280/ws',
         beforeConnect: () async {
           print("Connecting...");
         },

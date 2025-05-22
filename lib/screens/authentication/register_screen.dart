@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
@@ -47,7 +48,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
       setState(() => _isLoading = false);
 
-      if (response != null && response.statusCode == 200) {
+      if (response != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Registration successful!")),
         );
@@ -67,7 +68,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             duration: const Duration(seconds: 1),
             margin: const EdgeInsets.all(8),
             borderRadius: BorderRadius.circular(8),
-            animationDuration: const Duration(milliseconds: 300),
+            animationDuration: const Duration(milliseconds: 200),
           ).show(context);
           Navigator.pushReplacement(
             context,
@@ -77,13 +78,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       } else {
         await Flushbar(
           title: 'Error',
-          message: 'Create new account fail!',
-          backgroundColor: Colors.green,
+          message: "The Email or Usename is existed, try again!!",
+          backgroundColor: Colors.red,
           flushbarPosition: FlushbarPosition.TOP,
           duration: const Duration(seconds: 1),
           margin: const EdgeInsets.all(8),
           borderRadius: BorderRadius.circular(8),
-          animationDuration: const Duration(milliseconds: 300),
+          animationDuration: const Duration(milliseconds: 200),
         ).show(context);
       }
     }
@@ -158,22 +159,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ),
                       ),
                 const SizedBox(height: 16),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.login, color: Colors.white),
-                  label: const Text(
-                    'Create Account with Google',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: _registerWithGoogle,
-                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()),
+                      );
+                    },
+                    child: const Text(
+                      'Back to login',
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ))
               ],
             ),
           ),

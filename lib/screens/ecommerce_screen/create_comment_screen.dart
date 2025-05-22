@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
+import 'package:flutter_social_share/providers/async_provider/product_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
 import '../../providers/async_provider/review_async_provider.dart';
 
@@ -20,15 +22,12 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
 
   void _submitComment() async {
     if (_formKey.currentState!.validate()) {
-      ref.read(productReviewProvider).comment(
+      ref.read(reviewProductAsyncNotifierProvider.notifier).createComment(
         productId: widget.productId,
         author: _authorController.text.trim(),
         comment: _commentController.text.trim(),
         rating: _rating,
       );
-      ref.read(reviewProductAsyncNotifierProvider.notifier)
-          .getReviewProduct(widget.productId);
-      // Clear the fields after submission
       _authorController.clear();
       _commentController.clear();
       setState(() {
@@ -37,7 +36,6 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
       Navigator.pop(context, true);
     }
   }
-
   Widget _buildStarRating() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -85,7 +83,7 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.blueAccent),
+                      borderSide: const BorderSide(color: Colors.blueAccent),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -101,13 +99,13 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
                   controller: _commentController,
                   decoration: InputDecoration(
                     labelText: 'Your Comment',
-                    labelStyle: TextStyle(color: Colors.blueAccent),
+                    labelStyle: const TextStyle(color: Colors.blueAccent),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.blueAccent),
+                      borderSide: const BorderSide(color: Colors.blueAccent),
                     ),
                     filled: true,
                     fillColor: Colors.white,

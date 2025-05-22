@@ -54,7 +54,7 @@ class PostService {
     }
   }
 
-  Future<Response> createPost(PostRequest postRequest) async {
+  Future<Post> createPost(PostRequest postRequest) async {
     try {
       // Prepare list of MultipartFile
       List<MultipartFile> imageFiles = [];
@@ -78,11 +78,13 @@ class PostService {
           options: Options(
             contentType: 'multipart/form-data',
           ));
-      return await _dio.post('/api/posts',
-          data: formData,
-          options: Options(
-            contentType: 'multipart/form-data',
-          ));
+      final response = await _dio.post(
+        '/api/posts',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+
+      return Post.fromJson(response.data);
     } catch (e) {
       throw Exception('Failed to create post: $e');
     }

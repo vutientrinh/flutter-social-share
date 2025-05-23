@@ -10,8 +10,10 @@ import '../../../model/social/post.dart';
 
 class ActionPost extends ConsumerStatefulWidget {
   final Post post;
+  final VoidCallback? onCommentButtonPressed;
 
-  const ActionPost({Key? key, required this.post}) : super(key: key);
+  const ActionPost({Key? key, required this.post, this.onCommentButtonPressed})
+      : super(key: key);
 
   @override
   _ActionPostState createState() => _ActionPostState();
@@ -22,7 +24,6 @@ class _ActionPostState extends ConsumerState<ActionPost> {
 
   int likeCount = 0;
   bool isLiked = false;
-
 
   @override
   void initState() {
@@ -65,12 +66,12 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                   padding: const EdgeInsets.only(right: 0, left: 4),
                   child: GestureDetector(
                     onTap: () async {
-                      final likedService =   ref.read(likedPostServiceProvider);
+                      final likedService = ref.read(likedPostServiceProvider);
                       setState(() {
                         isLiked = !isLiked;
                         likeCount = isLiked ? likeCount + 1 : likeCount - 1;
                         if (isLiked) {
-                           likedService.like(post.id);
+                          likedService.like(post.id);
                         } else {
                           likedService.unlike(post.id);
                         }
@@ -93,7 +94,15 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                           ),
                   ),
                 ),
-                const IconPostComment(),
+                // Container(
+                //   color: Colors.transparent,
+                //   padding: const EdgeInsets.all(8),
+                //   child: const Icon(CupertinoIcons.conversation_bubble),
+                // ),
+                IconButton(
+                  icon: const Icon(CupertinoIcons.conversation_bubble),
+                  onPressed: widget.onCommentButtonPressed,
+                ),
               ],
             ),
           ],

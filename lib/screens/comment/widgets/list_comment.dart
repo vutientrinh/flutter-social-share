@@ -44,9 +44,6 @@ class _ListCommentState extends ConsumerState<ListComment> {
             final comment = comments[index];
             return CommentItemBubble(
               cmt: comment,
-              onReact: (type, isUnReact) {
-                // add reaction logic
-              },
             );
           },
         );

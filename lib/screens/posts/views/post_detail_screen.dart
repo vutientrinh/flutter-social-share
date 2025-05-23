@@ -28,14 +28,16 @@ class PostDetailScreen extends ConsumerStatefulWidget {
 
 class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   Post get post => widget.post;
+  bool _isCommentInputVisible = false;
   @override
   void initState() {
     super.initState();
-    // Future.microtask(() {
-    //   ref
-    //       .read(commentAsyncNotifierProvider.notifier)
-    //       .getCommentAPI(post.id);
-    // });
+  }
+
+  void _toggleCommentInput() {
+    setState(() {
+      _isCommentInputVisible = !_isCommentInputVisible;
+    });
   }
 
   @override
@@ -123,7 +125,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                       ),
                     ),
                     GridImage(photos: post.images, padding: 10),
-                    ActionPost(post: post),
+                    ActionPost(post: post,onCommentButtonPressed: _toggleCommentInput,),
                     const Divider(thickness: 1),
                     ListComment(
                       postId: post.id,
@@ -136,9 +138,9 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           ),
         ],
       ),
-      bottomSheet: CommentInput(
-        postId: post.id,
-      ),
+      bottomSheet: _isCommentInputVisible
+          ? CommentInput(postId: widget.post.id)
+          : null,
     );
   }
   void _showDeleteDialog(BuildContext context) {

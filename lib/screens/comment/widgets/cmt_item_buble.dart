@@ -17,12 +17,10 @@ import '../../../providers/async_provider/post_async_provider.dart';
 
 class CommentItemBubble extends ConsumerStatefulWidget {
   final Comment cmt;
-  final Function(int, bool) onReact;
 
   const CommentItemBubble({
     Key? key,
     required this.cmt,
-    required this.onReact,
   }) : super(key: key);
 
   @override

@@ -4,10 +4,13 @@ import 'package:flutter_social_share/providers/async_provider/comment_async_prov
 
 import '../../../providers/async_provider/post_async_provider.dart';
 
-
 class CommentInput extends ConsumerStatefulWidget {
   final String postId;
-  const CommentInput({super.key, required this.postId});
+  final String? content;
+  final String? commentId;
+
+  const CommentInput(
+      {super.key, required this.postId, this.content, this.commentId});
 
   @override
   ConsumerState<CommentInput> createState() => _CommentInputState();
@@ -15,29 +18,55 @@ class CommentInput extends ConsumerStatefulWidget {
 
 class _CommentInputState extends ConsumerState<CommentInput> {
   final TextEditingController _commentController = TextEditingController();
-    void _sendComment() async {
-      final content = _commentController.text.trim();
-      if (content.isNotEmpty) {
-        _commentController.clear();
-        FocusScope.of(context).unfocus(); // hide keyboard
-        final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
-        await commentNotifier.createComment(widget.postId, content);
-        await commentNotifier.getCommentAPI(widget.postId);
-        ref.watch(postAsyncNotifierProvider);
+  final FocusNode _focusNode = FocusNode();  @override
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        FocusScope.of(context).requestFocus(_focusNode);
       }
-      else{
-        FocusScope.of(context).unfocus(); // hide keyboard
-      }
+    });
+
+    if (widget.content != null) {
+      _commentController.text = widget.content!;
     }
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    _focusNode.dispose(); // Don't forget to dispose this
+    super.dispose();
+  }
+
+  void _sendComment() async {
+    final content = _commentController.text.trim();
+    if (content.isNotEmpty) {
+      _commentController.clear();
+      FocusScope.of(context).unfocus(); // hide keyboard
+      final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
+      await commentNotifier.createComment(widget.postId, content);
+      await commentNotifier.getCommentAPI(widget.postId);
+      ref.watch(postAsyncNotifierProvider);
+      if (mounted) {
+        FocusScope.of(context).unfocus(); // Hide keyboard
+      }
+    } else {
+      FocusScope.of(context).unfocus(); // hide keyboard
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, -2)),
+          BoxShadow(
+              color: Colors.black12, blurRadius: 4, offset: Offset(0, -2)),
         ],
       ),
       child: Row(
@@ -45,6 +74,7 @@ class _CommentInputState extends ConsumerState<CommentInput> {
           Expanded(
             child: TextField(
               controller: _commentController,
+              focusNode: _focusNode,
               decoration: InputDecoration(
                 hintText: "Write a comment...",
                 border: OutlineInputBorder(
@@ -62,6 +92,5 @@ class _CommentInputState extends ConsumerState<CommentInput> {
         ],
       ),
     );
-
   }
 }

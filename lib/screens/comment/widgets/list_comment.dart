@@ -5,8 +5,9 @@ import 'package:flutter_social_share/screens/comment/widgets/cmt_item_buble.dart
 
 class ListComment extends ConsumerStatefulWidget {
   final String postId;
+  final VoidCallback? onCommentButtonPressed;
 
-  const ListComment({Key? key, required this.postId}) : super(key: key);
+  const ListComment({Key? key, required this.postId, this.onCommentButtonPressed}) : super(key: key);
 
   @override
   _ListCommentState createState() => _ListCommentState();
@@ -43,6 +44,7 @@ class _ListCommentState extends ConsumerState<ListComment> {
           itemBuilder: (context, index) {
             final comment = comments[index];
             return CommentItemBubble(
+              onCommentButtonPressed: widget.onCommentButtonPressed,
               cmt: comment,
             );
           },

@@ -45,15 +45,35 @@ class _ActionPostState extends ConsumerState<ActionPost> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (post.content.trim().isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(left: 12, top: 8),
-            child: Text(
-              post.content,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+              child: Text(
+                post.topic.name,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.blueGrey[700],
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: Text(
+                post.content,
+                style: const TextStyle(
+                  fontSize: 16,
+                  height: 1.4,
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,11 +114,6 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                           ),
                   ),
                 ),
-                // Container(
-                //   color: Colors.transparent,
-                //   padding: const EdgeInsets.all(8),
-                //   child: const Icon(CupertinoIcons.conversation_bubble),
-                // ),
                 IconButton(
                   icon: const Icon(CupertinoIcons.conversation_bubble),
                   onPressed: widget.onCommentButtonPressed,

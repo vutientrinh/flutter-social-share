@@ -29,16 +29,17 @@ class PostDetailScreen extends ConsumerStatefulWidget {
 class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   Post get post => widget.post;
   bool _isCommentInputVisible = false;
+
   @override
   void initState() {
     super.initState();
   }
 
-  void _toggleCommentInput() {
-    setState(() {
-      _isCommentInputVisible = !_isCommentInputVisible;
-    });
-  }
+    void _toggleCommentInput() {
+      setState(() {
+        _isCommentInputVisible = !_isCommentInputVisible;
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -79,56 +80,69 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                         subtitle: post.createdAt,
                         rightWidget: widget.authorId == widget.post.author.id
                             ? PopupMenuButton<String>(
-                          onSelected: (String value) {
-                            switch (value) {
-                              case 'update':
-                                print(
-                                    'Update tapped for post: ${widget.post.id}');
-                                break;
-                              case 'delete':
-                                _showDeleteDialog(context);
-                                break;
-                            }
-                          },
-                          itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                            const PopupMenuItem<String>(
-                              value: 'update',
-                              child: Text('Update'),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'delete',
-                              child: Text('Delete'),
-                            ),
-                          ],
-                          icon: const Icon(Icons.more_horiz),
-                        )
+                                onSelected: (String value) {
+                                  switch (value) {
+                                    case 'update':
+                                      print(
+                                          'Update tapped for post: ${widget.post.id}');
+                                      break;
+                                    case 'delete':
+                                      _showDeleteDialog(context);
+                                      break;
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<String>>[
+                                  const PopupMenuItem<String>(
+                                    value: 'update',
+                                    child: Text('Update'),
+                                  ),
+                                  const PopupMenuItem<String>(
+                                    value: 'delete',
+                                    child: Text('Delete'),
+                                  ),
+                                ],
+                                icon: const Icon(Icons.more_horiz),
+                              )
                             : PopupMenuButton<String>(
-                          onSelected: (String value) async {
-                            switch (value) {
-                              case 'save':
-                                await ref
-                                    .read(postAsyncNotifierProvider.notifier)
-                                    .savePost(widget.authorId,widget.post.id);
-                                break;
-                            }
-                          },
-                          itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                            const PopupMenuItem<String>(
-                              value: 'save',
-                              child: Text('Save'),
-                            ),
-                          ],
-                          icon: const Icon(Icons.more_horiz),
-                        ),
+                                onSelected: (String value) async {
+                                  switch (value) {
+                                    case 'save':
+                                      await ref
+                                          .read(postAsyncNotifierProvider
+                                              .notifier)
+                                          .savePost(
+                                              widget.authorId, widget.post.id);
+                                      break;
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<String>>[
+                                  const PopupMenuItem<String>(
+                                    value: 'save',
+                                    child: Text('Save'),
+                                  ),
+                                ],
+                                icon: const Icon(Icons.more_horiz),
+                              ),
                       ),
                     ),
-                    GridImage(photos: post.images, padding: 10),
-                    ActionPost(post: post,onCommentButtonPressed: _toggleCommentInput,),
-                    const Divider(thickness: 1),
-                    ListComment(
-                      postId: post.id,
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          GridImage(photos: post.images, padding: 10),
+                          ActionPost(
+                            post: post,
+                            onCommentButtonPressed: _toggleCommentInput,
+                          ),
+                          const Divider(thickness: 1),
+                          ListComment(
+                            postId: post.id,
+                            onCommentButtonPressed: _toggleCommentInput,
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 80),
                   ],
@@ -138,11 +152,11 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           ),
         ],
       ),
-      bottomSheet: _isCommentInputVisible
-          ? CommentInput(postId: widget.post.id)
-          : null,
+      bottomSheet:
+          _isCommentInputVisible ? CommentInput(postId: widget.post.id) : null,
     );
   }
+
   void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,

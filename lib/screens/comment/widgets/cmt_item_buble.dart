@@ -1,3 +1,5 @@
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +19,11 @@ import '../../../providers/async_provider/post_async_provider.dart';
 
 class CommentItemBubble extends ConsumerStatefulWidget {
   final Comment cmt;
+  final VoidCallback? onCommentButtonPressed;
 
-  const CommentItemBubble({
-    Key? key,
-    required this.cmt,
-  }) : super(key: key);
+  const CommentItemBubble(
+      {Key? key, required this.cmt, this.onCommentButtonPressed})
+      : super(key: key);
 
   @override
   ConsumerState<CommentItemBubble> createState() => _CommentItemBubbleState();
@@ -60,7 +62,7 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
 
   void getAuthor(String userId) async {
     final commentAuthor =
-        await ref.read(userServiceProvider).getProfileById(userId);
+    await ref.read(userServiceProvider).getProfileById(userId);
     setState(() {
       author = commentAuthor;
     });
@@ -114,30 +116,39 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                  decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: const BorderRadius.all(Radius.circular(8))),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.cmt.author.username,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        widget.cmt.content!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Colors.grey[600]),
-                      )
-                    ],
+                GestureDetector(
+                  onLongPress: () =>
+                  {if (author!.id == userId) _showCommentActions(context)},
+                  child: Container(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius:
+                        const BorderRadius.all(Radius.circular(8))),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.cmt.author.username,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .titleMedium,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          widget.cmt.content!,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: Colors.grey[600]),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -150,7 +161,7 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                       child: GestureDetector(
                         onTap: () async {
                           final commentService =
-                              ref.read(commentServiceProvider);
+                          ref.read(commentServiceProvider);
                           setState(() {
                             isLiked = !isLiked;
                             likeCount = isLiked ? likeCount + 1 : likeCount - 1;
@@ -163,18 +174,18 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                         },
                         child: isLiked
                             ? Container(
-                                color: Colors.transparent,
-                                padding: const EdgeInsets.all(6),
-                                child: const Icon(
-                                  CupertinoIcons.heart_solid,
-                                  color: Colors.red,
-                                ),
-                              )
+                          color: Colors.transparent,
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(
+                            CupertinoIcons.heart_solid,
+                            color: Colors.red,
+                          ),
+                        )
                             : Container(
-                                color: Colors.transparent,
-                                padding: const EdgeInsets.all(6),
-                                child: const Icon(CupertinoIcons.heart),
-                              ),
+                          color: Colors.transparent,
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(CupertinoIcons.heart),
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -182,7 +193,8 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                     ),
                     Text(
                       "$likeCount likes",
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .bodyMedium!
                           .copyWith(color: Colors.grey),
@@ -190,27 +202,6 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                     const SizedBox(
                       width: 4,
                     ),
-                    if (author!.id == userId)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 0, left: 4),
-                        child: GestureDetector(
-                          onTap: () async {
-                            final commentService =
-                                ref.read(commentServiceProvider);
-                            await commentService.deleteComment(widget.cmt.id);
-                            ref.invalidate(commentAsyncNotifierProvider);
-                          },
-                          child: Container(
-                            color: Colors.transparent,
-                            padding: const EdgeInsets.all(6),
-                            child: const Icon(
-                              CupertinoIcons.delete,
-                              color: Colors.black,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ],
@@ -218,6 +209,43 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showCommentActions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit'),
+                onTap: () {
+                  Navigator.of(context).pop(); // Close the bottom sheet
+                  widget.onCommentButtonPressed; // Then trigger the comment input
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title:
+                const Text('Delete', style: TextStyle(color: Colors.red)),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  await ref
+                      .read(commentAsyncNotifierProvider.notifier)
+                      .deleteComment(widget.cmt.id, widget.cmt.postId);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

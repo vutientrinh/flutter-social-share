@@ -35,11 +35,16 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     super.initState();
   }
 
-    void _toggleCommentInput() {
-      setState(() {
-        _isCommentInputVisible = !_isCommentInputVisible;
-      });
-    }
+  String? _replyContent;
+  String? _replyCommentId;
+
+  void _toggleCommentInput({String? content, String? commentId}) {
+    setState(() {
+      _isCommentInputVisible = !_isCommentInputVisible;
+      _replyContent = content;
+      _replyCommentId = commentId;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +158,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         ],
       ),
       bottomSheet:
-          _isCommentInputVisible ? CommentInput(postId: widget.post.id) : null,
+          _isCommentInputVisible ? CommentInput(postId: widget.post.id,content: _replyContent,commentId: _replyCommentId,) : null,
     );
   }
 

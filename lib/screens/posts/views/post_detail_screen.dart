@@ -38,11 +38,18 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   String? _replyContent;
   String? _replyCommentId;
 
-  void _toggleCommentInput({String? content, String? commentId}) {
+  void _toggleEditInput(String content, String commentId) {
     setState(() {
-      _isCommentInputVisible = !_isCommentInputVisible;
+      _isCommentInputVisible = true;
       _replyContent = content;
       _replyCommentId = commentId;
+    });
+  }
+
+  void _toggleCommentInput() {
+    setState(() {
+      _isCommentInputVisible = true;
+
     });
   }
 
@@ -144,7 +151,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                           const Divider(thickness: 1),
                           ListComment(
                             postId: post.id,
-                            onCommentButtonPressed: _toggleCommentInput,
+                            onCommentButtonPressed: _toggleEditInput,
                           ),
                         ],
                       ),

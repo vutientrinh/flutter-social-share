@@ -12,7 +12,7 @@ import '../../../model/social/comment.dart';
 
 class CommentItemBubble extends ConsumerStatefulWidget {
   final Comment cmt;
-  final VoidCallback? onCommentButtonPressed;
+  final void Function(String content, String commentId)? onCommentButtonPressed;
 
   const CommentItemBubble(
       {Key? key, required this.cmt, this.onCommentButtonPressed})
@@ -186,7 +186,14 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                       width: 4,
                     ),
                     GestureDetector(
-                      onTap: widget.onCommentButtonPressed,
+                      onTap: () {
+                        final content = widget.cmt.content;
+                        final id = widget.cmt.id;
+
+                        if (content != null && id != null) {
+                          widget.onCommentButtonPressed?.call(content, id);
+                        }
+                      },
                       child: Container(
                         color: Colors.transparent,
                         padding: const EdgeInsets.all(6),

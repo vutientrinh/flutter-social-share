@@ -5,7 +5,7 @@ import 'package:flutter_social_share/screens/comment/widgets/cmt_item_buble.dart
 
 class ListComment extends ConsumerStatefulWidget {
   final String postId;
-  final VoidCallback? onCommentButtonPressed;
+  final void Function(String content, String commentId)? onCommentButtonPressed;
 
   const ListComment({Key? key, required this.postId, this.onCommentButtonPressed}) : super(key: key);
 

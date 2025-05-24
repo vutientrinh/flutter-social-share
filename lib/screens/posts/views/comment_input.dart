@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import '../../../providers/async_provider/post_async_provider.dart';
 
@@ -43,20 +44,33 @@ class _CommentInputState extends ConsumerState<CommentInput> {
 
   void _sendComment() async {
     final content = _commentController.text.trim();
-    if (content.isNotEmpty) {
-      _commentController.clear();
-      FocusScope.of(context).unfocus(); // hide keyboard
-      final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
-      await commentNotifier.createComment(widget.postId, content);
-      await commentNotifier.getCommentAPI(widget.postId);
-      ref.watch(postAsyncNotifierProvider);
-      if (mounted) {
-        FocusScope.of(context).unfocus(); // Hide keyboard
-      }
+    final id = widget.commentId;
+
+    if (content.isEmpty) {
+      FocusScope.of(context).unfocus(); // Hide keyboard
+      return;
+    }
+
+    _commentController.clear();
+    FocusScope.of(context).unfocus(); // Hide keyboard
+    final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
+
+    if (id != null) {
+      // Edit existing comment
+      await commentNotifier.updateComment(id, content, widget.postId);
     } else {
-      FocusScope.of(context).unfocus(); // hide keyboard
+      // Create new comment
+      await commentNotifier.createComment(widget.postId, content);
+    }
+
+    await commentNotifier.getCommentAPI(widget.postId);
+    ref.watch(postAsyncNotifierProvider);
+
+    if (mounted) {
+      FocusScope.of(context).unfocus(); // Ensure keyboard is hidden
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/social/post.dart';
 import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
+import 'package:flutter_social_share/providers/async_provider/post_profile_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/post_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/profile_screen/widget/show_setting_bottom_sheet.dart';
@@ -23,29 +24,29 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   User? user;
   final ScrollController _scrollController = ScrollController();
   List<String>? images;
-  List<Post>? posts;
+  String _selectedContent = 'Posts'; // Default content type
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   Future<void> loadData() async {
     final response =
-        await ref.read(userServiceProvider).getProfileById(widget.userId);
+    await ref.read(userServiceProvider).getProfileById(widget.userId);
     final listImages =
-        await ref.read(postServiceProvider).getPhotos(widget.userId);
+    await ref.read(postServiceProvider).getPhotos(widget.userId);
     setState(() {
       user = response;
       images = listImages;
     });
 
     if (user != null) {
-      final listPosts = await ref
-          .read(postAsyncNotifierProvider.notifier)
-          .loadInitialPosts(user!.id);
-      setState(() {
-        posts = listPosts;
-      });
+      // Fetch posts for the user using the provider
+      await ref
+          .read(postProfileAsyncNotifierProvider.notifier)
+          .fetchPostsForUser(user!.id);
       ref.read(orderAsyncNotifierProvider.notifier).getAllOrders(user!.id);
     }
   }
@@ -55,28 +56,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     super.initState();
     loadData();
     _scrollController.addListener(_onScroll);
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+    _animationController.forward();
   }
 
   void _onScroll() {
-    // if (_scrollController.position.pixels >=
-    //     _scrollController.position.maxScrollExtent - 400) {
-    //   ref
-    //       .read(postAsyncNotifierProvider.notifier)
-    //       .fetchNextPage(authorId: user!.id);
-    // }
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
+      ref.read(postProfileAsyncNotifierProvider.notifier).fetchNextPage();
+    }
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final postAsyncValue = ref.watch(postAsyncNotifierProvider);
-    final friendState = ref.watch(friendAsyncNotifierProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -98,126 +104,176 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
       ),
       body: user == null
           ? const Center(child: CircularProgressIndicator())
-          : DefaultTabController(
-              length: 3,
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildProfileHeader(),
-
-                    const TabBar(
-                      labelColor: Colors.black,
-                      unselectedLabelColor: Colors.grey,
-                      tabs: [
-                        Tab(text: 'Posts'),
-                        Tab(text: 'Images'),
-                        Tab(text: 'Friends'),
-                      ],
-                    ),
-
-                    // Give a fixed height to TabBarView so each tab content can render
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height + 1000,
-                      child: TabBarView(
-                        physics:
-                            const NeverScrollableScrollPhysics(), // optional
-                        children: [
-                          posts == null
-                              ? const Center(child: CircularProgressIndicator())
-                              : ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: posts!.length,
-                            itemBuilder: (context, index) {
-                              return PostItem(
-                                post: posts![index],
-                                authorId: user!.id,
-                              );
-                            },
-                          ),
-
-
-                          // Images tab
-                          images == null
-                              ? const Center(child: CircularProgressIndicator())
-                              : GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(8),
-                                  itemCount: images!.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    crossAxisSpacing: 4,
-                                    mainAxisSpacing: 4,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    return Image.network(
-                                      LINK_IMAGE.publicImage(images![index]),
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
-                                ),
-
-                          friendState.when(
-                            data: (friends) {
-                              if (friends.isEmpty) {
-                                return const Center(
-                                    child: Text('No users found.'));
-                              }
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                // Disable inner scrolling
-                                padding: const EdgeInsets.all(8),
-                                itemCount: friends.length,
-                                itemBuilder: (context, index) {
-                                  final friend = friends[index];
-                                  return ListUser(
-                                    userId: friend.id,
-                                    username: friend.username ?? "Unknown",
-                                    avatar: friend.avatar,
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.more_horiz),
-                                          onPressed: () {
-                                            showModalBottomSheet(
-                                              context: context,
-                                              builder: (context) =>
-                                                  MoreOptionWidget(
-                                                username: friend.username,
-                                                avatar: friend.avatar,
-                                                followAt: "",
-                                                option: "Friend",
-                                                id: friend.id,
-                                                author: widget.userId,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            loading: () => const Center(
-                                child: CircularProgressIndicator()),
-                            error: (error, _) =>
-                                Center(child: Text('Error: $error')),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+          : SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildProfileHeader(),
+                  _buildContentSelector(),
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: _buildContent(),
+                  ),
+                ],
               ),
             ),
     );
+  }
+
+  Widget _buildContentSelector() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildSelectorButton('Posts'),
+          _buildSelectorButton('Images'),
+          _buildSelectorButton('Friends'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectorButton(String contentType) {
+    final isSelected = _selectedContent == contentType;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          if (_selectedContent != contentType) {
+            setState(() {
+              _selectedContent = contentType;
+            });
+            _animationController.reset();
+            _animationController.forward();
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.blue : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: Text(
+              contentType,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black87,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    switch (_selectedContent) {
+      case 'Posts':
+        return ref.watch(postProfileAsyncNotifierProvider).when(
+              data: (posts) {
+                if (posts.isEmpty) {
+                  return const Center(child: Text('No posts found.'));
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    return PostItem(
+                      post: posts[index],
+                      authorId: user!.id,
+                    );
+                  },
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Center(child: Text('Error: $error')),
+            );
+
+      case 'Images':
+        return images == null
+            ? const Center(child: CircularProgressIndicator())
+            : GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(8),
+                itemCount: images!.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 4,
+                  mainAxisSpacing: 4,
+                ),
+                itemBuilder: (context, index) {
+                  return Image.network(
+                    LINK_IMAGE.publicImage(images![index]),
+                    fit: BoxFit.cover,
+                  );
+                },
+              );
+
+      case 'Friends':
+        return ref.watch(friendAsyncNotifierProvider).when(
+              data: (friends) {
+                if (friends.isEmpty) {
+                  return const Center(child: Text('No users found.'));
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(8),
+                  itemCount: friends.length,
+                  itemBuilder: (context, index) {
+                    final friend = friends[index];
+                    return ListUser(
+                      userId: friend.id,
+                      username: friend.username ?? "Unknown",
+                      avatar: friend.avatar,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.more_horiz),
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) => MoreOptionWidget(
+                                  username: friend.username,
+                                  avatar: friend.avatar,
+                                  followAt: "",
+                                  option: "Friend",
+                                  id: friend.id,
+                                  author: widget.userId,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Center(child: Text('Error: $error')),
+            );
+
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   Widget _buildProfileHeader() {
@@ -291,7 +347,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Post : ${user!.postCount}',
+                    'Post: ${user!.postCount}',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white,

@@ -40,24 +40,16 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     return fetchedPosts;
   }
 
-  Future<List<Post>> loadInitialPosts(String? authorId) async {
-    final postService = ref.watch(postServiceProvider);
-
-    _authorId = authorId;
-    _currentPage = 1;
-    _hasNextPage = true;
-
-    final posts = await postService.getAllPosts(
-        page: _currentPage, size: _pageSize, authorId: authorId);
-    return posts;
-  }
 
   Future<void> fetchNextPage() async {
     if (_isFetchingMore || !_hasNextPage) return;
 
     _isFetchingMore = true;
-
+    await Future.delayed(const Duration(milliseconds: 300));
     _currentPage++;
+
+
+
     try {
       final postService = ref.watch(postServiceProvider);
       final newPosts = await postService.getRecPost(
@@ -76,6 +68,15 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     } finally {
       _isFetchingMore = false;
     }
+  }
+  Future<List<Post>> loadInitialPosts(String? authorId) async {
+    final postService = ref.watch(postServiceProvider);
+
+    _authorId = authorId;
+
+    final posts = await postService.getAllPosts(
+        page: _currentPage, size: _pageSize, authorId: authorId);
+    return posts;
   }
 
   Future<void> addPost(PostRequest newPost) async {

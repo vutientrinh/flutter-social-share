@@ -26,6 +26,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
 
   @override
   void initState() {
+    timeago.setLocaleMessages('vi', timeago.ViMessages());
     final authService = ref.read(authServiceProvider);
     super.initState();
     _webSocketService = WebSocketService(
@@ -151,77 +152,85 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundImage:
-                NetworkImage(LINK_IMAGE.publicImage(widget.friend.user.avatar)),
-          ),
-          if (widget.friend.isOnline == true)
-            Positioned(
-              bottom: 4,
-              right: 4,
-              child: Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 2,
+        title: Row(
+          children: [
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 26,
+                  backgroundImage: NetworkImage(
+                    LINK_IMAGE.publicImage(widget.friend.user.avatar),
                   ),
                 ),
-              ),
-            ),
-          const SizedBox(
-            width: 20,
-          ),
-          Text(widget.friend.connectionUsername)
-        ],
-      )),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
-                final bool isMe =
-                    message.senderId != widget.friend.connectionId;
-                return _buildMessageItem(message, isMe);
-              },
-            ),
-          ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: "Type a message...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
+                if (widget.friend.isOnline == true)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2,
+                        ),
                       ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 15),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: const Icon(Icons.send, color: Colors.blue),
-                  onPressed: _sendMessage,
-                ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Text(widget.friend.connectionUsername),
+          ],
+        ),
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  final bool isMe =
+                      message.senderId != widget.friend.connectionId;
+                  return _buildMessageItem(message, isMe);
+                },
+              ),
+            ),
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        hintText: "Type a message...",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 15),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    icon: const Icon(Icons.send, color: Colors.blue),
+                    onPressed: _sendMessage,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -272,7 +281,10 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
                     : Column(
                         children: [
                           Text(
-                            timeago.format(DateTime.parse(message.time ?? "")),style: const TextStyle(fontSize: 12),
+                            timeago.format(
+                              DateTime.parse(message.time ?? "").toLocal(),
+                            ),
+                            style: const TextStyle(fontSize: 12),
                           ),
                           const SizedBox(
                             height: 4,

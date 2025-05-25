@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/social/post_request.dart';
+import 'package:flutter_social_share/model/social/post_update_request.dart';
 
 import '../../model/social/post.dart';
 import '../state_provider/post_provider.dart';
@@ -47,10 +48,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     _hasNextPage = true;
 
     final posts = await postService.getAllPosts(
-      page: _currentPage,
-      size: _pageSize,
-      authorId: authorId
-    );
+        page: _currentPage, size: _pageSize, authorId: authorId);
     return posts;
   }
 
@@ -96,12 +94,9 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     state = AsyncData(updatedPosts);
   }
 
-  Future<void> updatePost(String uuid, Map<String, dynamic> update) async {
+  Future<void> updatePost(String uuid, PostUpdateRequest update) async {
     final postService = ref.read(postServiceProvider);
     await postService.updatePost(uuid, update);
-
-    // Refresh list
-    state = const AsyncLoading();
     final updatedPosts = await _fetchPosts(reset: true);
     state = AsyncData(updatedPosts);
   }

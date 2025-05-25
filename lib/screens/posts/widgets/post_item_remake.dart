@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/component/create_post.dart';
 import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
+import 'package:flutter_social_share/screens/posts/views/create_post_screen.dart';
 import 'package:flutter_social_share/screens/posts/views/post_detail_screen.dart';
 import 'package:flutter_social_share/screens/posts/widgets/action_post.dart';
 import 'package:flutter_social_share/screens/posts/widgets/grid_image.dart';
@@ -55,8 +57,11 @@ class _PostItemState extends ConsumerState<PostItem> {
                               onSelected: (String value) {
                                 switch (value) {
                                   case 'update':
-                                    print(post.id);
-                                    break;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>  CreatePostScreen(post: widget.post,avatar:post.author.avatar)));
+                                        break;
                                   case 'delete':
                                     _showDeleteDialog(context);
                                     break;

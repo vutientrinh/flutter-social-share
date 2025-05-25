@@ -185,36 +185,43 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                     const SizedBox(
                       width: 4,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        final content = widget.cmt.content;
-                        final id = widget.cmt.id;
+                    if (author!.id == userId)
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              final content = widget.cmt.content;
+                              final id = widget.cmt.id;
 
-                        if (content != null && id != null) {
-                          widget.onCommentButtonPressed?.call(content, id);
-                        }
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                        padding: const EdgeInsets.all(6),
-                        child: const Icon(Icons.edit),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        await ref
-                            .read(commentAsyncNotifierProvider.notifier)
-                            .deleteComment(widget.cmt.id, widget.cmt.postId);
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                        padding: const EdgeInsets.all(6),
-                        child: const Icon(Icons.delete),
-                      ),
-                    ),
+                              if (content != null && id != null) {
+                                widget.onCommentButtonPressed
+                                    ?.call(content, id);
+                              }
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(Icons.edit),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              await ref
+                                  .read(commentAsyncNotifierProvider.notifier)
+                                  .deleteComment(
+                                      widget.cmt.id, widget.cmt.postId);
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(Icons.delete),
+                            ),
+                          ),
+                        ],
+                      )
                   ],
                 ),
               ],

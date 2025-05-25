@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter_social_share/model/social/post_update_request.dart';
 import '../../model/social/post.dart';
 import '../../model/social/post_request.dart';
 
@@ -73,18 +74,14 @@ class PostService {
         'topicId': postRequest.topicId,
         'images': imageFiles, // important: must match backend param name
       });
-      final newPost = await _dio.post('/api/posts',
-          data: formData,
-          options: Options(
-            contentType: 'multipart/form-data',
-          ));
+
       final response = await _dio.post(
         '/api/posts',
         data: formData,
         options: Options(contentType: 'multipart/form-data'),
       );
 
-      return Post.fromJson(response.data);
+      return Post.fromJson(response.data['data']);
     } catch (e) {
       throw Exception('Failed to create post: $e');
     }
@@ -92,9 +89,32 @@ class PostService {
 
   /// Update a post by UUID
   Future<Response> updatePost(
-      String uuid, Map<String, dynamic> postUpdateRequest) async {
+      String uuid, PostUpdateRequest postUpdateRequest) async {
+    List<MultipartFile> imageFiles = [];
+    if (postUpdateRequest.images != null &&
+        postUpdateRequest.images!.isNotEmpty) {
+      for (File image in postUpdateRequest.images) {
+        imageFiles.add(await MultipartFile.fromFile(
+          image.path,
+          filename: image.path.split('/').last,
+        ));
+      }
+    }
+
+    FormData formData = FormData.fromMap({
+      'content': postUpdateRequest.content,
+      'topicId': postUpdateRequest.topicId,
+      'images': imageFiles,
+      'status': postUpdateRequest.status,
+      'type': postUpdateRequest.type
+    });
+
     try {
-      return await _dio.put('/api/posts/$uuid', data: postUpdateRequest);
+      return await _dio.put(
+        '/api/posts/$uuid',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
     } catch (e) {
       throw Exception('Failed to update post $uuid: $e');
     }
@@ -153,10 +173,10 @@ class PostService {
       throw Exception('Failed to get photos: $e');
     }
   }
+
   Future<List<Post>> getRecPost({
     int? page = 1,
     int? size = 10,
-
   }) async {
     try {
       // ✅ Build query parameters
@@ -166,7 +186,7 @@ class PostService {
       };
 
       final response =
-      await _dio.get('/api/rec/rec-posts', queryParameters: queryParams);
+          await _dio.get('/api/rec/rec-posts', queryParameters: queryParams);
 
       // ✅ Extract the nested list
       final postListJson = response.data['data']['data'] as List;
@@ -177,5 +197,4 @@ class PostService {
       throw Exception('Failed to fetch posts: $e');
     }
   }
-
 }

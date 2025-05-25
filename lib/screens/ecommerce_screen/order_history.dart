@@ -28,7 +28,7 @@ class _OrderHistoryState extends ConsumerState<OrderHistory> {
     final authData = await ref.read(authServiceProvider).getSavedData();
     final response = await ref
         .read(orderServiceProvider)
-        .getAllOrders(customerId: authData['userId'], status: "PENDING");
+        .getAllOrders(customerId: authData['userId'], status: "DELIVERED");
 
     setState(() {
       listOrders = response;

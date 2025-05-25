@@ -8,6 +8,9 @@ import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:another_flushbar/flushbar.dart';
+
+
 
 import '../../model/user.dart';
 
@@ -107,10 +110,44 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
       updatedWebsiteUrl,
     );
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
-    );
+    await Flushbar(
+      titleText: const Text(
+        '✅ Success',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Text(
+        'Successfully!',
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white.withOpacity(0.9),
+        ),
+      ),
+      backgroundColor: Colors.green.shade600,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: const Duration(seconds: 1),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      borderRadius: BorderRadius.circular(12),
+      boxShadows: const [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 4),
+          blurRadius: 8,
+        ),
+      ],
+      animationDuration: const Duration(milliseconds: 100),
+      icon: const Icon(
+        Icons.check_circle_outline,
+        color: Colors.white,
+        size: 28,
+      ),
+    ).show(context);
+
+    Navigator.pop(context);
   }
 
   @override

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/model/social/post.dart';
 import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
-import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/post_profile_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/post_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';

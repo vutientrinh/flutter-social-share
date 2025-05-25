@@ -14,6 +14,8 @@ import '../../../model/social/post_request.dart';
 import '../../../providers/async_provider/post_async_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:another_flushbar/flushbar.dart';
+
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   final String? avatar;
@@ -94,9 +96,42 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
     await createPost.addPost(newPost);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Post created')),
-    );
+    await Flushbar(
+      titleText: const Text(
+        'Success',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Text(
+        'New post is created!',
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white.withOpacity(0.9),
+        ),
+      ),
+      backgroundColor: Colors.green.shade600,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: const Duration(seconds: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      borderRadius: BorderRadius.circular(12),
+      boxShadows: const [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 4),
+          blurRadius: 8,
+        ),
+      ],
+      animationDuration: const Duration(milliseconds: 200),
+      icon: const Icon(
+        Icons.check_circle_outline,
+        color: Colors.white,
+        size: 28,
+      ),
+    ).show(context);
 
     setState(() {
       _controllerContent.clear();
@@ -154,9 +189,42 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
       await updatePost.updatePost(widget.post!.id, updatedPost);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Post updated')),
-      );
+      await Flushbar(
+        titleText: const Text(
+          'Success',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'Update successfully!!!',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white.withOpacity(0.9),
+          ),
+        ),
+        backgroundColor: Colors.green.shade600,
+        flushbarPosition: FlushbarPosition.TOP,
+        duration: const Duration(seconds: 2),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        borderRadius: BorderRadius.circular(12),
+        boxShadows: const [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, 4),
+            blurRadius: 8,
+          ),
+        ],
+        animationDuration: const Duration(milliseconds: 200),
+        icon: const Icon(
+          Icons.check_circle_outline,
+          color: Colors.white,
+          size: 28,
+        ),
+      ).show(context);
 
       setState(() {
         _controllerContent.clear();

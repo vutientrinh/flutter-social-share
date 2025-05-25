@@ -4,7 +4,7 @@ import 'package:flutter_social_share/providers/async_provider/follower_async_pro
 import 'package:flutter_social_share/providers/async_provider/friend_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/user_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/follow_provider.dart';
-import 'package:flutter_social_share/screens/friend_screen/widgets/list_user.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 
 import '../../model/social/follow_response.dart';
@@ -50,11 +50,85 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
     await ref
         .read(friendAsyncNotifierProvider.notifier)
         .addFriend(requesterId!, userId);
+    await Flushbar(
+      titleText: const Text(
+        'Success',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Text(
+        'Send friend request successfully!',
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white.withOpacity(0.9),
+        ),
+      ),
+      backgroundColor: Colors.green.shade600,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: const Duration(seconds: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      borderRadius: BorderRadius.circular(12),
+      boxShadows: const [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 4),
+          blurRadius: 8,
+        ),
+      ],
+      animationDuration: const Duration(milliseconds: 200),
+      icon: const Icon(
+        Icons.check_circle_outline,
+        color: Colors.white,
+        size: 28,
+      ),
+    ).show(context);
+
+
     fetchAllUser();
   }
 
   void followRequest(String userId) async {
     await ref.read(followingAsyncNotifierProvider.notifier).follow(userId);
+    await Flushbar(
+      titleText: const Text(
+        'Success',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      messageText: Text(
+        'Follow successfully!',
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white.withOpacity(0.9),
+        ),
+      ),
+      backgroundColor: Colors.green.shade600,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: const Duration(seconds: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      borderRadius: BorderRadius.circular(12),
+      boxShadows: const [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 4),
+          blurRadius: 8,
+        ),
+      ],
+      animationDuration: const Duration(milliseconds: 200),
+      icon: const Icon(
+        Icons.check_circle_outline,
+        color: Colors.white,
+        size: 28,
+      ),
+    ).show(context);
     fetchAllUser();
   }
 

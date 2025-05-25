@@ -38,15 +38,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await _authService.saveLoginData(response.data);
       // Navigate to HomePage on successful login
       await Flushbar(
-        title: 'Success',
-        message: 'Login successfully!',
-        backgroundColor: Colors.green,
+        titleText: const Text(
+          '✅ Success',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          'You have logged in successfully!',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white.withOpacity(0.9),
+          ),
+        ),
+        backgroundColor: Colors.green.shade600,
         flushbarPosition: FlushbarPosition.TOP,
-        duration: const Duration(seconds: 1),
-        margin: const EdgeInsets.all(8),
-        borderRadius: BorderRadius.circular(8),
-        animationDuration: const Duration(milliseconds: 300),
+        duration: const Duration(seconds: 2),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        borderRadius: BorderRadius.circular(12),
+        boxShadows: const [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, 4),
+            blurRadius: 8,
+          ),
+        ],
+        animationDuration: const Duration(milliseconds: 200),
+        icon: const Icon(
+          Icons.check_circle_outline,
+          color: Colors.white,
+          size: 28,
+        ),
       ).show(context);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),

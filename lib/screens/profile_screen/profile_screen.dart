@@ -29,6 +29,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   String _selectedContent = 'Posts'; // Default content type
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  String? author;
 
   Future<void> loadData() async {
     final response =

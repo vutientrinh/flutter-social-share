@@ -43,7 +43,7 @@ class MoreOptionWidget extends ConsumerWidget {
               title: "Message $username",
               subtitle: "Send message",
               onTap: () {
-                // Implement navigation to ChatDetail here
+                print("hello");
               },
             ),
           if (option == "Following")

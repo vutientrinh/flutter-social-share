@@ -5,6 +5,7 @@ import 'package:flutter_social_share/providers/async_provider/address_async_prov
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/shipping_provider.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:flutter/services.dart';
 
 class CreateAddressScreen extends ConsumerStatefulWidget {
   const CreateAddressScreen({super.key});
@@ -152,7 +153,18 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
               controller: phoneController,
               decoration: _inputDecoration("Phone Number"),
               keyboardType: TextInputType.phone,
-              validator: (value) => value!.isEmpty ? 'Required' : null,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                LengthLimitingTextInputFormatter(15),   // Optional: limit to 15 digits
+              ],
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Phone number is required';
+                } else if (value.length < 10) {
+                  return 'Phone number must be at least 10 digits';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
             TextFormField(

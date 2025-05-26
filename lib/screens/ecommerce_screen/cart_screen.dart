@@ -38,25 +38,24 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   final List<Map<String, dynamic>> shippingOptions = [
     {
       "id": "light",
-      "name": "Hàng nhẹ",
+      "name": "Light Goods",
       "minWeight": 0,
       "maxWeight": 50000,
-      "options": "Tối đa 50kg",
+      "options": "Up to 50kg",
       "selected": true,
       "service_id": 53321,
       "service_type_id": 2,
     },
     {
       "id": "heavy",
-      "name": "Hàng nặng",
+      "name": "Heavy Goods",
       "minWeight": 50000,
-      "options": "Trên 50kg",
+      "options": "Over 50kg",
       "selected": false,
       "service_id": 53321,
       "service_type_id": 2,
     },
   ];
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -348,21 +347,23 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     const Text("Shipping Address",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18)),
-                    TextButton(
-                      onPressed: () => {
+                    TextButton.icon(
+                      onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const CreateAddressScreen()),
-                        )
+                            builder: (context) => const CreateAddressScreen(),
+                          ),
+                        );
                       },
-                      child: const Text(
+
+                      label: const Text(
                         "Add more",
                         style: TextStyle(color: Colors.black),
                       ),
-                      // style: ButtonStyle(),
+                      icon: const Icon(Icons.add, color: Colors.black),
                     ),
+
                     addressState.when(
                       data: (addresses) {
                         if (addresses.isEmpty) {
@@ -596,7 +597,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            "Total product :  ",
+                            "Subtotal :",
                             style: TextStyle(color: Colors.black, fontSize: 18),
                           ),
                           Text(
@@ -632,7 +633,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            "Tax : ",
+                            "VAT (8%): ",
                             style: TextStyle(color: Colors.black, fontSize: 16),
                           ),
                           Text(
@@ -646,30 +647,30 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           ),
                         ],
                       ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     const Text(
+                      //       "Discount : ",
+                      //       style: TextStyle(color: Colors.black, fontSize: 16),
+                      //     ),
+                      //     Text(
+                      //       "- ${NumberFormat("#,###", "vi_VN").format(summary['discount'])} ₫",
+                      //       textAlign: TextAlign.right,
+                      //       style: const TextStyle(
+                      //         fontSize: 16,
+                      //         fontWeight: FontWeight.bold,
+                      //         color: Colors.red,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            "Discount : ",
-                            style: TextStyle(color: Colors.black, fontSize: 16),
-                          ),
-                          Text(
-                            "- ${NumberFormat("#,###", "vi_VN").format(summary['discount'])} ₫",
-                            textAlign: TextAlign.right,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Payment : ",
-                            style: TextStyle(color: Colors.black, fontSize: 20),
+                            "Total : ",
+                            style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold,),
                           ),
                           Text(
                             "${NumberFormat("#,###", "vi_VN").format(summary['total'])} ₫",

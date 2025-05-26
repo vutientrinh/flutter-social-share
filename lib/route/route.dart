@@ -26,8 +26,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           userId: args['userId'],
         ),
       );
-    case userProfileScreenRoute:
-      return MaterialPageRoute(builder: (context) => const UserProfileScreen());
+
     case chatScreenRoute:
       return MaterialPageRoute(builder: (context) => const MessagesScreen());
     case ecommerceScreenRoute:

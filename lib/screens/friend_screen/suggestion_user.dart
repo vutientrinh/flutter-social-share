@@ -10,6 +10,7 @@ import 'package:flutter_social_share/utils/uidata.dart';
 import '../../model/social/follow_response.dart';
 import '../../providers/async_provider/following_async_provider.dart';
 import '../../providers/state_provider/auth_provider.dart';
+import '../profile_screen/profile_screen.dart';
 
 class SuggestionUser extends ConsumerStatefulWidget {
   const SuggestionUser({super.key});
@@ -87,7 +88,6 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
       ),
     ).show(context);
 
-
     fetchAllUser();
   }
 
@@ -156,86 +156,96 @@ class _SuggestionUserState extends ConsumerState<SuggestionUser> {
                 final user = users[index];
                 final isFollowing =
                     listFollowings?.any((f) => f.id == user.id) ?? false;
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(
-                          LINK_IMAGE.publicImage(user.avatar) ??
-                              "https://th.bing.com/th/id/OIP.YoTUWMoKovQT0gCYOYMwzwHaHa?rs=1&pid=ImgDetMain",
-                        ),
+                return GestureDetector(
+                  onTap: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(userId: user.id),
                       ),
-
-                      const SizedBox(width: 12),
-
-                      // Phần còn lại: Column gồm username + button
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Username
-                            Text(
-                              user.username,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                    )
+                  },
+                  child:
+                    Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage: NetworkImage(
+                              LINK_IMAGE.publicImage(user.avatar),
                             ),
-                            const SizedBox(height: 8),
+                          ),
 
-                            // Row buttons
-                            Row(
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                FilledButton.icon(
-                                  onPressed: () => sendFriendRequest(user.id),
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: Colors.blueAccent,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  icon: const Icon(Icons.person_add_alt_1,
-                                      color: Colors.white),
-                                  label: const Text(
-                                    "Add Friend",
-                                    style: TextStyle(color: Colors.white),
+                                // Username
+                                Text(
+                                  user.username,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(width: 10),
-                                isFollowing
-                                    ? const Text(
-                                        "Following",
-                                        style: TextStyle(color: Colors.grey),
-                                      )
-                                    : ElevatedButton(
-                                        onPressed: () => followRequest(user.id),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blueAccent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
+                                const SizedBox(height: 8),
+
+                                // Row buttons
+                                Row(
+                                  children: [
+                                    FilledButton.icon(
+                                      onPressed: () => sendFriendRequest(user.id),
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: Colors.blueAccent,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 12,
                                         ),
-                                        child: const Text(
-                                          "Follow",
-                                          style: TextStyle(color: Colors.white),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
                                         ),
                                       ),
+                                      icon: const Icon(Icons.person_add_alt_1,
+                                          color: Colors.white),
+                                      label: const Text(
+                                        "Add Friend",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    isFollowing
+                                        ? const Text(
+                                            "Following",
+                                            style: TextStyle(color: Colors.grey),
+                                          )
+                                        : ElevatedButton(
+                                            onPressed: () => followRequest(user.id),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.blueAccent,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              "Follow",
+                                              style: TextStyle(color: Colors.white),
+                                            ),
+                                          ),
+                                  ],
+                                )
                               ],
-                            )
-                          ],
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+
                 );
               },
             ),

@@ -157,11 +157,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
         children: [
           SizedBox(height: MediaQuery.of(context).size.height / 5),
           SizedBox(
-            height: 170.0,
+            height: 160.0,
             width: MediaQuery.of(context).size.width,
             child: Image.asset(
               'assets/image2/login.png',

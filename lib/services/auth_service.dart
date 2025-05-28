@@ -93,4 +93,26 @@ class AuthService {
       return null;
     }
   }
+  Future<Response?> recovery(String email) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/recovery',
+        queryParameters: {'email':email}, // Send email in JSON format
+      );
+      return response;
+    } catch (e) {
+      print('Recovery Error: $e');
+      return null;
+    }
+  }
+
+  Future<Response?> loginWithGoogle() async {
+    try {
+      final response = await _dio.post('/oauth2/authorization/google');
+      return response;
+    } catch (e) {
+      print('Login with google  Error: $e');
+      return null;
+    }
+  }
 }

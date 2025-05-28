@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/screens/authentication/forgot_password_screen.dart';
 import 'package:flutter_social_share/screens/authentication/register_screen.dart';
 import '../home_screen/home_page.dart';
 import 'package:another_flushbar/flushbar.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -91,6 +93,64 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ).show(context);
     }
   }
+  Future<void> _handleGoogleLogin() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      var baseUrl = dotenv.env['API_BASE_URL']; // Replace with your domain
+      final googleLoginUrl = Uri.parse('${baseUrl}oauth2/authorization/google');
+
+      // Launch the Google login URL in the browser
+      if (await canLaunchUrl(googleLoginUrl)) {
+        await launchUrl(
+          googleLoginUrl,
+          mode: LaunchMode.externalApplication, // Opens in external browser
+        );
+      } else {
+        throw 'Could not launch $googleLoginUrl';
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+
+    } catch (e, stackTrace) {
+      setState(() {
+        _isLoading = false;
+      });
+
+
+      if (context.mounted) {
+        await Flushbar(
+          titleText: const Text(
+            'Error',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          messageText: Text(
+            'Failed to redirect to Google login: ${e.toString()}',
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+          ),
+          backgroundColor: Colors.red.shade600,
+          flushbarPosition: FlushbarPosition.TOP,
+          duration: const Duration(seconds: 3),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          borderRadius: BorderRadius.circular(12),
+          animationDuration: const Duration(milliseconds: 300),
+          icon: const Icon(
+            Icons.error_outline,
+            color: Colors.white,
+            size: 28,
+          ),
+        ).show(context);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +228,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10.0),
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ForgotPasswordScreen()),
+                        );
+                      },
                       child: const Text(
                         'Forgot Password?',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -183,10 +249,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blueAccent,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 50),
+
+                          minimumSize: const Size(double.infinity, 56), // Match text field height
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          elevation: 0,
                         ),
                         onPressed: _handleLogin, // Call login function
                         child: const Text(
@@ -194,6 +262,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(color: Colors.grey),
+                    ),
+                    minimumSize: const Size(double.infinity, 56), // Match text field height
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    elevation: 0,
+                  ),
+                  onPressed: _handleGoogleLogin,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.network(
+                        'https://www.google.com/favicon.ico',
+                        height: 24,
+                        width: 24,
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Login with Google',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

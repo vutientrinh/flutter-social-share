@@ -156,10 +156,20 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
           children: [
             Stack(
               children: [
-                CircleAvatar(
-                  radius: 26,
-                  backgroundImage: NetworkImage(
-                    LINK_IMAGE.publicImage(widget.friend.user.avatar),
+                Container(
+                  width: 52, // radius * 2 + border width (24 * 2 + 2*2)
+                  height: 52,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black, width: 2),
+                  ),
+                  child: CircleAvatar(
+                    radius: 24,
+                    backgroundImage: NetworkImage(
+                      LINK_IMAGE.publicImage(widget.friend.user.avatar),
+                    ),
+                    backgroundColor:
+                        Colors.white, // Optional: to prevent image overflow
                   ),
                 ),
                 if (widget.friend.isOnline == true)
@@ -186,7 +196,6 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
           ],
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -244,10 +253,21 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!isMe) ...[
-            CircleAvatar(
-              radius: 22,
-              backgroundImage: NetworkImage(
-                  LINK_IMAGE.publicImage(widget.friend.user.avatar)),
+            Container(
+              width: 52, // radius * 2 + border width (24 * 2 + 2*2)
+              height: 52,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.black, width: 2),
+              ),
+              child: CircleAvatar(
+                radius: 24,
+                backgroundImage: NetworkImage(
+                  LINK_IMAGE.publicImage(widget.friend.user.avatar),
+                ),
+                backgroundColor:
+                    Colors.white, // Optional: to prevent image overflow
+              ),
             ),
             const SizedBox(width: 8),
           ],

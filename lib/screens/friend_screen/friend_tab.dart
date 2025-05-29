@@ -134,11 +134,10 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                         ),
                         const SizedBox(width: 10),
                         OutlinedButton(
-                          onPressed: () => {
-                            ref
+                          onPressed: () async => {
+                            await ref
                                 .read(friendAsyncNotifierProvider.notifier)
                                 .removeFriend(friendRequest.id),
-                            ref.invalidate(friendRequestAsyncProvider),
                           },
                           child: const Text(
                             "Deny",

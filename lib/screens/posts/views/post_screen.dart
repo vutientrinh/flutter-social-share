@@ -27,6 +27,7 @@ class _ListPostsScreenState extends ConsumerState<ListPostsScreen> {
       ref.invalidate(postAsyncNotifierProvider);
     });
     _scrollController.addListener(_onScroll);
+
   }
 
   void _onScroll() {

@@ -8,6 +8,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../../providers/async_provider/following_async_provider.dart';
 import '../../../providers/state_provider/follow_provider.dart';
 import '../../../providers/state_provider/friend_provider.dart';
+import '../../messages_screen/messages_screen.dart';
 
 class MoreOptionWidget extends ConsumerWidget {
   final String username;
@@ -43,7 +44,11 @@ class MoreOptionWidget extends ConsumerWidget {
               title: "Message $username",
               subtitle: "Send message",
               onTap: () {
-                print("hello");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MessagesScreen()),
+                );
               },
             ),
           if (option == "Following")

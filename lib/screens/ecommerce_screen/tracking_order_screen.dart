@@ -39,7 +39,6 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
   @override
   void initState() {
     super.initState();
-    print(shippingStatuses.length);
     _tabController =
         TabController(length: shippingStatuses.length, vsync: this);
     loadData();

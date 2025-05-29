@@ -183,7 +183,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Total product :  ",
+                  "Shipping fee :  ",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -200,6 +200,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                 ),
               ],
             ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -211,7 +212,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                   ),
                 ),
                 Text(
-                  "${NumberFormat("#,###", "vi_VN").format(order.totalAmount)} ₫",
+                  "${NumberFormat("#,###", "vi_VN").format(order.payment.amountPaid)} ₫",
                   textAlign: TextAlign.right,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
@@ -224,36 +225,36 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
           ],
         ),
       ),
-      bottomSheet: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton.icon(
-            onPressed: () async {
-              // Your logic here
-            },
-            icon: const Icon(Icons.shopping_cart_outlined,
-                size: 20, color: Colors.white),
-            label: const Text(
-              "Connect with seller",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ),
-      ),
+      // bottomSheet: Container(
+      //   color: Colors.white,
+      //   padding: const EdgeInsets.all(16),
+      //   child: SizedBox(
+      //     width: double.infinity,
+      //     height: 50,
+      //     child: ElevatedButton.icon(
+      //       onPressed: () async {
+      //         // Your logic here
+      //       },
+      //       icon: const Icon(Icons.shopping_cart_outlined,
+      //           size: 20, color: Colors.white),
+      //       label: const Text(
+      //         "Connect with seller",
+      //         style: TextStyle(
+      //           color: Colors.white,
+      //           fontSize: 16,
+      //           fontWeight: FontWeight.w600,
+      //         ),
+      //       ),
+      //       style: ElevatedButton.styleFrom(
+      //         backgroundColor: Colors.redAccent,
+      //         elevation: 5,
+      //         shape: RoundedRectangleBorder(
+      //           borderRadius: BorderRadius.circular(12),
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
     );
   }
 }

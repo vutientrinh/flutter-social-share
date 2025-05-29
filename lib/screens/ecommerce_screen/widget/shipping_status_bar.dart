@@ -6,10 +6,11 @@ class ShippingStatusBar extends StatelessWidget {
   ShippingStatusBar({required this.status});
 
   final List<Map<String, String>> stages = const [
-    {"key": "PENDING", "label": "Chờ xử lý"},
-    {"key": "PICKED_UP", "label": "Đã lấy hàng"},
-    {"key": "IN_TRANSIT", "label": "Đang vận chuyển"},
-    {"key": "DELIVERED", "label": "Đã giao hàng"},
+    {"key": "PENDING", "label": "Pending"},
+    {"key": "PICKED_UP", "label": "Pick up"},
+    {"key": "IN_TRANSIT", "label": "In transit"},
+    {"key": "DELIVERED", "label": "Delivered"},
+    {"key": "FAILED", "label": "Fail"},
   ];
 
   int _getStatusIndex(String status) {

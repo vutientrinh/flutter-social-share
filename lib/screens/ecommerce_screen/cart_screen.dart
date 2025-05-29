@@ -150,7 +150,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     const taxRate = 0.08;
     final tax = subTotal * taxRate;
     final discount = subTotal * 0.1;
-    final total = subTotal + tax + shippingFee - discount;
+    final total = subTotal + tax + shippingFee;
     setState(() {
       summary['subtotal'] = subTotal;
       summary['tax'] = tax;

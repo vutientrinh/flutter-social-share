@@ -49,6 +49,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     setState(() {
       product = data;
     });
+    print(data.rating);
   }
 
   @override

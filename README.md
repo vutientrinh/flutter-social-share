@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/b1e87c45-86e2-4440-acf8-15fcd4574c26)## Getting Started
+## Getting Started
 
 This project is a starting point for a Flutter application.
 
@@ -37,7 +37,7 @@ Flutter Social Platform integrate ecommerce features
 - Thanh toán bằng VNPay thông qua redirect qua trình duyệt
 - Tạo/ chỉnh sửa/ xóa địa chỉ
 - Đánh giá sản phẩm
-
+![image](https://github.com/user-attachments/assets/b1e87c45-86e2-4440-acf8-15fcd4574c26)
 ![image](https://github.com/user-attachments/assets/538c175c-375c-48ea-9f70-b544be98de05)
 ![image](https://github.com/user-attachments/assets/c848edcb-3f52-4df9-9071-80919e823e0e)
 ![image](https://github.com/user-attachments/assets/2ddeeea9-83a0-43c1-8e6a-a7aa80ae9c15)

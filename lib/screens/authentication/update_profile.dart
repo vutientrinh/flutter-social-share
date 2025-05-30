@@ -6,6 +6,7 @@ import 'package:flutter_social_share/providers/state_provider/upload_provider.da
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/screens/authentication/login_screen.dart';
 import 'package:flutter_social_share/screens/home_screen/home_page.dart';
+import 'package:flutter_social_share/screens/profile_screen/profile_screen.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -147,7 +148,10 @@ class _UpdateProfileState extends ConsumerState<UpdateProfile> {
       ),
     ).show(context);
 
-    Navigator.pop(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) =>  ProfileScreen(userId: user!.id)),
+    );
   }
 
   @override

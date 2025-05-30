@@ -23,6 +23,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   List<Conversation> messages = [];
   List<Conversation> readMessages = [];
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -42,12 +43,31 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
           } else {
             messages.add(message); // New message or other types
           }
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _scrollToBottom());
         });
       },
     );
     _webSocketService.connect();
     _fetchReadMessage(widget.friend.connectionId, widget.friend.convId);
     // _fetchUnSeenMessages();
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatDetail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Scroll to bottom whenever widget updates (e.g., new messages)
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   @override
@@ -59,7 +79,6 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   void _sendMessage() {
     String text = _messageController.text;
     if (text.isNotEmpty) {
-      print(text);
       _webSocketService.sendMessage(text, widget.friend.convId,
           widget.friend.connectionId, widget.friend.connectionUsername);
       _messageController.clear();
@@ -81,13 +100,13 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   }
 
   Future<void> _fetchReadMessage(String messageId, String convId) async {
-    print("Get ne ba");
     try {
       final data =
           await ref.read(chatServiceProvider).getMessageBefore(convId: convId);
       setState(() {
         messages = data;
       });
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     } catch (e) {
       print("Error fetching unseen messages: $e");
     }
@@ -202,6 +221,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
           children: [
             Expanded(
               child: ListView.builder(
+                controller: _scrollController,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 itemCount: messages.length,
                 itemBuilder: (context, index) {

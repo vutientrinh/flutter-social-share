@@ -16,6 +16,7 @@ class FollowingNotifier extends AsyncNotifier<List<FollowUserResponse>> {
   }
   Future<List<FollowUserResponse>> getFollowings(String userId) async {
     final followService = ref.watch(followServiceProvider);
+    print("get dc ròi nè chaaaaa");
     final followings = await followService.getFollowings(userId);
     return followings;
   }

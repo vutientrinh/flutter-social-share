@@ -104,7 +104,7 @@ class _GridProductListState extends ConsumerState<GridProductList> {
                         const Icon(Icons.star, color: Colors.amber, size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          product.rating.toStringAsFixed(1),
+                          product.rating.toDouble().toStringAsFixed(1),
                           style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,

@@ -31,9 +31,9 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
     final data = await authService.getSavedData();
     userId = data['userId'];
     if (userId != null) {
-      await ref
-          .read(friendRequestAsyncProvider.notifier)
-          .getFriendRequests(userId!);
+      Future.microtask((){
+        ref.read(friendRequestAsyncProvider.notifier).getFriendRequests(userId!);
+      });
     }
   }
 
@@ -118,8 +118,8 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton(
-                          onPressed: () => {
-                            ref
+                          onPressed: () async => {
+                            await ref
                                 .read(friendAsyncNotifierProvider.notifier)
                                 .acceptFriend(friendRequest.requestId),
                             getFriendRequest(),

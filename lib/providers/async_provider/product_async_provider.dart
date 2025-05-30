@@ -102,9 +102,5 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
     }
   }
 
-  Future<Product> getProductById(String productId) async {
-    final productService = ref.watch(productServiceProvider);
-    final product = await productService.getProductById(productId);
-    return product;
-  }
+
 }

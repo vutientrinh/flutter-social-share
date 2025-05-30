@@ -32,9 +32,11 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
       userId = userId;
     });
     if (userId != null) {
-      await ref
-          .read(followingAsyncNotifierProvider.notifier)
-          .getFollowings(userId!);
+      Future.microtask(() {
+        ref
+            .read(followingAsyncNotifierProvider.notifier)
+            .getFollowings(userId!);
+      });
     }
   }
 
@@ -62,7 +64,7 @@ class _FollowingTabState extends ConsumerState<FollowingTab> {
                     context: context,
                     builder: (context) => MoreOptionWidget(
                       username: following.username,
-                      avatar: following.avatar??"",
+                      avatar: following.avatar ?? "",
                       followAt: following.followAt,
                       option: "Following",
                       id: following.id,

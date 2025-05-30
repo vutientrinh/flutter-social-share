@@ -22,7 +22,7 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
 
   void _submitComment() async {
     if (_formKey.currentState!.validate()) {
-      ref.read(reviewProductAsyncNotifierProvider.notifier).createComment(
+      await ref.read(reviewProductAsyncNotifierProvider.notifier).createComment(
         productId: widget.productId,
         author: _authorController.text.trim(),
         comment: _commentController.text.trim(),

@@ -5,6 +5,7 @@ import 'package:flutter_social_share/providers/async_provider/product_async_prov
 import 'package:flutter_social_share/providers/async_provider/product_liked_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/review_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/create_comment_screen.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/widget/review_item.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
@@ -34,9 +35,6 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     loadProduct();
     Future.microtask(() {
       ref
-          .read(productAsyncNotifierProvider.notifier)
-          .getProductById(widget.productId);
-      ref
           .read(reviewProductAsyncNotifierProvider.notifier)
           .getReviewProduct(widget.productId);
     });
@@ -44,12 +42,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   Future<void> loadProduct() async {
     final data = await ref
-        .read(productAsyncNotifierProvider.notifier)
+        .read(productServiceProvider)
         .getProductById(widget.productId);
     setState(() {
       product = data;
     });
-    print(data.rating);
   }
 
   @override
@@ -136,7 +133,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                     color: Colors.amber, size: 16),
                                 const SizedBox(width: 4),
                                 Text(
-                                  product!.rating.toStringAsFixed(1),
+                                  product!.rating.toDouble().toStringAsFixed(1),
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500,

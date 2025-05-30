@@ -19,4 +19,15 @@ class FriendRequestNotifier extends AsyncNotifier<List<FriendRequest>> {
     final friend = await friendService.getFriendRequests(userId);
     state = AsyncData(friend);
   }
+  // Future<void> acceptFriend(String requestId) async {
+  //   final friendService = ref.watch(friendServiceProvider);
+  //   await friendService.acceptFriend(requestId);
+  //
+  //   final authService = ref.read(authServiceProvider);
+  //   final data = await authService.getSavedData();
+  //   final userId = data['userId'];
+  //
+  //   final listFriendUpdate = await getFriend(userId);
+  //   state = AsyncData(listFriendUpdate);
+  // }
 }

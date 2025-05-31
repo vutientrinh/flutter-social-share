@@ -24,12 +24,15 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   List<Conversation> readMessages = [];
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-
+  bool? isOnline;
   @override
   void initState() {
     timeago.setLocaleMessages('vi', timeago.ViMessages());
     final authService = ref.read(authServiceProvider);
     super.initState();
+    setState(() {
+      isOnline = widget.friend.isOnline;
+    });
     _webSocketService = WebSocketService(
       userId: widget.friend.convId,
       authService: authService,
@@ -40,15 +43,32 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
             if (index != -1) {
               messages[index] = message; // Replace with updated delivery status
             }
-          } else {
-            messages.add(message); // New message or other types
+          }
+
+          else if (message.messageType == "CHAT") {
+            messages.add(message);
+          }
+          else if(message.messageType == "FRIEND_ONLINE"){
+            setState(() {
+              isOnline = true;
+            });
+            print("Online ne ");
+          }
+          else if(message.messageType == "FRIEND_OFFLINE"){
+            setState(() {
+              isOnline = false;
+            });
+            print("Offline ne ");
+
           }
           WidgetsBinding.instance
               .addPostFrameCallback((_) => _scrollToBottom());
+
         });
+
       },
     );
-    _webSocketService.connect();
+    _webSocketService.connect(subscriptionType:  SubscriptionType.chat);
     _fetchReadMessage(widget.friend.connectionId, widget.friend.convId);
     // _fetchUnSeenMessages();
   }
@@ -56,7 +76,6 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
   @override
   void didUpdateWidget(covariant ChatDetail oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Scroll to bottom whenever widget updates (e.g., new messages)
     _scrollToBottom();
   }
 
@@ -191,7 +210,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
                         Colors.white, // Optional: to prevent image overflow
                   ),
                 ),
-                if (widget.friend.isOnline == true)
+                if (isOnline == true)
                   Positioned(
                     bottom: 0,
                     right: 0,

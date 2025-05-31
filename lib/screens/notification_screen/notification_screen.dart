@@ -4,6 +4,9 @@ import 'package:flutter_social_share/model/social/notification.dart';
 import 'package:flutter_social_share/providers/async_provider/notification_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/notification_provider.dart';
 
+import '../../providers/state_provider/auth_provider.dart';
+import '../../socket_service/websocket_service.dart';
+
 class NotificationScreen extends ConsumerStatefulWidget {
   const NotificationScreen({super.key});
 
@@ -12,15 +15,38 @@ class NotificationScreen extends ConsumerStatefulWidget {
 }
 
 class _NotificationScreenState extends ConsumerState<NotificationScreen> {
+  late WebSocketService _webSocketService;
+  List<AppNotification> listNotification = [];
+
   @override
   void initState() {
     super.initState();
+    loadNotification();
+    connectNotification();
+  }
 
-    // This causes build() in the notifier to be called
-    Future.microtask(() {
-      ref.invalidate(notificationAsyncNotifierProvider);
+  void connectNotification() async {
+    final authService = ref.read(authServiceProvider);
+    final data = await authService.getSavedData();
+    _webSocketService = WebSocketService(
+        userId: data['userId'],
+        authService: authService,
+        onMessageReceived: (message) {
+          setState(() {
+            listNotification.insert(0, message);
+          });
+        });
+    _webSocketService.connect(subscriptionType: SubscriptionType.notifications);
+  }
+
+  Future<void> loadNotification() async {
+    final notifications =
+        await ref.read(notificationServiceProvider).getAllNotification();
+    setState(() {
+      listNotification = notifications;
     });
   }
+
   Icon _getIcon(String type) {
     switch (type) {
       case 'LIKE_POST':
@@ -41,9 +67,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final notificationState = ref.watch(notificationAsyncNotifierProvider);
+  void dispose() {
+    _webSocketService.disconnect();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notifications"),
@@ -81,69 +111,58 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
           ),
         ],
       ),
-      body: notificationState.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
-        data: (notifications) {
-          if (notifications.isEmpty) {
-            return const Center(child: Text("No notifications found."));
-          }
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: listNotification.length,
+              itemBuilder: (context, index) {
+                final AppNotification notification = listNotification[index];
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    final AppNotification notification = notifications[index];
+                final icon = _getIcon(notification.messageType);
+                // Whether the notification is read or unread
+                bool isUnread = notification.isRead == false;
 
-                    final icon = _getIcon(notification.messageType);
-                    // Whether the notification is read or unread
-                    bool isUnread = notification.isRead == false;
-
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                return Card(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  color: isUnread ? Colors.blue.shade50 : Colors.white,
+                  elevation: 4,
+                  child: ListTile(
+                    leading: icon,
+                    title: Text(
+                      notification.content,
+                      style: TextStyle(
+                        fontWeight:
+                            isUnread ? FontWeight.bold : FontWeight.normal,
+                        color: isUnread ? Colors.black : Colors.grey,
                       ),
-                      color: isUnread ? Colors.blue.shade50 : Colors.white,
-                      elevation: 4,
-                      child: ListTile(
-                        leading: icon,
-                        title: Text(
-                          notification.content,
-                          style: TextStyle(
-                            fontWeight:
-                                isUnread ? FontWeight.bold : FontWeight.normal,
-                            color: isUnread ? Colors.black : Colors.grey,
-                          ),
-                        ),
-                        subtitle: Text(
-                          _formatTime(notification.createdAt),
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        trailing: isUnread
-                            ? const Icon(
-                                Icons.mark_chat_read,
-                                color: Colors.blue,
-                              )
-                            : null,
-                        onTap: () async {
-                          await ref
-                              .read(notificationServiceProvider)
-                              .readNotification(notification.id);
-                          ref.invalidate(notificationAsyncNotifierProvider);
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        },
+                    ),
+                    subtitle: Text(
+                      _formatTime(notification.createdAt),
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    trailing: isUnread
+                        ? const Icon(
+                            Icons.mark_chat_read,
+                            color: Colors.blue,
+                          )
+                        : null,
+                    onTap: () async {
+                      await ref
+                          .read(notificationServiceProvider)
+                          .readNotification(notification.id);
+                      ref.invalidate(notificationAsyncNotifierProvider);
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -158,5 +177,4 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
 
     return '${localDateTime.hour.toString().padLeft(2, '0')}:${localDateTime.minute.toString().padLeft(2, '0')} - ${localDateTime.day}/${localDateTime.month}/${localDateTime.year}';
   }
-
 }

@@ -1,22 +1,28 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_social_share/model/social/conversation.dart';
+import 'package:flutter_social_share/model/social/friend_connection.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
+import '../model/social/notification.dart';
 import '../services/auth_service.dart';
+
+enum SubscriptionType { chat, notifications, both }
 
 class WebSocketService {
   late StompClient _stompClient;
   final String userId;
-  final Function(Conversation) onMessageReceived;
+  final Function(dynamic) onMessageReceived;
   String? token;
   AuthService authService;
 
-  WebSocketService(
-      {required this.userId,
-      required this.authService,
-      required this.onMessageReceived});
+  WebSocketService({
+    required this.userId,
+    required this.authService,
+    required this.onMessageReceived,
+  });
 
-  void connect() async {
+  void connect(
+      {SubscriptionType subscriptionType = SubscriptionType.both}) async {
     final data = await authService.getSavedData();
     token = data['token'];
 
@@ -29,10 +35,10 @@ class WebSocketService {
         stompConnectHeaders: {
           'Authorization': 'Bearer $token',
         },
-        onConnect: _onConnect,
+        onConnect: (frame) => _onConnect(frame, subscriptionType),
         onDisconnect: (frame) {
           print("🔁 Reconnecting in 3 seconds...");
-          Future.delayed(Duration(seconds: 3), () {
+          Future.delayed(const Duration(seconds: 3), () {
             if (!_stompClient.connected) {
               print("🔄 Reconnecting now...");
               _stompClient.activate();
@@ -46,17 +52,18 @@ class WebSocketService {
     _stompClient.activate();
   }
 
-  void _onConnect(StompFrame frame) {
-    print("Connected to WebSocket");
+  void _onConnect(StompFrame frame, SubscriptionType subscriptionType) {
+    print("Connected to WebSocket ✅");
 
-    // Subscribe to /topic/{userId}
-    _subscribeToTopic("/topic/$userId");
+    if (subscriptionType == SubscriptionType.chat ||
+        subscriptionType == SubscriptionType.both) {
+      _subscribeToTopic("/topic/$userId");
+    }
 
-    // Subscribe to /topic/notifications
-    _subscribeToTopic("/topic/notifications");
-
-    // Subscribe to /topic/notifications/{userId}
-    _subscribeToTopic("/topic/notifications/$userId");
+    if (subscriptionType == SubscriptionType.notifications ||
+        subscriptionType == SubscriptionType.both) {
+      _subscribeToTopic("/topic/notifications/$userId");
+    }
   }
 
   void _subscribeToTopic(String topic) {
@@ -64,63 +71,70 @@ class WebSocketService {
       destination: topic,
       callback: (StompFrame frame) {
         if (frame.body != null) {
-          print(frame.body);
-          final message = json.decode(frame.body!);
-          final newMessage = Conversation.fromJson(message);
-          _handleMessage(newMessage);
+          final Map<String, dynamic> data = json.decode(frame.body!);
+
+          // Decide model based on `messageType` or other keys
+          final type = data['messageType'];
+
+          if (_isNotificationType(type)) {
+            final notification = AppNotification.fromJson(data);
+            _handleNotification(notification);
+          } else if (_isConversationType(type)) {
+            final conversation = Conversation.fromJson(data);
+            _handleConversation(conversation);
+          } else {
+            print("⚠️ Unknown message type: $type");
+            onMessageReceived(data); // fallback: raw data
+          }
         }
       },
     );
   }
 
-  void _handleMessage(Conversation message) {
-    final type = message.messageType;
-
-    switch (type) {
-      case "CHAT":
-      case "UNSEEN":
-        // Gửi về UI xử lý CHAT hoặc UNSEEN
-        onMessageReceived(message);
-        break;
-
-      case "FRIEND_OFFLINE":
-      case "FRIEND_ONLINE":
-        // Cập nhật trạng thái online
-        onMessageReceived(message);
-        break;
-
-      case "MESSAGE_DELIVERY_UPDATE":
-        // Truyền delivery status
-        onMessageReceived(message);
-        break;
-
-      case "LIKE_COUNT":
-      case "FOLLOW_COUNT":
-      case "POST_COUNT":
-      case "COMMENT_POST_COUNT":
-      case "COMMENT_LIKED_COUNT":
-        print("General Notification: $type");
-        print("Message: $message");
-        break;
-
-      case "LIKE_POST":
-      case "FOLLOW_USER":
-      case "COMMENT_POST":
-      case "COMMENT_LIKED":
-      case "FRIEND_REQUEST":
-      case "FRIEND_REQUEST_ACCEPTED":
-        print("Personal Notification: $type");
-        print("Message: $message");
-        break;
-
-      default:
-        print("Unknown message type: $type");
-        print(message);
-    }
+  bool _isNotificationType(String type) {
+    const notificationTypes = [
+      "LIKE_COUNT",
+      "FOLLOW_COUNT",
+      "POST_COUNT",
+      "COMMENT_POST_COUNT",
+      "COMMENT_LIKED_COUNT",
+      "LIKE_POST",
+      "FOLLOW_USER",
+      "COMMENT_POST",
+      "COMMENT_LIKED",
+      "FRIEND_REQUEST",
+      "FRIEND_REQUEST_ACCEPTED",
+    ];
+    return notificationTypes.contains(type);
   }
 
-  void sendMessage(String message, String convId, String connectionId,
-      String connectionUsername) {
+  bool _isConversationType(String type) {
+    const conversationTypes = [
+      "CHAT",
+      "UNSEEN",
+      "FRIEND_OFFLINE",
+      "FRIEND_ONLINE",
+      "MESSAGE_DELIVERY_UPDATE",
+    ];
+    return conversationTypes.contains(type);
+  }
+
+  void _handleNotification(AppNotification notification) {
+    print("📥 Received notification: ${notification.messageType}");
+    onMessageReceived(notification);
+  }
+
+  void _handleConversation(Conversation conversation) {
+    print("📥 Received conversation: ${conversation.messageType}");
+    onMessageReceived(conversation);
+  }
+
+  void sendMessage(
+    String message,
+    String convId,
+    String connectionId,
+    String connectionUsername,
+  ) {
     if (_stompClient.connected) {
       final body = json.encode({
         "messageType": "CHAT",
@@ -128,15 +142,14 @@ class WebSocketService {
         "receiverId": connectionId,
         "receiverUsername": connectionUsername,
       });
-      print("Sending message: $body");
 
+      print("✉️ Sending message: $body");
       _stompClient.send(
         destination: "/app/chat/sendMessage/$convId",
         body: body,
       );
     } else {
       print("❌ Cannot send message: WebSocket not connected");
-      // Optional: Reconnect logic or UI notification
     }
   }
 

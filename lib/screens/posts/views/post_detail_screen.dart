@@ -39,6 +39,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   String? _replyCommentId;
 
   void _toggleEditInput(String content, String commentId) {
+    if (!mounted) return;
     setState(() {
       _isCommentInputVisible = true;
       _replyContent = content;
@@ -49,7 +50,6 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   void _toggleCommentInput() {
     setState(() {
       _isCommentInputVisible = true;
-
     });
   }
 
@@ -164,8 +164,13 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
           ),
         ],
       ),
-      bottomSheet:
-          _isCommentInputVisible ? CommentInput(postId: widget.post.id,content: _replyContent,commentId: _replyCommentId,) : null,
+      bottomSheet: _isCommentInputVisible
+          ? CommentInput(
+              postId: widget.post.id,
+              content: _replyContent,
+              commentId: _replyCommentId,
+            )
+          : null,
     );
   }
 

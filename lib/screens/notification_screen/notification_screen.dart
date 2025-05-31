@@ -88,7 +88,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                   await ref
                       .read(notificationServiceProvider)
                       .readAllNotification();
-                  ref.invalidate(notificationAsyncNotifierProvider);
+                  loadNotification();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,

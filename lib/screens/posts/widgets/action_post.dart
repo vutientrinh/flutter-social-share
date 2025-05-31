@@ -87,6 +87,7 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                   child: GestureDetector(
                     onTap: () async {
                       final likedService = ref.read(likedPostServiceProvider);
+                      if (!mounted) return;
                       setState(() {
                         isLiked = !isLiked;
                         likeCount = isLiked ? likeCount + 1 : likeCount - 1;
@@ -96,6 +97,7 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                           likedService.unlike(post.id);
                         }
                       });
+                      if (!mounted) return;
                       ref.invalidate(postAsyncNotifierProvider);
                     },
                     child: isLiked

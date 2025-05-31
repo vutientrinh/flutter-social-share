@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/social/friend_connection.dart';
@@ -37,6 +38,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
       userId: widget.friend.convId,
       authService: authService,
       onMessageReceived: (message) {
+        if (!mounted) return;
         setState(() {
           if (message.messageType == "MESSAGE_DELIVERY_UPDATE") {
             int index = messages.indexWhere((m) => m.id == message.id);
@@ -203,7 +205,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
                   ),
                   child: CircleAvatar(
                     radius: 24,
-                    backgroundImage: NetworkImage(
+                    backgroundImage: CachedNetworkImageProvider(
                       LINK_IMAGE.publicImage(widget.friend.user.avatar),
                     ),
                     backgroundColor:
@@ -230,7 +232,7 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
               ],
             ),
             const SizedBox(width: 12),
-            Text(widget.friend.connectionUsername),
+            Text(widget.friend.user.username),
           ],
         ),
       ),

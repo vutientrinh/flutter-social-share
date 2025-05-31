@@ -61,7 +61,6 @@ class OrderService {
   Future<OrderDetailResponse> getOrderById(String id) async {
     try {
       final response = await _dio.get('/api/orders/$id');
-      print("Order detail ne : ${response.data}");
       if (response.statusCode == 200) {
         return OrderDetailResponse.fromJson(response.data);
       } else {
@@ -69,6 +68,31 @@ class OrderService {
       }
     } catch (e) {
       throw Exception('Error fetching order: $e');
+    }
+  }
+  Future<String> rePayment(String orderId) async {
+    try {
+      final response = await _dio.post('/api/orders/repayment/$orderId');
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      } else {
+        throw Exception('Failed to pre_payment');
+      }
+    } catch (e) {
+      throw Exception('Failed to pre_payment');
+    }
+  }
+
+  Future<Map<String,dynamic>> cancelOrder(String orderId) async {
+    try {
+      final response = await _dio.delete('/api/orders/$orderId/cancel-order');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception('Failed to cancel order');
+      }
+    } catch (e) {
+      throw Exception('Failed to cancel');
     }
   }
 }

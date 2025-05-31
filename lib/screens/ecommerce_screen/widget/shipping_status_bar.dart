@@ -14,6 +14,9 @@ class ShippingStatusBar extends StatelessWidget {
   ];
 
   int _getStatusIndex(String status) {
+    if (status == "FAILED") {
+      return stages.length - 1; // Jump to "FAILED"
+    }
     return stages.indexWhere((stage) => stage["key"] == status);
   }
 
@@ -26,7 +29,19 @@ class ShippingStatusBar extends StatelessWidget {
       children: stages.asMap().entries.map((entry) {
         final index = entry.key;
         final label = entry.value["label"]!;
-        final isActive = index <= currentIndex;
+
+        bool isActive;
+        Color activeColor = Colors.green;
+
+        if (status == "FAILED") {
+          // Only Pending and Failed are active
+          isActive = index == 0 || index == stages.length - 1;
+          if (index == stages.length - 1) {
+            activeColor = Colors.redAccent; // Red for failed
+          }
+        } else {
+          isActive = index <= currentIndex;
+        }
 
         return Expanded(
           child: Column(
@@ -38,7 +53,10 @@ class ShippingStatusBar extends StatelessWidget {
                     Expanded(
                       child: Container(
                         height: 4,
-                        color: index <= currentIndex ? Colors.green : Colors.grey[300],
+                        color: (status == "FAILED" && index == stages.length - 1) ||
+                            (status != "FAILED" && index <= currentIndex)
+                            ? activeColor
+                            : Colors.grey[300],
                       ),
                     ),
                   // Dot
@@ -47,7 +65,7 @@ class ShippingStatusBar extends StatelessWidget {
                     height: 24,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: isActive ? Colors.green : Colors.grey[400],
+                        color: isActive ? activeColor : Colors.grey[400],
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.check, size: 14, color: Colors.white),
@@ -58,13 +76,14 @@ class ShippingStatusBar extends StatelessWidget {
                     Expanded(
                       child: Container(
                         height: 4,
-                        color: index < currentIndex ? Colors.green : Colors.grey[300],
+                        color: (status != "FAILED" && index < currentIndex)
+                            ? activeColor
+                            : Colors.grey[300],
                       ),
                     ),
                 ],
               ),
               const SizedBox(height: 6),
-              // Label centered
               Container(
                 alignment: Alignment.center,
                 margin: const EdgeInsets.only(top: 4),

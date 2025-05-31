@@ -86,10 +86,13 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
         provinceName: selectedProvinceName!,
       );
 
-      await ref.read(addressAsyncNotifierProvider.notifier).createAddress(address);
+      await ref
+          .read(addressAsyncNotifierProvider.notifier)
+          .createAddress(address);
       Navigator.pop(context);
     } else {
-      VxToast.show(context, msg: "Please complete all fields", bgColor: Colors.red.shade300);
+      VxToast.show(context,
+          msg: "Please complete all fields", bgColor: Colors.red.shade300);
     }
   }
 
@@ -154,14 +157,16 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
               decoration: _inputDecoration("Phone Number"),
               keyboardType: TextInputType.phone,
               inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly, // Allow only digits
-                LengthLimitingTextInputFormatter(15),   // Optional: limit to 15 digits
+                FilteringTextInputFormatter.digitsOnly,
+                // Allow only digits
+                LengthLimitingTextInputFormatter(15),
+                // Optional: limit to 15 digits
               ],
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Phone number is required';
-                } else if (value.length < 10) {
-                  return 'Phone number must be at least 10 digits';
+                } else if (value.length != 10) {
+                  return 'Phone number must be 10 digits';
                 }
                 return null;
               },
@@ -182,7 +187,8 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
               displayField: 'ProvinceName',
               idField: 'ProvinceID',
               onChanged: (val) {
-                final selected = provinces.firstWhere((e) => e['ProvinceID'] == val);
+                final selected =
+                    provinces.firstWhere((e) => e['ProvinceID'] == val);
                 selectedProvinceId = val;
                 selectedProvinceName = selected['ProvinceName'];
                 _loadDistricts(val!);
@@ -196,7 +202,8 @@ class _CreateAddressState extends ConsumerState<CreateAddressScreen> {
               displayField: 'DistrictName',
               idField: 'DistrictID',
               onChanged: (val) {
-                final selected = districts.firstWhere((e) => e['DistrictID'] == val);
+                final selected =
+                    districts.firstWhere((e) => e['DistrictID'] == val);
                 selectedDistrictId = val;
                 selectedDistrictName = selected['DistrictName'];
                 _loadWards(val!);

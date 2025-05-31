@@ -26,4 +26,15 @@ class OrderNotifier extends AsyncNotifier<List<OrderResponse>> {
     final order = await orderService.createOrder(orderRequest: orderRequest);
     return order;
   }
+  Future<String> rePayment(String orderId) async {
+    final orderService = ref.watch(orderServiceProvider);
+    final order = await orderService.rePayment(orderId);
+    return order;
+  }
+  Future<void> cancelOrder(String orderId, String userId) async {
+    final orderService = ref.watch(orderServiceProvider);
+    await orderService.cancelOrder(orderId);
+    final orders = await orderService.getAllOrders(customerId: userId);
+    state = AsyncData(orders);
+  }
 }

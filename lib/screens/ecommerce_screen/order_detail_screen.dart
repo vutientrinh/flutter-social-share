@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/order_detail_response.dart';
+import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/order_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/widget/shipping_status_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:another_flushbar/flushbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/uidata.dart';
 
@@ -43,6 +46,60 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     }
   }
 
+  Future<void> cancelOrder(
+      BuildContext context, OrderDetailResponse order) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Cancel"),
+        content: const Text("Are you sure you want to cancel this order?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text("No"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text("Yes, Cancel"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await ref
+          .read(orderAsyncNotifierProvider.notifier)
+          .cancelOrder(order.id, order.customer.id);
+
+      await Flushbar(
+        title: 'Order Cancelled',
+        message: 'The order has been successfully cancelled!',
+        backgroundColor: Colors.green,
+        flushbarPosition: FlushbarPosition.TOP,
+        duration: const Duration(seconds: 1),
+        margin: const EdgeInsets.all(8),
+        borderRadius: BorderRadius.circular(8),
+        animationDuration: const Duration(milliseconds: 300),
+      ).show(context);
+
+      // Optionally refresh or pop
+      Navigator.pop(context); // go back
+    }
+  }
+
+  Future<void> rePayment(OrderDetailResponse order) async {
+    final response =
+        await ref.read(orderAsyncNotifierProvider.notifier).rePayment(order.id);
+    final uri = Uri.parse(response);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('Could not launch $uri');
+    }
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -61,9 +118,6 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     }
 
     final order = orderDetail!;
-    final paymentAmount = order.payment.amountPaid ?? 0.0;
-    final address = order.shippingInfo.address ?? 'N/A';
-
     return Scaffold(
       appBar: AppBar(title: const Text('Order Details')),
       body: Padding(
@@ -200,7 +254,6 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                 ),
               ],
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -225,36 +278,69 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
           ],
         ),
       ),
-      // bottomSheet: Container(
-      //   color: Colors.white,
-      //   padding: const EdgeInsets.all(16),
-      //   child: SizedBox(
-      //     width: double.infinity,
-      //     height: 50,
-      //     child: ElevatedButton.icon(
-      //       onPressed: () async {
-      //         // Your logic here
-      //       },
-      //       icon: const Icon(Icons.shopping_cart_outlined,
-      //           size: 20, color: Colors.white),
-      //       label: const Text(
-      //         "Connect with seller",
-      //         style: TextStyle(
-      //           color: Colors.white,
-      //           fontSize: 16,
-      //           fontWeight: FontWeight.w600,
-      //         ),
-      //       ),
-      //       style: ElevatedButton.styleFrom(
-      //         backgroundColor: Colors.redAccent,
-      //         elevation: 5,
-      //         shape: RoundedRectangleBorder(
-      //           borderRadius: BorderRadius.circular(12),
-      //         ),
-      //       ),
-      //     ),
-      //   ),
-      // ),
+      bottomSheet:
+          order.status == "PENDING" && order.payment.status == "PENDING"
+              ? Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            cancelOrder(context, order);
+                          },
+                          icon: const Icon(Icons.cancel,
+                              size: 20, color: Colors.white),
+                          label: const Text(
+                            "Cancel Order",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            rePayment(order);
+                          },
+                          icon: const Icon(Icons.payment,
+                              size: 20, color: Colors.white),
+                          label: const Text(
+                            "Payment",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            elevation: 5,
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : null,
     );
   }
 }

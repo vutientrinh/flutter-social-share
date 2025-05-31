@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
-import 'package:flutter_social_share/providers/async_provider/product_async_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
 import '../../providers/async_provider/review_async_provider.dart';
 
 class CreateCommentScreen extends ConsumerStatefulWidget {

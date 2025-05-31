@@ -41,14 +41,12 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
     super.initState();
     _tabController =
         TabController(length: shippingStatuses.length, vsync: this);
-    loadData();
-  }
-
-  Future<void> loadData() async {
-    final response = await ref.read(authServiceProvider).getSavedData();
-    ref
-        .read(orderAsyncNotifierProvider.notifier)
-        .getAllOrders(response['userId'],);
+    Future.microtask(() async {
+      final response = await ref.read(authServiceProvider).getSavedData();
+      await ref
+          .read(orderAsyncNotifierProvider.notifier)
+          .getAllOrders(response['userId'],);
+    });
   }
 
   @override

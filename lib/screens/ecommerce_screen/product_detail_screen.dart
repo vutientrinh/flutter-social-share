@@ -349,32 +349,32 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               const SizedBox(
                 width: 10,
               ),
-              Expanded(
-                  child: ElevatedButton.icon(
-                onPressed: () async {
-                  final data =
-                      await ref.read(authServiceProvider).getSavedData();
-                  ref.read(cartAsyncNotifierProvider.notifier).addToCart(
-                      data['userId'], product!.id, product!.price, 1);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CartScreen()),
-                  );
-                },
-                icon: const Icon(Icons.shopping_cart_outlined,
-                    size: 18, color: Colors.white),
-                label: const Text(
-                  "Buy now",
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ))
+              // Expanded(
+              //     child: ElevatedButton.icon(
+              //   onPressed: () async {
+              //     final data =
+              //         await ref.read(authServiceProvider).getSavedData();
+              //     ref.read(cartAsyncNotifierProvider.notifier).addToCart(
+              //         data['userId'], product!.id, product!.price, 1);
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => const CartScreen()),
+              //     );
+              //   },
+              //   icon: const Icon(Icons.shopping_cart_outlined,
+              //       size: 18, color: Colors.white),
+              //   label: const Text(
+              //     "Buy now",
+              //     style: TextStyle(color: Colors.white),
+              //   ),
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.red,
+              //     padding: const EdgeInsets.symmetric(vertical: 4),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(10),
+              //     ),
+              //   ),
+              // ))
             ],
           ),
         ),

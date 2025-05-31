@@ -5,7 +5,6 @@ import 'package:flutter_social_share/model/social/post_update_request.dart';
 import 'package:flutter_social_share/model/social/topic.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/topic_provider.dart';
-import 'package:flutter_social_share/screens/home_screen/home_page.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -181,7 +180,6 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       final updatedPost = PostUpdateRequest(
         content: _controllerContent.text,
         images: _newImages, // New images to upload
-        // existingImages: _existingImages, // Retained existing images
         topicId: selectedTopicId!,
         status: "PUBLIC",
         type: "TEXT"
@@ -328,6 +326,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                       ),
                       items: topics
                           .map((topic) => DropdownMenuItem<String>(
+
                                 value: topic.id,
                                 child: Row(
                                   children: [

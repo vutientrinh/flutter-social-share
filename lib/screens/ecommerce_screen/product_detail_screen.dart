@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_social_share/providers/async_provider/product_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/product_liked_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/review_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
@@ -41,9 +40,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   }
 
   Future<void> loadProduct() async {
-    final data = await ref
-        .read(productServiceProvider)
-        .getProductById(widget.productId);
+    final data =
+        await ref.read(productServiceProvider).getProductById(widget.productId);
     setState(() {
       product = data;
     });
@@ -56,6 +54,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Product detail"),
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
               onPressed: () {
@@ -115,10 +114,29 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        product!.name,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            product!.name,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          Row(
+                            children: [
+                              const Icon(Icons.inventory,
+                                  color: Colors.grey, size: 16),
+                              const SizedBox(width: 4),
+                              Text(
+                                "${product!.stockQuantity.toStringAsFixed(0)} Stock",
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -233,7 +251,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                       color: Colors.grey.withOpacity(0.3),
                                       spreadRadius: 2,
                                       blurRadius: 5,
-                                      offset: const Offset(0, 3), // Shadow position
+                                      offset:
+                                          const Offset(0, 3), // Shadow position
                                     ),
                                   ],
                                 ),

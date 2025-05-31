@@ -39,6 +39,12 @@ class _ActionPostState extends ConsumerState<ActionPost> {
     likeCount = widget.post.likedCount ?? 0;
     isLiked = widget.post.hasLiked;
   }
+  int _hexToColor(String hex) {
+    hex = hex.replaceAll('#', '');
+    if (hex.length == 6) hex = 'FF$hex';
+    return int.parse(hex, radix: 16);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +54,30 @@ class _ActionPostState extends ConsumerState<ActionPost> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
-              child: Text(
-                post.topic.name,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.blueGrey[700],
+            Row(
+              children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  margin: const EdgeInsets.only(left: 8, top: 8),
+                  decoration: BoxDecoration(
+                    color: Color(_hexToColor(post.topic.color)),
+                    shape: BoxShape.circle,
+                  ),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+                  child: Text(
+                    post.topic.name,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.blueGrey[700],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
@@ -143,4 +162,5 @@ class _ActionPostState extends ConsumerState<ActionPost> {
       ],
     );
   }
+
 }

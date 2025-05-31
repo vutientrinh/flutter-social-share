@@ -38,7 +38,10 @@ class _OrderHistoryState extends ConsumerState<OrderHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Order History')),
+      appBar: AppBar(
+        title: const Text('Order History'),
+        backgroundColor: Colors.white,
+      ),
       body: listOrders == null
           ? const Center(child: Text('No order history.'))
           : listOrders!.isEmpty

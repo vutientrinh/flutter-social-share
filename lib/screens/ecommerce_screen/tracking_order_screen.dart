@@ -66,6 +66,7 @@ class _TrackingShippingScreenState extends ConsumerState<TrackingShippingScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Track Your Orders'),
+        backgroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
           // isScrollable: true,

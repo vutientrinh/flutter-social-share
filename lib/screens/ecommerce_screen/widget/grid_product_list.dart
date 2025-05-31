@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/product_async_provider.dart';
@@ -12,7 +13,7 @@ import '../../../providers/state_provider/product_provider.dart';
 class GridProductList extends ConsumerStatefulWidget {
   final List<Product> products;
 
-  const GridProductList({super.key, required this.products });
+  const GridProductList({super.key, required this.products});
 
   @override
   ConsumerState<GridProductList> createState() => _GridProductListState();
@@ -46,7 +47,8 @@ class _GridProductListState extends ConsumerState<GridProductList> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProductDetailScreen(productId: product.id),
+                builder: (context) =>
+                    ProductDetailScreen(productId: product.id),
               ),
             );
           },
@@ -68,17 +70,37 @@ class _GridProductListState extends ConsumerState<GridProductList> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.network(
-                  LINK_IMAGE.publicImage(product.images[0]),
+                CachedNetworkImage(
+                  imageUrl: LINK_IMAGE.publicImage(product.images[0]),
                   width: 150,
                   height: 120,
                   fit: BoxFit.fitHeight,
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  product.category.name,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.grey, fontSize: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      product.category.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.grey, fontSize: 10),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          product.stockQuantity.toStringAsFixed(0),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 10),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.inventory,
+                            color: Colors.grey, size: 16),
+                      ],
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 5),
                 Text(

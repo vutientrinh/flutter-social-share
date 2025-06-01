@@ -9,13 +9,17 @@ import 'package:flutter_social_share/providers/state_provider/comment_provider.d
 import 'package:flutter_social_share/providers/state_provider/user_provider.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import '../../../model/social/comment.dart';
+import '../../../model/social/post.dart';
+import '../../../providers/async_provider/post_async_provider.dart';
+import '../../../providers/state_provider/post_provider.dart';
 
 class CommentItemBubble extends ConsumerStatefulWidget {
   final Comment cmt;
+  final Post post;
   final void Function(String content, String commentId)? onCommentButtonPressed;
 
   const CommentItemBubble(
-      {Key? key, required this.cmt, this.onCommentButtonPressed})
+      {Key? key, required this.cmt, this.onCommentButtonPressed, required this.post})
       : super(key: key);
 
   @override
@@ -185,7 +189,7 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                     const SizedBox(
                       width: 4,
                     ),
-                    if (author!.id == userId)
+                    if (widget.cmt.author.id == userId)
                       Row(
                         children: [
                           GestureDetector(
@@ -209,10 +213,17 @@ class _CommentItemBubbleState extends ConsumerState<CommentItemBubble> {
                           ),
                           GestureDetector(
                             onTap: () async {
+
+                              await ref
+                                  .read(postAsyncNotifierProvider.notifier)
+                                  .updateComment(
+                                      widget.cmt.postId, widget.post.commentCount - 1);
                               await ref
                                   .read(commentAsyncNotifierProvider.notifier)
                                   .deleteComment(
                                       widget.cmt.id, widget.cmt.postId);
+
+                              if (!mounted) return;
                             },
                             child: Container(
                               color: Colors.transparent,

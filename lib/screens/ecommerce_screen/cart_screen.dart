@@ -7,6 +7,7 @@ import 'package:flutter_social_share/model/ecommerce/order_request.dart';
 import 'package:flutter_social_share/providers/async_provider/address_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/cart_async_provider.dart';
 import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
+import 'package:flutter_social_share/providers/async_provider/product_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/auth_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/shipping_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/create_address_screen.dart';
@@ -56,21 +57,22 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       "service_type_id": 2,
     },
   ];
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (userId == null) {
       loadData();
+      final cartState = ref.watch(cartAsyncNotifierProvider);
+      cartState.maybeWhen(
+        data: (cartItems) {
+          if (cartItems.isNotEmpty) {
+            updateOption(cartItems);
+          }
+        },
+        orElse: () {},
+      );
     }
-    final cartState = ref.watch(cartAsyncNotifierProvider);
-    cartState.maybeWhen(
-      data: (cartItems) {
-        if (cartItems.isNotEmpty) {
-          updateOption(cartItems);
-        }
-      },
-      orElse: () {},
-    );
   }
 
   Future<void> loadData() async {
@@ -206,7 +208,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final response = await ref
         .read(orderAsyncNotifierProvider.notifier)
         .createOrder(orderRequest);
-
+    print(response.statusCode);
     await Flushbar(
       title: 'Success',
       message: 'Order successfully!',
@@ -220,17 +222,18 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     if (_paymentMethod == "COD") {
       Navigator.pop(context);
     } else {
-      final uri = Uri.parse(response);
+      final uri = Uri.parse(response as String);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         throw Exception('Could not launch $uri');
       }
     }
-    ref.read(cartAsyncNotifierProvider.notifier).clearCart(userId!);
+    await ref.read(cartAsyncNotifierProvider.notifier).clearCart(userId!);
+    ref.read(productAsyncNotifierProvider.notifier);
   }
-  @override
 
+  @override
   @override
   Widget build(BuildContext context) {
     final cartState = ref.watch(cartAsyncNotifierProvider);
@@ -263,8 +266,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   itemBuilder: (context, index) {
                     final item = items[index];
                     return Card(
-                      margin:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
@@ -301,31 +304,56 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          if (item.quantity >= 2)
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.remove,
-                                                color: Colors.black,
-                                              ),
-                                              onPressed: () {
-                                                decreaseQuantity(item, -1);
-                                              },
-                                            ),
-                                          if (item.quantity < 2)
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.remove,
-                                                color: Colors.grey,
-                                              ),
-                                              onPressed: () {},
-                                            ),
+                                          item.quantity >= 2
+                                              ? IconButton(
+                                                  icon: const Icon(
+                                                    Icons.remove,
+                                                    color: Colors.black,
+                                                  ),
+                                                  onPressed: () {
+                                                    decreaseQuantity(item, -1);
+                                                  },
+                                                )
+                                              : IconButton(
+                                                  icon: const Icon(
+                                                    Icons.remove,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  onPressed: () {},
+                                                ),
                                           Text("${item.quantity}"),
-                                          IconButton(
-                                            icon: const Icon(Icons.add),
-                                            onPressed: () {
-                                              increaseQuantity(item, 1);
-                                            },
-                                          ),
+                                          item.quantity <
+                                                  item.product.stockQuantity
+                                              ? IconButton(
+                                                  icon: const Icon(Icons.add),
+                                                  onPressed: () {
+                                                    increaseQuantity(item, 1);
+                                                  },
+                                                )
+                                              : IconButton(
+                                                  icon: const Icon(Icons.add),
+                                                  onPressed: () async {
+                                                    await Flushbar(
+                                                      message: 'Out of stock',
+                                                      backgroundColor:
+                                                          Colors.orange,
+                                                      flushbarPosition:
+                                                          FlushbarPosition.TOP,
+                                                      duration: const Duration(
+                                                          seconds: 1),
+                                                      margin:
+                                                          const EdgeInsets.all(
+                                                              8),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      animationDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  100),
+                                                    ).show(context);
+                                                  },
+                                                ),
                                           IconButton(
                                             icon: const Icon(Icons.delete,
                                                 color: Colors.red),
@@ -353,8 +381,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   },
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -370,14 +398,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             ),
                           );
                         },
-
                         label: const Text(
                           "Add more",
                           style: TextStyle(color: Colors.black),
                         ),
                         icon: const Icon(Icons.add, color: Colors.black),
                       ),
-
                       addressState.when(
                         data: (addresses) {
                           if (addresses.isEmpty) {
@@ -398,12 +424,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       // Red signal if default
                                       if (isDefault)
                                         Container(
-                                          margin: const EdgeInsets.only(right: 8),
+                                          margin:
+                                              const EdgeInsets.only(right: 8),
                                           width: 18,
                                           // bigger size
                                           height: 18,
@@ -438,12 +466,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                             // Name and phone row
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   '${user.firstName} ${user.lastName}',
                                                   style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 16),
                                                 ),
                                                 Text("📞 ${address.phone}"),
@@ -456,7 +486,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                             const SizedBox(height: 8),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 if (!isDefault)
                                                   OutlinedButton.icon(
@@ -465,7 +496,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                                           address.id);
                                                     },
                                                     icon: const Icon(
-                                                      Icons.check_circle_outline,
+                                                      Icons
+                                                          .check_circle_outline,
                                                       size: 18,
                                                       color: Colors.black,
                                                     ),
@@ -474,12 +506,13 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                                       style: TextStyle(
                                                           color: Colors.black),
                                                     ),
-                                                    style:
-                                                        OutlinedButton.styleFrom(
+                                                    style: OutlinedButton
+                                                        .styleFrom(
                                                       backgroundColor:
                                                           Colors.grey,
-                                                      textStyle: const TextStyle(
-                                                          fontSize: 14),
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontSize: 14),
                                                     ),
                                                   ),
                                                 if (!isDefault)
@@ -612,7 +645,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           children: [
                             const Text(
                               "Subtotal :",
-                              style: TextStyle(color: Colors.black, fontSize: 18),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18),
                             ),
                             Text(
                               "${NumberFormat("#,###", "vi_VN").format(summary['subtotal'])} ₫",
@@ -630,7 +664,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           children: [
                             const Text(
                               "Shipping : ",
-                              style: TextStyle(color: Colors.black, fontSize: 16),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
                             ),
                             Text(
                               "${NumberFormat("#,###", "vi_VN").format(summary['shipping'])} ₫",
@@ -648,7 +683,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           children: [
                             const Text(
                               "VAT (8%): ",
-                              style: TextStyle(color: Colors.black, fontSize: 16),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
                             ),
                             Text(
                               "${NumberFormat("#,###", "vi_VN").format(summary['tax'])} ₫",
@@ -666,7 +702,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           children: [
                             const Text(
                               "Total : ",
-                              style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold,),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             Text(
                               "${NumberFormat("#,###", "vi_VN").format(summary['total'])} ₫",

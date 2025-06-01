@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
+import 'package:flutter_social_share/providers/state_provider/post_provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import '../../../model/social/post.dart';
 import '../../../providers/async_provider/post_async_provider.dart';
 
 class CommentInput extends ConsumerStatefulWidget {
-  final String postId;
+  final Post post;
   final String? content;
   final String? commentId;
 
   const CommentInput(
-      {super.key, required this.postId, this.content, this.commentId});
+      {super.key, required this.post, this.content, this.commentId});
 
   @override
   ConsumerState<CommentInput> createState() => _CommentInputState();
@@ -19,7 +21,8 @@ class CommentInput extends ConsumerStatefulWidget {
 
 class _CommentInputState extends ConsumerState<CommentInput> {
   final TextEditingController _commentController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();  @override
+  final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -54,23 +57,25 @@ class _CommentInputState extends ConsumerState<CommentInput> {
     _commentController.clear();
     FocusScope.of(context).unfocus(); // Hide keyboard
     final commentNotifier = ref.read(commentAsyncNotifierProvider.notifier);
-
     if (id != null) {
       // Edit existing comment
-      await commentNotifier.updateComment(id, content, widget.postId);
+      await commentNotifier.updateComment(id, content, widget.post.id);
     } else {
       // Create new comment
-      await commentNotifier.createComment(widget.postId, content);
+
+      await ref
+          .read(postAsyncNotifierProvider.notifier)
+          .updateComment(widget.post.id, widget.post.commentCount + 1);
+      await commentNotifier.createComment(widget.post.id, content);
     }
 
-    await commentNotifier.getCommentAPI(widget.postId);
+    await commentNotifier.getCommentAPI(widget.post.id);
     ref.watch(postAsyncNotifierProvider);
 
     if (mounted) {
-      FocusScope.of(context).unfocus(); // Ensure keyboard is hidden
+      FocusScope.of(context).unfocus();
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

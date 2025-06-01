@@ -316,20 +316,25 @@ class _ChatDetailState extends ConsumerState<ChatDetail> {
               crossAxisAlignment:
                   isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isMe ? Colors.blue[100] : Colors.grey[300],
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(12),
-                      topRight: const Radius.circular(12),
-                      bottomLeft: Radius.circular(isMe ? 12 : 0),
-                      bottomRight: Radius.circular(isMe ? 0 : 12),
-                    ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 2 / 3,
                   ),
-                  child: Text(
-                    message.content ?? "Not found",
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isMe ? Colors.blue[100] : Colors.grey[300],
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(12),
+                        topRight: const Radius.circular(12),
+                        bottomLeft: Radius.circular(isMe ? 12 : 0),
+                        bottomRight: Radius.circular(isMe ? 0 : 12),
+                      ),
+                    ),
+                    child: Text(
+                      message.content ?? "Not found",
+                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
                   ),
                 ),
                 isMe

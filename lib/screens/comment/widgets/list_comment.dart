@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_social_share/model/social/post.dart';
 import 'package:flutter_social_share/providers/async_provider/comment_async_provider.dart';
 import 'package:flutter_social_share/screens/comment/widgets/cmt_item_buble.dart';
 
 class ListComment extends ConsumerStatefulWidget {
-  final String postId;
+  final Post post;
   final void Function(String content, String commentId)? onCommentButtonPressed;
 
-  const ListComment({Key? key, required this.postId, this.onCommentButtonPressed}) : super(key: key);
+  const ListComment({Key? key, required this.post, this.onCommentButtonPressed}) : super(key: key);
 
   @override
   _ListCommentState createState() => _ListCommentState();
@@ -20,7 +21,7 @@ class _ListCommentState extends ConsumerState<ListComment> {
     Future.microtask(() {
       ref
           .read(commentAsyncNotifierProvider.notifier)
-          .getCommentAPI(widget.postId);
+          .getCommentAPI(widget.post.id);
     });
 
   }
@@ -46,6 +47,7 @@ class _ListCommentState extends ConsumerState<ListComment> {
             return CommentItemBubble(
               onCommentButtonPressed: widget.onCommentButtonPressed,
               cmt: comment,
+              post: widget.post,
             );
           },
         );

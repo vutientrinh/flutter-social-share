@@ -105,7 +105,7 @@ class _GridProductListState extends ConsumerState<GridProductList> {
                 const SizedBox(height: 5),
                 Text(
                   product.name,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.black,

@@ -35,8 +35,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() {
       _isLoading = false;
     });
-
-    if (response != null && response.statusCode == 200) {
+    final noti = response.data;
+    if (response.statusCode == 200) {
       await _authService.saveLoginData(response.data);
       // Navigate to HomePage on successful login
       await Flushbar(
@@ -49,7 +49,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
         messageText: Text(
-          'You have logged in successfully!',
+          "Login successfully",
           style: TextStyle(
             fontSize: 16,
             color: Colors.white.withOpacity(0.9),
@@ -83,13 +83,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } else {
       await Flushbar(
         title: 'Error',
-        message: 'Login fail, check your email or password!',
+        message: noti['message'].toString(),
         backgroundColor: Colors.red,
         flushbarPosition: FlushbarPosition.TOP,
         duration: const Duration(seconds: 1),
         margin: const EdgeInsets.all(8),
         borderRadius: BorderRadius.circular(8),
-        animationDuration: const Duration(milliseconds: 300),
+        animationDuration: const Duration(milliseconds: 100),
       ).show(context);
     }
   }

@@ -25,6 +25,7 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
         comment: _commentController.text.trim(),
         rating: _rating,
       );
+
       _authorController.clear();
       _commentController.clear();
       setState(() {
@@ -74,7 +75,7 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
                   controller: _authorController,
                   decoration: InputDecoration(
                     labelText: 'Your Name',
-                    labelStyle: TextStyle(color: Colors.blueAccent),
+                    labelStyle: const TextStyle(color: Colors.blueAccent),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

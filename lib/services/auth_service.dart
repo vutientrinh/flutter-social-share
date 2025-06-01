@@ -57,20 +57,24 @@ class AuthService {
     }
   }
 
-  Future<Response?> login(String username, String password) async {
+  Future<Response> login(String username, String password) async {
     try {
       final response = await _dio.post('/api/auth/login', data: {
         'username': username,
         'password': password,
       });
       return response;
-    } catch (e) {
-      print('Login Error: $e');
-      return null;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        // Still return the response so you can inspect it
+        return e.response!;
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
     }
   }
 
-  Future<Response?> register(String name, String email, String password) async {
+  Future<Response> register(String name, String email, String password) async {
     try {
       final response = await _dio.post('/api/auth/register', data: {
         'username': name,
@@ -79,40 +83,58 @@ class AuthService {
         'password': password
       });
       return response;
-    } catch (e) {
-      print('Register Error: $e');
-      return null;
-    }
-  }
-  Future<Response?> logout() async {
-    try {
-      final response = await _dio.post('/api/auth/signout');
-      return response;
-    } catch (e) {
-      print('Register Error: $e');
-      return null;
-    }
-  }
-  Future<Response?> recovery(String email) async {
-    try {
-      final response = await _dio.post(
-        '/api/auth/recovery',
-        queryParameters: {'email':email}, // Send email in JSON format
-      );
-      return response;
-    } catch (e) {
-      print('Recovery Error: $e');
-      return null;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        // Still return the response so you can inspect it
+        return e.response!;
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
     }
   }
 
-  Future<Response?> loginWithGoogle() async {
+  Future<Response> logout() async {
+    try {
+      final response = await _dio.post('/api/auth/signout');
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        // Still return the response so you can inspect it
+        return e.response!;
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
+    }
+  }
+
+  Future<Response> recovery(String email) async {
+    try {
+      final response = await _dio.post(
+        '/api/auth/recovery',
+        queryParameters: {'email': email}, // Send email in JSON format
+      );
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        // Still return the response so you can inspect it
+        return e.response!;
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
+    }
+  }
+
+  Future<Response> loginWithGoogle() async {
     try {
       final response = await _dio.post('/oauth2/authorization/google');
       return response;
-    } catch (e) {
-      print('Login with google  Error: $e');
-      return null;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        // Still return the response so you can inspect it
+        return e.response!;
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
     }
   }
 }

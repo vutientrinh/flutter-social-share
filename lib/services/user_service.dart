@@ -74,9 +74,13 @@ class UserService {
       });
 
       return response;
-    } catch (e) {
-      print('Error fetching profile: $e');
-      throw Exception('Failed to fetch profile: $e');
+    } on DioException catch (e) {
+      if (e.response != null) {
+        // Still return the response so you can inspect it
+        return e.response!;
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
     }
   }
 }

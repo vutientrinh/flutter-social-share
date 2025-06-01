@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/post_async_provider.dart';
 import 'package:flutter_social_share/providers/state_provider/liked_post_provider.dart';
-import 'package:flutter_social_share/screens/posts/widgets/icon_post_comment.dart';
 import 'package:flutter_social_share/screens/posts/widgets/text_count_number.dart';
 
 import '../../../model/social/post.dart';
@@ -48,6 +47,11 @@ class _ActionPostState extends ConsumerState<ActionPost> {
 
   @override
   Widget build(BuildContext context) {
+    final posts = ref.watch(postAsyncNotifierProvider).value;
+    final currentPost = posts?.firstWhere((p) => p.id == widget.post.id,
+        orElse: () => widget.post);
+    final commentCount = currentPost?.commentCount;
+    print("Comment count : $commentCount");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -117,7 +121,9 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                         }
                       });
                       if (!mounted) return;
-                      ref.invalidate(postAsyncNotifierProvider);
+                      ref
+                          .read(postAsyncNotifierProvider.notifier)
+                          .updatePostLikeStatus(post.id, isLiked, likeCount);
                     },
                     child: isLiked
                         ? Container(
@@ -153,7 +159,7 @@ class _ActionPostState extends ConsumerState<ActionPost> {
                 subText: 'Likes',
               ),
               TextCountNumber(
-                number: post.commentCount,
+                number: commentCount!,
                 subText: 'Comment',
               ),
             ],

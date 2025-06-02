@@ -150,7 +150,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                           ),
                           const Divider(thickness: 1),
                           ListComment(
-                            postId: post.id,
+                            post: post,
                             onCommentButtonPressed: _toggleEditInput,
                           ),
                         ],
@@ -166,7 +166,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
       ),
       bottomSheet: _isCommentInputVisible
           ? CommentInput(
-              postId: widget.post.id,
+              post: widget.post,
               content: _replyContent,
               commentId: _replyCommentId,
             )

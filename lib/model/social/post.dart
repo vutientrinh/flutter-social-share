@@ -37,6 +37,42 @@ class Post {
     required this.hasSaved,
   });
 
+  Post copyWith({
+    String? id,
+    String? content,
+    List<String>? images,
+    String? authorId,
+    String? topicId,
+    int? commentCount,
+    int? likedCount,
+    String? type,
+    String? status,
+    String? createdAt,
+    String? updatedAt,
+    TopicResponse? topic,
+    UserInfo? author,
+    bool? hasLiked,
+    bool? hasSaved,
+  }) {
+    return Post(
+      id: id ?? this.id,
+      content: content ?? this.content,
+      images: images ?? this.images,
+      authorId: authorId ?? this.authorId,
+      topicId: topicId ?? this.topicId,
+      commentCount: commentCount ?? this.commentCount,
+      likedCount: likedCount ?? this.likedCount,
+      type: type ?? this.type,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      topic: topic ?? this.topic,
+      author: author ?? this.author,
+      hasLiked: hasLiked ?? this.hasLiked,
+      hasSaved: hasSaved ?? this.hasSaved,
+    );
+  }
+
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       id: json['id'],
@@ -57,6 +93,7 @@ class Post {
     );
   }
 }
+
 
 class TopicResponse {
   final String id;

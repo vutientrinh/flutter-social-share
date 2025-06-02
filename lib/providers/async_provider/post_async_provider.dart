@@ -40,15 +40,12 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
     return fetchedPosts;
   }
 
-
   Future<void> fetchNextPage() async {
     if (_isFetchingMore || !_hasNextPage) return;
 
     _isFetchingMore = true;
     await Future.delayed(const Duration(milliseconds: 300));
     _currentPage++;
-
-
 
     try {
       final postService = ref.watch(postServiceProvider);
@@ -69,6 +66,39 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
       _isFetchingMore = false;
     }
   }
+
+  Future<void> updatePostLikeStatus(
+      String postId, bool isLiked, int likeCount) async {
+    final posts = state.value;
+    if (posts == null) return;
+
+    final updatedPosts = posts.map((post) {
+      if (post.id == postId) {
+        return post.copyWith(
+          hasLiked: isLiked,
+          likedCount: likeCount,
+        );
+      }
+      return post;
+    }).toList();
+
+    state = AsyncValue.data(updatedPosts);
+  }
+
+  Future<void> updateComment(String postId, int commentCount) async {
+    final posts = state.value;
+    if (posts == null) return;
+
+    final updatedPosts = posts.map((post) {
+      if (post.id == postId) {
+        return post.copyWith(commentCount: commentCount);
+      }
+      return post;
+    }).toList();
+
+    state = AsyncValue.data(updatedPosts);
+  }
+
   Future<List<Post>> loadInitialPosts(String? authorId) async {
     final postService = ref.watch(postServiceProvider);
 

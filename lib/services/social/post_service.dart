@@ -42,14 +42,14 @@ class PostService {
   }
 
   /// Get a single post by UUID
-  Future<List<Post>> getPostById(String uuid) async {
+  Future<Post> getPostById(String uuid) async {
     try {
       final response = await _dio.get('/api/posts/$uuid');
-      final postListJson = response.data['data']['data'] as List;
-      print('Post in service : $postListJson');
+      final post = response.data['data'];
+
 
       // ✅ Parse into Post objects
-      return postListJson.map((json) => Post.fromJson(json)).toList();
+      return Post.fromJson(post);
     } catch (e) {
       throw Exception('Failed to fetch post $uuid: $e');
     }

@@ -6,6 +6,7 @@ import 'package:flutter_social_share/providers/state_provider/notification_provi
 
 import '../../providers/state_provider/auth_provider.dart';
 import '../../socket_service/websocket_service.dart';
+import '../../utils/uidata.dart';
 
 class NotificationScreen extends ConsumerStatefulWidget {
   const NotificationScreen({super.key});
@@ -120,7 +121,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                 final AppNotification notification = listNotification[index];
 
                 final icon = _getIcon(notification.messageType);
-                // Whether the notification is read or unread
+
                 bool isUnread = notification.isRead == false;
 
                 return Card(
@@ -132,7 +133,12 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                   color: isUnread ? Colors.blue.shade50 : Colors.white,
                   elevation: 4,
                   child: ListTile(
-                    leading: icon,
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: NetworkImage(
+                        LINK_IMAGE.publicImage(notification.actor.avatar),
+                      ),
+                    ),
                     title: Text(
                       notification.content,
                       style: TextStyle(

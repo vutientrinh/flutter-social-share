@@ -101,6 +101,45 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
       _isFetchingMore = false;
     }
   }
+  Future<void> updateProductRating(Product productCurrent, int newRating) async {
+    final products = state.value;
+    if (products == null) return;
 
+    // Create updated list of products
+    final updatedProducts = products.map((product) {
+      if (product.id == productCurrent.id) {
+        final currentAmountRating = product.amountRating;
+        final currentTotalRating = product.rating * currentAmountRating;
 
+        final newAmountRating = currentAmountRating + 1;
+        final newTotalRating = currentTotalRating + newRating;
+        final newCalculatedRating = newTotalRating / newAmountRating;
+
+        return product.copyWith(
+          rating: newCalculatedRating,
+          amountRating: newAmountRating,
+        );
+      }
+      return product;
+    }).toList();
+
+    state = AsyncValue.data(updatedProducts);
+  }
+  Future<void> updateLike(Product productCurrent, bool like) async {
+    final products = state.value;
+    if (products == null) return;
+
+    // Create updated list of products
+    final updatedProducts = products.map((product) {
+      if (product.id == productCurrent.id) {
+
+        return product.copyWith(
+          isLiked: like,
+        );
+      }
+      return product;
+    }).toList();
+
+    state = AsyncValue.data(updatedProducts);
+  }
 }

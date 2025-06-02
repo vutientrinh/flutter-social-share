@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/order_async_provider.dart';
@@ -217,9 +218,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                   mainAxisSpacing: 4,
                 ),
                 itemBuilder: (context, index) {
-                  return Image.network(
-                    LINK_IMAGE.publicImage(images![index]),
+                  return CachedNetworkImage(
+                    imageUrl: LINK_IMAGE.publicImage(images![index]),
                     fit: BoxFit.cover,
+                    // placeholder: (context, url) => const Center(
+                    //   child: CircularProgressIndicator(),
+                    // ),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   );
                 },
               );

@@ -40,6 +40,47 @@ class Product {
     required this.isLiked,
     required this.amountRating,
   });
+  Product copyWith({
+    String? id,
+    String? name,
+    String? description,
+    Category? category,
+    num? price,
+    num? weight,
+    num? width,
+    num? height,
+    num? length,
+    List<String>? images,
+    int? stockQuantity,
+    String? currency,
+    num? rating,
+    int? salesCount,
+    bool? visible,
+    bool? isDeleted,
+    bool? isLiked,
+    int? amountRating,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      price: price ?? this.price,
+      weight: weight ?? this.weight,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      length: length ?? this.length,
+      images: images ?? this.images,
+      stockQuantity: stockQuantity ?? this.stockQuantity,
+      currency: currency ?? this.currency,
+      rating: rating ?? this.rating,
+      salesCount: salesCount ?? this.salesCount,
+      visible: visible ?? this.visible,
+      isDeleted: isDeleted ?? this.isDeleted,
+      isLiked: isLiked ?? this.isLiked,
+      amountRating: amountRating ?? this.amountRating,
+    );
+  }
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(

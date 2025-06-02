@@ -34,7 +34,6 @@ class ProductReviewService {
     }
   }
 
-  // Get comments for a specific product
   Future<List<ProductReview>> getComments({
     required String productId,
     int page = 1,

@@ -208,7 +208,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final response = await ref
         .read(orderAsyncNotifierProvider.notifier)
         .createOrder(orderRequest);
-    print(response.statusCode);
+    print(response.data['data']);
     await Flushbar(
       title: 'Success',
       message: 'Order successfully!',
@@ -222,7 +222,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     if (_paymentMethod == "COD") {
       Navigator.pop(context);
     } else {
-      final uri = Uri.parse(response as String);
+      final uri = Uri.parse(response.data['data']);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
@@ -233,7 +233,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     ref.read(productAsyncNotifierProvider.notifier);
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     final cartState = ref.watch(cartAsyncNotifierProvider);

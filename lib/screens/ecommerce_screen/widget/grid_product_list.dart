@@ -2,13 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/providers/async_provider/product_async_provider.dart';
-import 'package:flutter_social_share/providers/state_provider/product_review_provider.dart';
 import 'package:flutter_social_share/screens/ecommerce_screen/product_detail_screen.dart';
 import 'package:flutter_social_share/utils/uidata.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/ecommerce/product.dart';
-import '../../../providers/state_provider/product_provider.dart';
 
 class GridProductList extends ConsumerStatefulWidget {
   final List<Product> products;
@@ -48,7 +46,7 @@ class _GridProductListState extends ConsumerState<GridProductList> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    ProductDetailScreen(productId: product.id),
+                    ProductDetailScreen(product: product),
               ),
             );
           },
@@ -88,18 +86,31 @@ class _GridProductListState extends ConsumerState<GridProductList> {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.grey, fontSize: 10),
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          product.stockQuantity.toStringAsFixed(0),
-                          style:
-                              const TextStyle(color: Colors.grey, fontSize: 10),
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.inventory,
-                            color: Colors.grey, size: 16),
-                      ],
-                    ),
+                    product.stockQuantity > 1
+                        ? const Row(
+                            children: [
+                              Icon(Icons.check_circle,
+                                  color: Colors.green, size: 16),
+                              SizedBox(width: 4),
+                              Text(
+                                "In Stock",
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 10),
+                              ),
+                            ],
+                          )
+                        : const Row(
+                            children: [
+                              Icon(Icons.remove_circle,
+                                  color: Colors.red, size: 16),
+                              SizedBox(width: 4),
+                              Text(
+                                "Out Stock",
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 10),
+                              ),
+                            ],
+                          )
                   ],
                 ),
                 const SizedBox(height: 5),

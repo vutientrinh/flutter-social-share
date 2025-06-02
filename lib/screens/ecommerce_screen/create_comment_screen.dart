@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../model/ecommerce/product.dart';
+import '../../providers/async_provider/product_async_provider.dart';
 import '../../providers/async_provider/review_async_provider.dart';
 
 class CreateCommentScreen extends ConsumerStatefulWidget {
-  final String productId;
+  final Product product;
 
-  const CreateCommentScreen({super.key, required this.productId});
+  const CreateCommentScreen({super.key, required this.product});
 
   @override
-  ConsumerState<CreateCommentScreen> createState() => _CreateCommentScreenState();
+  ConsumerState<CreateCommentScreen> createState() =>
+      _CreateCommentScreenState();
 }
 
 class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
@@ -20,12 +23,14 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
   void _submitComment() async {
     if (_formKey.currentState!.validate()) {
       await ref.read(reviewProductAsyncNotifierProvider.notifier).createComment(
-        productId: widget.productId,
-        author: _authorController.text.trim(),
-        comment: _commentController.text.trim(),
-        rating: _rating,
-      );
-
+            productId: widget.product.id,
+            author: _authorController.text.trim(),
+            comment: _commentController.text.trim(),
+            rating: _rating,
+          );
+      await ref
+          .read(productAsyncNotifierProvider.notifier)
+          .updateProductRating(widget.product, _rating);
       _authorController.clear();
       _commentController.clear();
       setState(() {
@@ -34,6 +39,7 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
       Navigator.pop(context, true);
     }
   }
+
   Widget _buildStarRating() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -85,10 +91,12 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
                     ),
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
                   ),
-                  validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter your name' : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter your name'
+                      : null,
                 ),
                 const SizedBox(height: 20),
 
@@ -107,11 +115,13 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
                     ),
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
                   ),
                   maxLines: 4,
-                  validator: (value) =>
-                  value == null || value.isEmpty ? 'Please enter a comment' : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter a comment'
+                      : null,
                 ),
                 const SizedBox(height: 20),
 
@@ -133,14 +143,19 @@ class _CreateCommentScreenState extends ConsumerState<CreateCommentScreen> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      textStyle: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     onPressed: _submitComment,
-                    child: const Text('Submit Comment', style: TextStyle(color: Colors.white),),
+                    child: const Text(
+                      'Submit Comment',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],

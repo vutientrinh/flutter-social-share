@@ -10,20 +10,20 @@ class OrderService {
   OrderService(this._dio);
 
   // Create an order
-  Future<String> createOrder({required OrderRequest orderRequest}) async {
+  Future<Response> createOrder({required OrderRequest orderRequest}) async {
     try {
       final response = await _dio.post(
         '/api/orders/create',
         data: orderRequest.toJson(),
       );
-
-      if (response.statusCode == 200) {
-        return response.data['data'];
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        // Still return the response so you can inspect it
+        return e.response!;
       } else {
-        throw Exception('Failed to create order');
+        throw Exception('Network error: ${e.message}');
       }
-    } catch (e) {
-      throw Exception('Error creating order: $e');
     }
   }
 
@@ -43,15 +43,10 @@ class OrderService {
         },
       );
 
-      if (response.statusCode == 200) {
-        print(response.data['data']);
-        List<OrderResponse> orders = (response.data['data'] as List)
-            .map((productJson) => OrderResponse.fromJson(productJson))
-            .toList();
-        return orders;
-      } else {
-        throw Exception('Failed to fetch orders');
-      }
+      List<OrderResponse> orders = (response.data['data'] as List)
+          .map((productJson) => OrderResponse.fromJson(productJson))
+          .toList();
+      return orders;
     } catch (e) {
       throw Exception('Error fetching orders: $e');
     }
@@ -61,15 +56,12 @@ class OrderService {
   Future<OrderDetailResponse> getOrderById(String id) async {
     try {
       final response = await _dio.get('/api/orders/$id');
-      if (response.statusCode == 200) {
-        return OrderDetailResponse.fromJson(response.data);
-      } else {
-        throw Exception('Failed to fetch order');
-      }
+      return OrderDetailResponse.fromJson(response.data);
     } catch (e) {
       throw Exception('Error fetching order: $e');
     }
   }
+
   Future<String> rePayment(String orderId) async {
     try {
       final response = await _dio.post('/api/orders/repayment/$orderId');
@@ -83,14 +75,10 @@ class OrderService {
     }
   }
 
-  Future<Map<String,dynamic>> cancelOrder(String orderId) async {
+  Future<Map<String, dynamic>> cancelOrder(String orderId) async {
     try {
       final response = await _dio.delete('/api/orders/$orderId/cancel-order');
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception('Failed to cancel order');
-      }
+      return response.data;
     } catch (e) {
       throw Exception('Failed to cancel');
     }

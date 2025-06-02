@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/order_request.dart';
 import 'package:flutter_social_share/model/ecommerce/order_response.dart';
@@ -21,7 +22,7 @@ class OrderNotifier extends AsyncNotifier<List<OrderResponse>> {
     state = AsyncData(orders);
   }
 
-  Future<String> createOrder(OrderRequest orderRequest) async {
+  Future<Response> createOrder(OrderRequest orderRequest) async {
     final orderService = ref.watch(orderServiceProvider);
     final order = await orderService.createOrder(orderRequest: orderRequest);
     return order;

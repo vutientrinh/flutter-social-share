@@ -174,13 +174,12 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                         children: [
                           Text(
                             item.product.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
+
                           const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -312,31 +311,31 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            rePayment(order);
-                          },
-                          icon: const Icon(Icons.payment,
-                              size: 20, color: Colors.white),
-                          label: const Text(
-                            "Payment",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                      if (order.payment.method == "VNPAY")
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              rePayment(order);
+                            },
+                            icon: const Icon(Icons.payment, size: 20, color: Colors.white),
+                            label: const Text(
+                              "Payment",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
-                            elevation: 5,
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              elevation: 5,
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 )

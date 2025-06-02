@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_social_share/model/ecommerce/product.dart';
 import 'package:flutter_social_share/providers/state_provider/product_provider.dart';
 
+import '../../model/ecommerce/cart_response.dart';
 import '../state_provider/product_liked_provider.dart';
 
 final productAsyncNotifierProvider =
@@ -142,4 +143,30 @@ class ProductNotifier extends AsyncNotifier<List<Product>> {
 
     state = AsyncValue.data(updatedProducts);
   }
+  Future<void> updateQuantityStock(List<CartResponse> orderedItems) async {
+    final products = state.value;
+    if (products == null) return;
+
+    // Update the quantity of each product in the order
+    final updatedProducts = products.map((product) {
+      // Find the matching ordered item
+      final orderedItem = orderedItems.firstWhere(
+            (item) => item.product.id == product.id,
+
+      );
+
+      if (orderedItem != null) {
+        // Calculate new stock quantity
+        final newStockQuantity = product.stockQuantity - orderedItem.quantity;
+        return product.copyWith(
+          stockQuantity: newStockQuantity >= 0 ? newStockQuantity : 0,
+        );
+      }
+      return product;
+    }).toList();
+
+    state = AsyncValue.data(updatedProducts);
+  }
+
+
 }

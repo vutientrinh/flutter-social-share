@@ -229,6 +229,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         throw Exception('Could not launch $uri');
       }
     }
+    await ref
+        .read(productAsyncNotifierProvider.notifier)
+        .updateQuantityStock(items);
     await ref.read(cartAsyncNotifierProvider.notifier).clearCart(userId!);
     ref.read(productAsyncNotifierProvider.notifier);
   }

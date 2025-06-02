@@ -205,8 +205,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   ),
                   IconButton(
                     icon: Icon(
-                      isLike! ? Icons.favorite : Icons.favorite_border,  // ✅ show filled heart when liked
-                      color: isLike! ? Colors.red : Colors.black,       // ✅ red when liked
+                      isLike! ? Icons.favorite : Icons.favorite_border,
+                      // ✅ show filled heart when liked
+                      color: isLike! ? Colors.red : Colors.black,
+                      // ✅ red when liked
                       size: 18,
                     ),
                     onPressed: () async {
@@ -235,7 +237,6 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       }
                     },
                   ),
-
                 ],
               ),
               const SizedBox(height: 10),

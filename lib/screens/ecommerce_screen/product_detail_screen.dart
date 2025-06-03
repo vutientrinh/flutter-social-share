@@ -40,6 +40,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     setState(() {
       isLike = widget.product.isLiked;
     });
+    print("Product count : ${widget.product.salesCount}");
   }
 
   @override

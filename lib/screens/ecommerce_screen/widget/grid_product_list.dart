@@ -151,7 +151,7 @@ class _GridProductListState extends ConsumerState<GridProductList> {
                             color: Colors.grey, size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          "${product.salesCount} sold",
+                          "${product.salesCount.toString()} sold",
                           style: const TextStyle(
                             color: Colors.black87,
                             fontSize: 12,
